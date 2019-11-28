@@ -12,7 +12,7 @@ p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
 
 Pipx dw 0 
-seed dw 0
+seed db 0
 Gap dw 0 
 Running db  0h   
 Tunnel dw   0h  
