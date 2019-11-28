@@ -4,7 +4,7 @@ include barrier.inc
 .stack
 .data
 plen   equ  20      ; height and width of player
-p1x    dw   0      ; left upper cornder 
+p1x    dw   2      ; left upper cornder 
 p1y    dw   0   
 m1x    dw   0       ; right bottom corner 
 m1y    dw   0  
@@ -48,7 +48,7 @@ GameLoop:
 	jnz complete
     mov ax, p1y
 	sub ax,Gap
-	cmp ax,1
+	cmp ax,3
 	jz complete
 		mov Running ,0
 	complete:
@@ -102,7 +102,7 @@ Update:
     mov ax, Tunnel
     mul TunnelSize
     mov p1y, ax     
-    ADD p1y, 0
+    ADD p1y, 2
     
 Return:
     ; Flush Keyboard Buffer
