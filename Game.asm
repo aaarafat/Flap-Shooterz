@@ -45,7 +45,7 @@ GameLoop:
     Call Delay
 	mov ax ,Pipx
 	cmp ax,20
-	jnz complete
+	jg complete
     mov ax, p1y
 	sub ax,Gap
 	cmp ax,2
