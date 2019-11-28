@@ -43,15 +43,7 @@ GameLoop:
     Call Draw
     ; Delay
     Call Delay
-	mov ax ,Pipx
-	cmp ax,20
-	jg complete
-    mov ax, p1y
-	sub ax,Gap
-	cmp ax,2
-	jz complete
-		mov Running ,0
-	complete:
+	Call Collision
     cmp Running, 1                                  
     je GameLoop 
     
@@ -133,5 +125,19 @@ Delay proc
     ret
 
 Delay endp
+;---------------------
+;-collision Function--
+Collision proc
+	mov ax ,Pipx
+	cmp ax,20
+	jg complete
+    mov ax, p1y
+	sub ax,Gap
+	cmp ax,2
+	jz complete
+		mov Running ,0
+	complete:
+	ret 
+collision endp
 ;----------------------- 
 end main
