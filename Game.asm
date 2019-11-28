@@ -43,6 +43,7 @@ GameLoop:
     Call Draw
     ; Delay
     Call Delay
+	; detect collision
 	Call Collision
     cmp Running, 1                                  
     je GameLoop 
@@ -128,11 +129,14 @@ Delay endp
 ;---------------------
 ;-collision Function--
 Collision proc
+	; is the spaceship inside the tunnel or not in x axis
 	mov ax ,Pipx
 	cmp ax,20
 	jg complete
+	;is the spaceship inside the tunnel or not in y axis
     mov ax, p1y
 	sub ax,Gap
+	;alaways the different bettwen the gap and the spaceship y is 2
 	cmp ax,2
 	jz complete
 		mov Running ,0
