@@ -4,8 +4,8 @@ include barrier.inc
 .stack
 .data
 plen   equ  20      ; height and width of player
-p1x    dw   2      ; left upper cornder 
-p1y    dw   0   
+p1x    dw   0      ; left upper cornder 
+p1y    dw   2   
 m1x    dw   0       ; right bottom corner 
 m1y    dw   0  
 p1cl   db   09h     ; p1 body color
@@ -48,7 +48,7 @@ GameLoop:
 	jnz complete
     mov ax, p1y
 	sub ax,Gap
-	cmp ax,3
+	cmp ax,2
 	jz complete
 		mov Running ,0
 	complete:

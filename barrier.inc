@@ -34,7 +34,6 @@ getrandom  macro  Gap seed
     mov ah,0
     mov dl,24
     mul dl
-	dec ax
 	mov Gap ,ax ;reminder
 endm getrandom 
 DrawPipe Macro px, tunnel
