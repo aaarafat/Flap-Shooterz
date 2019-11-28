@@ -18,7 +18,7 @@ DeletePipe Macro px, tunnel
     mov ah,0ch 
     int 10h     
     inc SI
-    cmp SI , 144  
+    cmp SI , 168  
     jl plop 
 ENDM DeletePipe
 getrandom  macro  Gap seed
@@ -27,7 +27,7 @@ getrandom  macro  Gap seed
     mov aL,dh    ; Seconds is in DH 
     inc seed
 	add al,seed
-	mov dl,6	
+	mov dl,7	
     mov ah,0
 	div dl
     mov al,ah
@@ -55,7 +55,7 @@ DrawPipe Macro px, tunnel
     mov ah,0ch 
     int 10h     
     inc SI
-    cmp SI , 144  
+    cmp SI , 168  
     jl plop 
      
     mov SI , tunnel ; random value  
