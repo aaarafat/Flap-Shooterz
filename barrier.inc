@@ -21,19 +21,21 @@ DeletePipe Macro px, tunnel
     cmp SI , 144  
     jl plop 
 ENDM DeletePipe
-getrandom  macro  tunnel 
+getrandom  macro  Gap seed
     mov ah,2ch    ; To get System Time
     int 21h
     mov aL,dh    ; Seconds is in DH 
-    mov dl,3	;144-40-20/3=5 
+    inc seed
+	add al,seed
+	mov dl,6	
     mov ah,0
 	div dl
     mov al,ah
     mov ah,0
-    mov dl,40
+    mov dl,24
     mul dl
-	add ax,20
-    mov tunnel ,ax ;reminder
+	dec ax
+	mov Gap ,ax ;reminder
 endm getrandom 
 DrawPipe Macro px, tunnel
     Local plop
