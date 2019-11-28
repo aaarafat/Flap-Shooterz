@@ -2,3 +2,6 @@
 !*.asm
 !*.inc
 !.gitignore
+*.exe
+*.obj
+
