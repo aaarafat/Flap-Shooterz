@@ -10,12 +10,14 @@ m1x    dw   0       ; right bottom corner
 m1y    dw   0  
 p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
+
 Pipx dw 0 
 seed dw 0
-Gap dw 0 ; y of the gap in pipe
+Gap dw 0 
 Running db  0h   
 Tunnel dw   0h  
-TunnelSize dw 24
+TunnelSize dw 24    
+
 .code
 main proc far 
     mov ax,@data
@@ -24,27 +26,24 @@ main proc far
     mov ah,0
     mov al,13h
     int 10h
+     
     mov Pipx ,100
-	getrandom Gap seed
+	getrandom Gap seed 
+     
     mov Running, 1
 GameLoop:
 	
     ; Clear
     Call Clear
-		dec Pipx
-    cmp Pipx,-1
-	jnz nowrap
-		mov Pipx,100
-		getrandom Gap seed
-	nowrap:
 	; Get Input
-    Call GetInput   
+    Call GetInput
+    ; Update
+	Call Update   
     ; Draw
     Call Draw
     ; Delay
     Call Delay
-	; detect collision
-	Call Collision
+	
     cmp Running, 1                                  
     je GameLoop 
     
@@ -82,20 +81,14 @@ GetInput proc
 
 MoveUp:
     cmp Tunnel, 0   
-    je Return
+    je Return      
     DEC Tunnel  
-    jmp Update
+    jmp Return
 
 MoveDown:
     cmp Tunnel, 6
     je Return
-    INC Tunnel  
-      
-Update:
-    mov ax, Tunnel
-    mul TunnelSize
-    mov p1y, ax     
-    ADD p1y, 2
+    INC Tunnel          
     
 Return:
     ; Flush Keyboard Buffer
@@ -107,19 +100,18 @@ GetInput endp
 ;-----------------------   
     
 ;------Draw Function---- 
-Draw proc  
-    ; Draw Player 1
-    
+Draw proc     
     DrawPipe Pipx , Gap  
-	DrawP1 p1x, p1y, plen, m1x , m1y , p1cl , p1cd
+	; Draw Player 1
+    DrawP1 p1x, p1y, plen, m1x , m1y , p1cl , p1cd
     ret
 
 Draw endp
 ;-----------------------
                            
 ;------Delay Function---- 
-Delay proc  
-    mov ah, 86h
+Delay proc                              
+    mov ah, 86h        ;  1/10 second
     mov cx, 1h
     mov dx, 86A0h
     int 15h
@@ -127,8 +119,26 @@ Delay proc
 
 Delay endp
 ;---------------------
-;-collision Function--
-Collision proc
+;----Update Function--
+Update proc 
+    
+    ; UPDATE PLAYER
+    mov ax, Tunnel    ; TUNNEL ==> POSITION
+    mul TunnelSize
+    mov p1y, ax     
+    ADD p1y, 2        ; PLAYER POS = 2 + TUNNEL START
+    ;--------------
+    
+    ; GENERATE PIP 
+    dec Pipx          ; TODO CHANGE SPEED LATER
+    cmp Pipx,-1
+	jnz nowrap
+	mov Pipx,100   
+	getrandom Gap seed  
+	;------------
+	
+	nowrap:	
+	; CHECK IF PLAYER HIT THE PIP
 	; is the spaceship inside the tunnel or not in x axis
 	mov ax ,Pipx
 	cmp ax,20
@@ -139,9 +149,11 @@ Collision proc
 	;alaways the different bettwen the gap and the spaceship y is 2
 	cmp ax,2
 	jz complete
-		mov Running ,0
+	mov Running ,0     ; Exit
+	;-------------------------
+	
 	complete:
 	ret 
-collision endp
+Update endp
 ;----------------------- 
 end main

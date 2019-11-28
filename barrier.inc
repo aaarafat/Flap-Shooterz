@@ -26,7 +26,7 @@ getrandom  macro  Gap seed
     int 21h
     mov aL,dh    ; Seconds is in DH 
     inc seed
-	add al,seed
+	add ax,seed
 	mov dl,7	
     mov ah,0
 	div dl
