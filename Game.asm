@@ -92,7 +92,7 @@ Clear proc
     DeletePipe Pipx ,Gap
     cmp s1x, 0
     je noclear
-    shoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
+    DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
 noclear:
     ret
 Clear endp
@@ -154,17 +154,9 @@ Draw proc
     ; Draw Player 1
     DrawP1 p1x, p1y, plen, m1x , m1y , p1cl , p1cd
     cmp s1x, 0
-    jnz DrawShoot ; to avoid jmp out of range
-    jmp noshoot ;we factor the jumping into two jumps
-DrawShoot:
-    ;mov bp, swid / 4
-    ;add s1x, 3 * swid / 4
-    shoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh ;right most layer
-    ;sub s1x, swid / 4
-    ;shoot s1x, s1y, slen, bp, 04h ;middle layer
-    ;mov bp, swid / 2
-    ;sub s1x, swid / 2
-    ;shoot s1x, s1y, slen, bp, 0fh ;left most layer
+    jz noshoot 
+
+    DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh 
 
 noshoot:
     mov ah,2
@@ -208,10 +200,8 @@ noupdate:
     UpdatePlayer Tunnel, TunnelSize, p1y, plen
     ;--------------
     ; GENERATE PIP
-	GeneratePip  2,Pipx,-1,invc,Gap, seed
-    
-    ;-------------
-   
+    GeneratePip  2,Pipx,-1,invc,Gap, seed
+    ;------------
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap, Tunnel, Pipx, p1x, invc, p1lives, Running
     
