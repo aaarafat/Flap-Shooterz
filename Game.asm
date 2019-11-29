@@ -13,8 +13,8 @@ m1x    dw   0       ; right bottom corner
 m1y    dw   0
 p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
-s1x	dw 0h	;p1 shoot x
-s1y	dw 0h	;p1 shoot y
+s1x dw 0h   ;p1 shoot x
+s1y dw 0h   ;p1 shoot y
 p1lives db 5h
 invc db 0h ;invincible
 
@@ -199,13 +199,7 @@ Update proc
     mov s1x, 0
 noupdate:
     ; UPDATE PLAYER
-    mov ax, Tunnel    ; TUNNEL ==> POSITION
-    mul TunnelSize
-    mov p1y, ax
-    mov ax , TunnelSize
-    sub ax , plen
-    shr ax , 1b
-    ADD p1y, ax        ; PLAYER POS Aligned with the tunnel
+    UpdatePlayer Tunnel, TunnelSize, p1y, plen
     ;--------------
 
     ; GENERATE PIP

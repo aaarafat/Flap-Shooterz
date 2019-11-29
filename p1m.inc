@@ -149,3 +149,16 @@ olop:
 	
 ENDM ClearP1
 ;========================================================================================
+;========================================================================================
+UpdatePlayer Macro Tunnel, TunnelSize, p1y, plen
+    ; UPDATE PLAYER
+    mov ax, Tunnel    ; TUNNEL ==> POSITION
+    mul TunnelSize
+    mov p1y, ax
+    mov ax , TunnelSize
+    sub ax , plen
+    shr ax , 1b
+    ADD p1y, ax        ; PLAYER POS Aligned with the tunnel
+	
+ENDM UpdatePlayer
+;========================================================================================
