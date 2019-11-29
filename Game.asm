@@ -16,6 +16,7 @@ p1cd   db   01h     ; p1 link color
 s1x	dw 0h	;p1 shoot x
 s1y	dw 0h	;p1 shoot y
 p1lives db 5h
+invc db 0h ;invincible
 
 Pipx dw 0
 seed db 0
@@ -72,6 +73,15 @@ main endp
 
 ;------Clear Screen-----
 Clear proc
+
+    mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, ' ' ;heart
+    mov cl, 5
+    mov ch, 0
+    mov bl,04h
+    int 10h
+
     ClearP1 p1x, p1y, plen, m1x , m1y ; Clear Player1
     DeletePipe Pipx ,Gap
     cmp s1x, 0
@@ -154,6 +164,7 @@ noshoot:
     mov ah,2
     mov dx,0
     int 10h
+;drawing lives of player 1
     mov ah,9 ;Display
     mov bh,0 ;Page 0
     mov al, 3h ;heart
@@ -202,6 +213,7 @@ noupdate:
     cmp Pipx,-1
     jnz CheckCollision
     mov Pipx,159      ; Center of Screen
+    mov invc, 0
     getrandom Gap seed
     ;-------------
     ; CHECK IF PLAYER HIT THE PIP
@@ -218,11 +230,21 @@ noupdate:
     cmp ax, p1x     ; IF equal or lower
     JG NoCollision  ; IF GREATER JUMP
     ; (TODO CHANGE THIS LATER)
+
+    ; If player is invincible then lives are the same
+    cmp invc, 1
+    jz Complete
+
+    dec p1lives
+    mov invc, 1
+    cmp p1lives, 0
+    jnz complete
+
     mov Running ,0     ; Exit
     ;-------------------------
 
     NoCollision:
-
+    mov invc, 0
     complete:
     ret
 Update endp

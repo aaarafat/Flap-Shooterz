@@ -10,23 +10,26 @@ DrawPipe Macro px, tunnel
     mov al,07h 
     mov ah,0ch 
     int 10h 
+
     inc CX
     mov al,08h 
     mov ah,0ch 
-    int 10h    
+    int 10h
+    
     inc CX
     mov al,07h 
     mov ah,0ch 
-    int 10h     
+    int 10h 
+    
     inc SI
     cmp SI , 144  
     jl plop 
     ;mutiply tunnel by 24 
     mov ax,tunnel
-	mov ah,0
+    mov ah,0
     mov dl,24
     mul dl	
-	mov SI , ax ; random value  
+    mov SI , ax ; random value  
     mov BX , SI
     add BX , 24
     glop:
@@ -35,12 +38,15 @@ DrawPipe Macro px, tunnel
     mov CX , pipx 
     mov ah , 0ch 
     int 10h
+
     inc CX 
     mov ah , 0ch 
     int 10h
+
     inc CX
     mov ah , 0ch 
     int 10h 
+
     inc SI
     cmp SI,BX
     jle glop 
