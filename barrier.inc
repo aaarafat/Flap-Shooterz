@@ -84,6 +84,7 @@ getrandom  macro  Gap seed
     mov ah,0
 	div dl
     mov al,ah
+    mov ah, 0
 	mov Gap ,ax ;reminder
 endm getrandom 
 ;========================================================================================
