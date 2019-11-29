@@ -31,6 +31,10 @@ main proc far
 	getrandom Gap seed 
      
     mov Running, 1
+	
+	;------------------
+	;MainMenuLoop
+	;------------------
 GameLoop:
 	
     ; Clear
@@ -43,10 +47,15 @@ GameLoop:
     Call Draw
     ; Delay
     Call Delay
-	
+	; UI
+	;Call UI
     cmp Running, 1                                  
     je GameLoop 
-    
+	
+	
+    ;------------------
+	;GameOverLoop
+	;------------------
     
 	mov ah, 4ch
 	int 21h
@@ -57,7 +66,7 @@ main endp
 ;------Clear Screen----- 
 Clear proc
     ClearP1 p1x, p1y, plen, m1x , m1y ; Clear Player1
-	DeletePipe Pipx ,Gap
+	DeletePipe Pipx , Gap
     ret
 Clear endp 
 ;-----------------------
@@ -86,7 +95,7 @@ MoveUp:
     jmp Return
 
 MoveDown:
-    cmp Tunnel, 6
+    cmp Tunnel, 5
     je Return
     INC Tunnel          
     
@@ -125,15 +134,18 @@ Update proc
     ; UPDATE PLAYER
     mov ax, Tunnel    ; TUNNEL ==> POSITION
     mul TunnelSize
-    mov p1y, ax     
-    ADD p1y, 2        ; PLAYER POS = 2 + TUNNEL START
+    mov p1y, ax  
+	mov ax , TunnelSize
+	sub ax , plen
+	shr ax , 1b
+    ADD p1y, ax        ; PLAYER POS Aligned with the tunnel
     ;--------------
     
     ; GENERATE PIP 
     dec Pipx          ; TODO CHANGE SPEED LATER
     cmp Pipx,-1
 	jnz nowrap
-	mov Pipx,100   
+	mov Pipx,159	  ; Center of Screen   
 	getrandom Gap seed  
 	;------------
 	
