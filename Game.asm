@@ -171,9 +171,8 @@ Update proc
     jz noupdate
     add s1x, 4 ;move the shoot
     mov si, s1x
-    add si, swid
-    cmp si, 320 ;if we reached to the end of screen
-    jbe noupdate
+    cmp s1x, 320 ;if we reached to the end of screen
+    jb noupdate
     mov s1x, 0
 noupdate:
     ; UPDATE PLAYER
