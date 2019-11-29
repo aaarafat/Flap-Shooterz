@@ -181,14 +181,7 @@ Delay endp
 ;----Update Function--
 Update proc
 
-    cmp s1x, 0 ;check if there's a shoot
-    jz noupdate
-    add s1x, 4 ;move the shoot
-    mov si, s1x
-    cmp s1x, 320 ;if we reached to the end of screen
-    jb noupdate
-    mov s1x, 0
-noupdate:
+    MoveShoot s1x, 320
     ; UPDATE PLAYER
     UpdatePlayer Tunnel, TunnelSize, p1y, plen
     ;--------------
