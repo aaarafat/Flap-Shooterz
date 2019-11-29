@@ -1,3 +1,4 @@
+-------------------------------------------------
 DrawShoot MACRO sxpos, sypos, slen, swidquart, color1, color2, color3
 local colcount1
 local Continue1
@@ -69,3 +70,18 @@ inc dx      ;next row
 cmp dx, di
 JNE colcount3
 ENDM DrawShoot
+-------------------------------------------------
+-------------------------------------------------
+MoveShoot MACRO sx, ScreenWidth
+    LOCAL noupdate
+    cmp sx, 0 ;check if there's a shoot
+    jz noupdate
+    add sx, 4 ;move the shoot
+    mov si, sx
+    cmp sx, ScreenWidth ;if we reached to the end of screen
+    jb noupdate
+    mov sx, 0
+noupdate:
+
+ENDM MoveShoot
+-------------------------------------------------
