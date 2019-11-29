@@ -1,41 +1,5 @@
-
-DeletePipe Macro px, tunnel
-    Local plop
-	Local Glop
-	mov SI , 0
-   plop:  
-    mov CX , pipx
-    mov DX , SI
-    mov al,00h 
-    mov ah,0ch 
-    int 10h 
-    inc CX
-    mov al,00h 
-    mov ah,0ch 
-    int 10h    
-    inc CX
-    mov al,00h 
-    mov ah,0ch 
-    int 10h     
-    inc SI
-    cmp SI , 168  
-    jl plop 
-ENDM DeletePipe
-getrandom  macro  Gap seed
-    mov ah,2ch    ; To get System Time
-    int 21h
-    mov aL,dh    ; Seconds is in DH 
-    inc seed
-	add al,seed
-	mov dl,7	
-    mov ah,0
-	div dl
-    mov al,ah
-    mov ah,0
-    mov dl,24
-    mul dl
-	mov Gap ,ax ;reminder
-endm getrandom 
+;========================================================================================
+;------------Pipe Macro--------------
 DrawPipe Macro px, tunnel
     Local plop
 	Local Glop
@@ -55,10 +19,14 @@ DrawPipe Macro px, tunnel
     mov ah,0ch 
     int 10h     
     inc SI
-    cmp SI , 168  
+    cmp SI , 144  
     jl plop 
-     
-    mov SI , tunnel ; random value  
+    ;mutiply tunnel by 24 
+    mov ax,tunnel
+	mov ah,0
+    mov dl,24
+    mul dl	
+	mov SI , ax ; random value  
     mov BX , SI
     add BX , 24
     glop:
@@ -75,6 +43,47 @@ DrawPipe Macro px, tunnel
     int 10h 
     inc SI
     cmp SI,BX
-    jl glop 
+    jle glop 
 
 ENDM DrawPipe
+;========================================================================================
+
+;========================================================================================
+DeletePipe Macro px, tunnel
+    Local plop
+	Local Glop
+	mov SI , 0
+   plop:  
+    mov CX , pipx
+    mov DX , SI
+    mov al,00h 
+    mov ah,0ch 
+    int 10h 
+    inc CX
+    mov al,00h 
+    mov ah,0ch 
+    int 10h    
+    inc CX
+    mov al,00h 
+    mov ah,0ch 
+    int 10h     
+    inc SI
+    cmp SI , 144  
+    jl plop 
+ENDM DeletePipe
+;========================================================================================
+
+;========================================================================================
+getrandom  macro  Gap seed
+    mov ah,2ch    ; To get System Time
+    int 21h
+    mov aL,dh    ; Seconds is in DH 
+    inc seed
+	add al,seed
+	mov dl,6	
+    mov ah,0
+	div dl
+    mov al,ah
+	mov Gap ,ax ;reminder
+endm getrandom 
+;========================================================================================
