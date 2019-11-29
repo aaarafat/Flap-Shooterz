@@ -36,7 +36,7 @@ main proc far
     mov al,13h
     int 10h
 
-    mov Pipx ,100
+    mov Pipx ,159
     getrandom Gap seed
 
     mov Running, 1
@@ -207,17 +207,11 @@ noupdate:
     ; UPDATE PLAYER
     UpdatePlayer Tunnel, TunnelSize, p1y, plen
     ;--------------
-
     ; GENERATE PIP
-    SUB Pipx, 2          ; TODO CHANGE SPEED LATER
-    cmp Pipx, 0
-    jnl FinGenPip
-    mov Pipx,159      ; Center of Screen
-    mov invc, 0
-    getrandom Gap seed
-    ;-------------
-    FinGenPip:
+	GeneratePip  2,Pipx,-1,invc,Gap, seed
     
+    ;-------------
+   
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap, Tunnel, Pipx, p1x, invc, p1lives, Running
     

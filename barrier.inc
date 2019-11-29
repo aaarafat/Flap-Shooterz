@@ -94,3 +94,15 @@ getrandom  macro  Gap seed
 	mov Gap ,ax ;reminder
 endm getrandom 
 ;========================================================================================
+;========================================================================================
+GeneratePip macro speed,px,endpip,invc,Gap,seed
+	local finish
+	sub px,speed
+    cmp px, endpip
+	jnz finish
+	mov invc ,0
+    mov px,159 ;center of the screen    
+    getrandom Gap seed
+	finish:
+	endm GeneratePip
+;========================================================================================
