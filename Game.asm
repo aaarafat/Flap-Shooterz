@@ -1,22 +1,28 @@
 include p1m.inc 
 include barrier.inc
+include shoot.inc
 .model small
 .stack
 .data
 plen   equ  20      ; height and width of player
-p1x    dw   0      ; left upper cornder 
+slen	equ 4
+swid	equ 8
+p1x    dw   0      ; left upper corner 
 p1y    dw   2   
 m1x    dw   0       ; right bottom corner 
 m1y    dw   0  
 p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
+s1x	dw 0h	;p1 shoot x
+s1y	dw 0h	;p1 shoot y
 
 Pipx dw 0 
 seed db 0
 Gap dw 0 
 Running db  0h   
 Tunnel dw   0h  
-TunnelSize dw 24    
+TunnelSize dw 24
+   
 
 .code
 main proc far 
@@ -58,6 +64,10 @@ main endp
 Clear proc
     ClearP1 p1x, p1y, plen, m1x , m1y ; Clear Player1
 	DeletePipe Pipx ,Gap
+    cmp s1x, 0
+    je noclear
+    shoot s1x, s1y, slen, swid, 0h
+noclear:
     ret
 Clear endp 
 ;-----------------------
@@ -74,6 +84,9 @@ GetInput proc
    
     cmp ah, 50h     ; IF DOWN ARROW MOVE DOWN
     je MoveDown
+
+    cmp ah, 39h
+    je P1Shoot
    
     mov Running, 0  ; Else Exit 
     jmp Return
@@ -88,7 +101,17 @@ MoveUp:
 MoveDown:
     cmp Tunnel, 6
     je Return
-    INC Tunnel          
+    INC Tunnel
+    jmp Return
+P1Shoot:
+    cmp s1x, 0
+    jne Return
+    mov ax, p1x
+    add ax, plen
+    mov s1x, ax
+    mov ax, p1y
+    add ax, plen / 2 - slen / 2
+    mov s1y, ax         
     
 Return:
     ; Flush Keyboard Buffer
@@ -104,6 +127,19 @@ Draw proc
     DrawPipe Pipx , Gap  
 	; Draw Player 1
     DrawP1 p1x, p1y, plen, m1x , m1y , p1cl , p1cd
+    cmp s1x, 0
+    jnz DrawShoot ; to avoid jmp out of range
+    jmp noshoot ;we factor the jumping into two jumps
+DrawShoot:
+    mov bp, swid / 4
+    add s1x, 3 * swid / 4
+    shoot s1x, s1y, slen, bp, 0Bh ;right most layer
+    sub s1x, swid / 4
+    shoot s1x, s1y, slen, bp, 04h ;middle layer
+    mov bp, swid / 2
+    sub s1x, swid / 2
+    shoot s1x, s1y, slen, bp, 0fh ;left most layer   
+noshoot:
     ret
 
 Draw endp
@@ -122,6 +158,15 @@ Delay endp
 ;----Update Function--
 Update proc 
     
+    cmp s1x, 0 ;check if there's a shoot
+    jz noupdate
+    add s1x, 4 ;move the shoot
+    mov si, s1x
+    add si, swid
+    cmp si, 320 ;if we reached to the end of screen
+    jbe noupdate
+    mov s1x, 0
+noupdate:    
     ; UPDATE PLAYER
     mov ax, Tunnel    ; TUNNEL ==> POSITION
     mul TunnelSize
