@@ -15,6 +15,7 @@ p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
 s1x	dw 0h	;p1 shoot x
 s1y	dw 0h	;p1 shoot y
+p1lives db 5h
 
 Pipx dw 0
 seed db 0
@@ -148,7 +149,18 @@ DrawShoot:
     mov bp, swid / 2
     sub s1x, swid / 2
     shoot s1x, s1y, slen, bp, 0fh ;left most layer
+
 noshoot:
+    mov ah,2
+    mov dx,0
+    int 10h
+    mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, 3h ;heart
+    mov cl, p1lives
+    mov ch, 0
+    mov bl,04h
+    int 10h
     ret
 
 Draw endp
