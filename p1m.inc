@@ -162,17 +162,3 @@ UpdatePlayer Macro Tunnel, TunnelSize, p1y, plen
 	
 ENDM UpdatePlayer
 ;========================================================================================
-DrawHearts macro hearts,color,col
-    mov dh, 0
-	mov dl,col
-	mov bh, 0
-    mov ah, 2
-    int 10h
-	mov ah,9 ;Display
-    mov bh,0 ;Page 0
-    mov al, 03h ;heart
-    mov cl, hearts
-    mov ch, 0
-    mov bl,color
-    int 10h
-endm DrawHearts

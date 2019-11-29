@@ -159,8 +159,18 @@ Draw proc
     DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh 
 
 noshoot:
+    mov ah,2
+    mov dx,0
+    int 10h
 ;drawing lives of player 1
-    DrawHearts p1lives,04h,0
+    mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, 3h ;heart
+    mov cl, p1lives
+    mov ch, 0
+    mov bl,04h
+    int 10h
+    ret
 
 Draw endp
 ;-----------------------
