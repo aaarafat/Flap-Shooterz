@@ -209,9 +209,9 @@ noupdate:
     ;--------------
 
     ; GENERATE PIP
-    dec Pipx          ; TODO CHANGE SPEED LATER
-    cmp Pipx,-1
-    jnz CheckCollision
+    SUB Pipx, 2          ; TODO CHANGE SPEED LATER
+    cmp Pipx, 0
+    jnl CheckCollision
     mov Pipx,159      ; Center of Screen
     mov invc, 0
     getrandom Gap seed
