@@ -105,7 +105,7 @@ GetInput proc
     cmp ah, 50h     ; IF DOWN ARROW MOVE DOWN
     je MoveDown
 
-    cmp ah, 39h
+    cmp ah, 39h     ; IF SPACE SHOOT
     je P1Shoot
 
     mov Running, 0  ; Else Exit
@@ -124,13 +124,13 @@ MoveDown:
     INC Tunnel
     jmp Return
 P1Shoot:
-    cmp s1x, 0
+    cmp s1x, 0       ; IF SHOOT.X = 0 RETURN
     jne Return
     mov ax, p1x
-    add ax, plen
+    add ax, plen     ; MOVE SHOOT TO THE PLAYER HEAD
     mov s1x, ax
     mov ax, p1y
-    add ax, plen / 2 - slen / 2
+    add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
     mov s1y, ax
 
 Return:
@@ -216,6 +216,7 @@ noupdate:
     mov invc, 0
     getrandom Gap seed
     ;-------------
+
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision:
     ; CHECK IF PLAYER TUNNEL != PIP TUNNEL
