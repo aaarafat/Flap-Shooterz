@@ -6,7 +6,7 @@ include shoot.inc
 .data
 plen   equ  20      ; height and width of player
 slen    equ 4
-swid    equ 8
+swidquart    equ 2
 p1x    dw   0      ; left upper corner
 p1y    dw   2
 m1x    dw   0       ; right bottom corner
@@ -74,9 +74,14 @@ main endp
 ;------Clear Screen-----
 Clear proc
 
+    ;clearing the hearts of player 1
+    mov ah,2
+    mov dx,0
+    int 10h
+
     mov ah,9 ;Display
     mov bh,0 ;Page 0
-    mov al, ' ' ;heart
+    mov al, ' ' ;space
     mov cl, 5
     mov ch, 0
     mov bl,04h
@@ -86,7 +91,7 @@ Clear proc
     DeletePipe Pipx ,Gap
     cmp s1x, 0
     je noclear
-    shoot s1x, s1y, slen, swid, 0h
+    shoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
 noclear:
     ret
 Clear endp
@@ -151,14 +156,14 @@ Draw proc
     jnz DrawShoot ; to avoid jmp out of range
     jmp noshoot ;we factor the jumping into two jumps
 DrawShoot:
-    mov bp, swid / 4
-    add s1x, 3 * swid / 4
-    shoot s1x, s1y, slen, bp, 0Bh ;right most layer
-    sub s1x, swid / 4
-    shoot s1x, s1y, slen, bp, 04h ;middle layer
-    mov bp, swid / 2
-    sub s1x, swid / 2
-    shoot s1x, s1y, slen, bp, 0fh ;left most layer
+    ;mov bp, swid / 4
+    ;add s1x, 3 * swid / 4
+    shoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh ;right most layer
+    ;sub s1x, swid / 4
+    ;shoot s1x, s1y, slen, bp, 04h ;middle layer
+    ;mov bp, swid / 2
+    ;sub s1x, swid / 2
+    ;shoot s1x, s1y, slen, bp, 0fh ;left most layer
 
 noshoot:
     mov ah,2
