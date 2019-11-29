@@ -159,9 +159,6 @@ Draw proc
     DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh 
 
 noshoot:
-    mov ah,2
-    mov dx,0
-    int 10h
 ;drawing lives of player 1
     DrawHearts p1lives,04h,0
 
@@ -181,14 +178,7 @@ Delay endp
 ;----Update Function--
 Update proc
 
-    cmp s1x, 0 ;check if there's a shoot
-    jz noupdate
-    add s1x, 4 ;move the shoot
-    mov si, s1x
-    cmp s1x, 320 ;if we reached to the end of screen
-    jb noupdate
-    mov s1x, 0
-noupdate:
+    MoveShoot s1x, 320
     ; UPDATE PLAYER
     UpdatePlayer Tunnel, TunnelSize, p1y, plen
     ;--------------
