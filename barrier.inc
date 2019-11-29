@@ -21,8 +21,12 @@ DrawPipe Macro px, tunnel
     inc SI
     cmp SI , 144  
     jl plop 
-     
-    mov SI , tunnel ; random value  
+    ;mutiply tunnel by 24 
+    mov ax,tunnel
+	mov ah,0
+    mov dl,24
+    mul dl	
+	mov SI , ax ; random value  
     mov BX , SI
     add BX , 24
     glop:
@@ -80,9 +84,6 @@ getrandom  macro  Gap seed
     mov ah,0
 	div dl
     mov al,ah
-    mov ah,0
-    mov dl,24
-    mul dl
 	mov Gap ,ax ;reminder
 endm getrandom 
 ;========================================================================================

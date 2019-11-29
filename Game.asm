@@ -4,7 +4,7 @@ include barrier.inc
 .stack
 .data
 plen   equ  20      ; height and width of player
-p1x    dw   0      ; left upper cornder 
+p1x    dw   20      ; left upper cornder 
 p1y    dw   2   
 m1x    dw   0       ; right bottom corner 
 m1y    dw   0  
@@ -152,16 +152,16 @@ Update proc
 	nowrap:	
 	; CHECK IF PLAYER HIT THE PIP
 	; is the spaceship inside the tunnel or not in x axis
-	mov ax ,Pipx
-	cmp ax,20
-	jg complete
+	;mov ax ,Pipx
+	;cmp ax,20
+	;jg complete
 	;is the spaceship inside the tunnel or not in y axis
-    mov ax, p1y
-	sub ax,Gap
+    ;mov ax, p1y
+	;sub ax,Gap
 	;alaways the different bettwen the gap and the spaceship y is 2
-	cmp ax,2
-	jz complete
-	mov Running ,0     ; Exit
+	;cmp ax,2
+	;jz complete
+	;mov Running ,0     ; Exit
 	;-------------------------
 	
 	complete:
