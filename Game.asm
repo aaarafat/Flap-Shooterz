@@ -1,6 +1,7 @@
 include p1m.inc
 include barrier.inc
 include shoot.inc
+include logic.inc
 .model small
 .stack
 .data
@@ -205,42 +206,16 @@ noupdate:
     ; GENERATE PIP
     SUB Pipx, 2          ; TODO CHANGE SPEED LATER
     cmp Pipx, 0
-    jnl CheckCollision
+    jnl FinGenPip
     mov Pipx,159      ; Center of Screen
     mov invc, 0
     getrandom Gap seed
     ;-------------
-
+    FinGenPip:
+    
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision:
-    ; CHECK IF PLAYER TUNNEL != PIP TUNNEL
-    mov ax, GAP
-    cmp ax, Tunnel
-    JE NoCollision   ; If Equal No Collision
-    ; CHECK THAAT P1X + PLEN >= PIPX >= P1X
-    mov ax, Pipx
-    cmp ax, p1x     ; IF equal or greater
-    JL  NoCollision ; IF LOWER JUMP
-    sub ax, plen    ; TO MAKE (P1x + PLEN >= PIPX)  ==> (P1X >= PIPX - PLEN)
-    cmp ax, p1x     ; IF equal or lower
-    JG NoCollision  ; IF GREATER JUMP
-    ; (TODO CHANGE THIS LATER)
-
-    ; If player is invincible then lives are the same
-    cmp invc, 1
-    jz Complete
-
-    dec p1lives
-    mov invc, 1
-    cmp p1lives, 0
-    jnz complete
-
-    mov Running ,0     ; Exit
-    ;-------------------------
-
-    NoCollision:
-    mov invc, 0
-    complete:
+    CheckCollision Gap, Tunnel, Pipx, p1x, invc, p1lives, Running
+    
     ret
 Update endp
 ;-----------------------
