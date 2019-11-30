@@ -112,8 +112,8 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  48h , 50h , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen
-	PlayerInput  11h , 1fh , 1Ch , P2Tunnel , p2x , p2y , plen , s2x , s2y , slen
+    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen   
+	PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , plen , s2x , s2y , slen
 	; Flush Keyboard Buffer
     mov ah,0ch
     mov al,0
