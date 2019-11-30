@@ -1,8 +1,7 @@
 ;========================================================================================
 ;------------Pipe Macro--------------
 DrawPipe Macro px, tunnel
-    Local plop
-	Local Glop
+    Local plop, Glop
 	mov SI , 0
    plop:  
     mov CX , pipx
@@ -56,8 +55,7 @@ ENDM DrawPipe
 
 ;========================================================================================
 DeletePipe Macro px, tunnel
-    Local plop
-	Local Glop
+    Local plop ,Glop
 	mov SI , 0
    plop:  
     mov CX , pipx
@@ -80,7 +78,7 @@ ENDM DeletePipe
 ;========================================================================================
 
 ;========================================================================================
-getrandom  macro  Gap seed
+getrandom  macro  Gap , seed
     mov ah,2ch    ; To get System Time
     int 21h
     mov aL,dh    ; Seconds is in DH 

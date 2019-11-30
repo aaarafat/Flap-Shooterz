@@ -1,11 +1,6 @@
--------------------------------------------------
+;-------------------------------------------------
 DrawShoot MACRO sxpos, sypos, slen, swidquart, color1, color2, color3
-local colcount1
-local Continue1
-local colcount2
-local Continue2
-local colcount3
-local Continue3
+local colcount1, Continue1, colcount2,Continue2, colcount3, Continue3
 
 mov cx, sxpos  ;col
 mov dx, sypos  ;row
@@ -70,8 +65,8 @@ inc dx      ;next row
 cmp dx, di
 JNE colcount3
 ENDM DrawShoot
--------------------------------------------------
--------------------------------------------------
+;-------------------------------------------------
+;-------------------------------------------------
 MoveShoot MACRO sx, ScreenWidth
     LOCAL noupdate
     cmp sx, 0 ;check if there's a shoot
@@ -84,4 +79,4 @@ MoveShoot MACRO sx, ScreenWidth
 noupdate:
 
 ENDM MoveShoot
--------------------------------------------------
+;-------------------------------------------------

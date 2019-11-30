@@ -1,7 +1,7 @@
 ;========================================================================================
 ;------------Player Macro--------------
 
-DrawP1 Macro px,py,plen,mx,my,p1cl,p1cd
+DrawP Macro px,py,plen,mx,my,p1cl,p1cd
 	Local outlop,inlop,outlop2,inlop2,outlop3,inlop3
 ;************** intialize  ************** 
     mov SI,px 
@@ -111,7 +111,7 @@ ENDM DrawP1
 ;========================================================================================
 
 ;========================================================================================
-ClearP1 Macro px, py, plen, mx , my
+ClearP Macro px, py, plen, mx , my
 	Local olop,ilop
 	mov ax , px
 	mov bx , py
@@ -147,4 +147,49 @@ UpdatePlayer Macro Tunnel, TunnelSize, p1y, plen
     ADD p1y, ax        ; PLAYER POS Aligned with the tunnel
 	
 ENDM UpdatePlayer
+;========================================================================================
+;========================================================================================
+PlayerInput Macro Up , Down , Shoot , Tunnel , px , py , plen , sx , sy , slen
+	LOCAL MoveUp,MoveDown,PShoot,Return
+	mov ah, 1
+    int 16h   ; Get Key Pressed
+    jz Return ; If no Key Pressed Return
+
+    ; Key Pressed
+    cmp ah, Up     ; IF UP ARROW MOVE UP
+    je MoveUp
+
+    cmp ah, Down     ; IF DOWN ARROW MOVE DOWN
+    je MoveDown
+
+    cmp ah, Shoot     ; IF SPACE SHOOT
+    je PShoot
+
+    jmp Return
+    ;------------
+
+MoveUp:
+    cmp Tunnel, 0
+    je Return
+    DEC Tunnel
+    jmp Return
+
+MoveDown:
+    cmp Tunnel, 5
+    je Return
+    INC Tunnel
+    jmp Return
+PShoot:
+    cmp s1x, 0       ; IF SHOOT.X = 0 RETURN
+    jne Return
+    mov ax, px
+    add ax, plen     ; MOVE SHOOT TO THE PLAYER HEAD
+    mov sx, ax
+    mov ax, py
+    add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
+    mov sy, ax
+
+Return:
+		NOP
+ENDM	PlayerInput
 ;========================================================================================

@@ -14,16 +14,27 @@ m1x    dw   0       ; right bottom corner
 m1y    dw   0
 p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
-s1x dw 0h   ;p1 shoot x
-s1y dw 0h   ;p1 shoot y
+s1x dw 0h   ;p2 shoot x
+s1y dw 0h   ;p2 shoot y
+p2x    dw   300      ; left upper corner
+p2y    dw   2
+m2x    dw   0       ; right bottom corner
+m2y    dw   0
+p2cl   db   0Ch     ; p2 body color
+p2cd   db   04h     ; p2 link color
+s2x dw 0h   ;p2 shoot x
+s2y dw 0h   ;p2 shoot y
 p1lives db 5h
-invc db 0h ;invincible
+p2lives db 5h
+p1invc db 0h ;invincible
+p2invc db 0h ;invincible
 
 Pipx dw 0
-seed db 0
 Gap dw 0
+seed db 0
 Running db  0h
-Tunnel dw   0h
+P1Tunnel dw   0h
+P2Tunnel dw   0h
 TunnelSize dw 24
 
 
@@ -88,7 +99,8 @@ Clear proc
     mov bl,04h
     int 10h
 
-    ClearP1 p1x, p1y, plen, m1x , m1y ; Clear Player1
+    ClearP p1x, p1y, plen, m1x , m1y ; Clear Player1
+	ClearP p2x, p2y, plen, m2x , m2y ; Clear Player1
     DeletePipe Pipx ,Gap
     cmp s1x, 0
     je noclear
@@ -100,47 +112,9 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    mov ah, 1
-    int 16h   ; Get Key Pressed
-    jz Return ; If no Key Pressed Return
-
-    ; Key Pressed
-    cmp ah, 48h     ; IF UP ARROW MOVE UP
-    je MoveUp
-
-    cmp ah, 50h     ; IF DOWN ARROW MOVE DOWN
-    je MoveDown
-
-    cmp ah, 39h     ; IF SPACE SHOOT
-    je P1Shoot
-
-    mov Running, 0  ; Else Exit
-    jmp Return
-    ;------------
-
-MoveUp:
-    cmp Tunnel, 0
-    je Return
-    DEC Tunnel
-    jmp Return
-
-MoveDown:
-    cmp Tunnel, 5
-    je Return
-    INC Tunnel
-    jmp Return
-P1Shoot:
-    cmp s1x, 0       ; IF SHOOT.X = 0 RETURN
-    jne Return
-    mov ax, p1x
-    add ax, plen     ; MOVE SHOOT TO THE PLAYER HEAD
-    mov s1x, ax
-    mov ax, p1y
-    add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
-    mov s1y, ax
-
-Return:
-    ; Flush Keyboard Buffer
+    PlayerInput  48h , 50h , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen
+	PlayerInput  11h , 1fh , 1Ch , P2Tunnel , p2x , p2y , plen , s2x , s2y , slen
+	; Flush Keyboard Buffer
     mov ah,0ch
     mov al,0
     int 21h
@@ -152,10 +126,10 @@ GetInput endp
 Draw proc
     DrawPipe Pipx , Gap
     ; Draw Player 1
-    DrawP1 p1x, p1y, plen, m1x , m1y , p1cl , p1cd
+    DrawP p1x, p1y, plen, m1x , m1y , p1cl , p1cd
+	DrawP p2x, p2y, plen, m2x , m2y , p2cl , p2cd
     cmp s1x, 0
     jz noshoot 
-
     DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh 
 
 noshoot:
@@ -190,13 +164,14 @@ Update proc
 
     MoveShoot s1x, 320
     ; UPDATE PLAYER
-    UpdatePlayer Tunnel, TunnelSize, p1y, plen
+    UpdatePlayer P1Tunnel, TunnelSize, p1y, plen
+	UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
     ;--------------
     ; GENERATE PIP
-    GeneratePip  2,Pipx,-1,invc,Gap, seed
+    GeneratePip  2,Pipx,-1,p1invc,Gap, seed
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap, Tunnel, Pipx, p1x, invc, p1lives, Running
+    CheckCollision Gap, P1Tunnel, Pipx, p1x, p1invc, p1lives, Running
     
     ret
 Update endp
