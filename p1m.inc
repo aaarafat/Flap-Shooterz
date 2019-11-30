@@ -1,14 +1,9 @@
 ;========================================================================================
 ;------------Player Macro--------------
 
-DrawP1 Macro px, py, plen, mx , my , p1cl , p1cd
+DrawP1 Macro px,py,plen,mx,my,p1cl,p1cd
+	Local outlop,inlop,outlop2,inlop2,outlop3,inlop3
 ;************** intialize  ************** 
-	Local outlop
-	Local inlop
-	Local outlop2
-	Local inlop2
-	Local outlop3
-	Local inlop3
     mov SI,px 
     mov DI,py 
     add SI,plen
@@ -23,10 +18,8 @@ DrawP1 Macro px, py, plen, mx , my , p1cl , p1cd
 	mov CL , 3
     shr BP , CL     ; 1/8  below center + 1/8 above the center = 1/4 of total height
     mov DI,  0
-outlop:
-    mov SI,px
-    inlop:
-        mov cx,SI 
+outlop: mov SI,px
+inlop:  mov cx,SI 
         mov dx,py
         add dx,DI 
         mov al,0fh ;first color
@@ -54,10 +47,8 @@ outlop:
     shr BX , CL    ; center of the body (half of plen)
     add BX , py   ; move it to the new origin
     mov DI , 0    ; intialize counter 
-outlop2:
-    mov SI,px
-    inlop2:
-        mov cx,SI 
+outlop2:mov SI,px
+inlop2: mov cx,SI 
         mov dx,BX
         add dx,DI  ;draw below center
         mov al,p1cl ;body color
@@ -91,14 +82,12 @@ outlop2:
     add BP, DI   ; start the link after 10 pixels from the center
     add BX , py 
     sub mx , DI
-outlop3:
-    mov SI , px
+outlop3:mov SI , px
     mov DX , plen 
     mov CL , 2
     shr DX , CL
     add SI , DX
-    inlop3:
-        mov cx,SI 
+inlop3:mov cx,SI 
         mov dx,BX
         add dx,DI 
         mov al,p1cd ;body color
@@ -123,8 +112,7 @@ ENDM DrawP1
 
 ;========================================================================================
 ClearP1 Macro px, py, plen, mx , my
-	Local olop
-	Local ilop
+	Local olop,ilop
 	mov ax , px
 	mov bx , py
 	mov mx , ax
@@ -132,10 +120,8 @@ ClearP1 Macro px, py, plen, mx , my
 	add mx , plen
 	add my , plen
 	mov DI , py
-olop:
-	mov SI , px
-	ilop:
-		mov cx , SI 
+olop:mov SI , px
+ilop:mov cx , SI 
 		mov dx , DI
         mov al,00h ;body color
         mov ah,0ch 

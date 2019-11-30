@@ -96,8 +96,8 @@ GetInput endp
 ;------Draw Function---- 
 Draw proc  
     ; Draw Player 1
-    DrawP1 p1x, p1y, plen, m1x , m1y , p1cl , p1cd
-      
+    DrawP1 p1x,p1y,plen,m1x,m1y,p1cl,p1cd
+    DrawP1 280,p1y,plen,m1x,m1y,04h,p1cd 
     ret
 
 Draw endp
