@@ -82,7 +82,8 @@ getrandom  macro  Gap , seed
     mov ah,2ch    ; To get System Time
     int 21h
     mov aL,dh    ; Seconds is in DH 
-    inc seed
+    mov ah,0
+	inc seed
 	add al,seed
 	mov dl,6	
     mov ah,0
