@@ -51,8 +51,8 @@ main proc far
 
     mov Pipx1 ,159
     getrandom Gap1 seed
-	mov Pipx2 ,159
-	getrandom Gap2 seed
+	;mov Pipx2 ,159
+	;getrandom Gap2 seed
     mov Running, 1
 
     ;------------------
@@ -105,7 +105,7 @@ Clear proc
     ClearP p1x, p1y, plen, m1x , m1y ; Clear Player1
 	ClearP p2x, p2y, plen, m2x , m2y ; Clear Player1
     DeletePipe Pipx1 ,Gap1
-    DeletePipe Pipx2 ,Gap2
+    ;DeletePipe Pipx2 ,Gap2
 	cmp s1x, 0
     je noclear
     DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
@@ -131,7 +131,7 @@ Draw proc
 	;draw first pipe
     DrawPipe Pipx1 , Gap1
 	;draw second pipe
-    DrawPipe Pipx2 , Gap2
+    ;DrawPipe Pipx2 , Gap2
     
 	; Draw Player 1
     DrawP p1x, p1y, plen, m1x , m1y , p1cl , p1cd
@@ -149,6 +149,22 @@ noshoot:
     mov bh,0 ;Page 0
     mov al, 3h ;heart
     mov cl, p1lives
+    mov ch, 0
+    mov bl,09h
+    int 10h
+
+; move cursor 
+	mov ah, 2
+	mov dl,40
+	sub dl,p2lives
+	mov dh,0
+	mov bh,0
+	int 10h
+;drawing lives of player 2
+	mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, 3h ;heart
+    mov cl, p2lives
     mov ch, 0
     mov bl,04h
     int 10h
@@ -178,7 +194,7 @@ Update proc
     ; GENERATE PIP 1
     GeneratePip  2,Pipx1,-1,p1invc  ,Gap1, seed
     ; GENERATE PIP 2
-    GeneratePip  -2,Pipx2,321,p2invc,Gap2, seed
+    ;GeneratePip  -2,Pipx2,321,p2invc,Gap2, seed
 	;------------
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running
