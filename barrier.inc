@@ -4,7 +4,7 @@ DrawPipe Macro px, tunnel
     Local plop, Glop
 	mov SI , 0
    plop:  
-    mov CX , pipx
+    mov CX , px
     mov DX , SI
     mov al,07h 
     mov ah,0ch 
@@ -34,7 +34,7 @@ DrawPipe Macro px, tunnel
     glop:
     mov DX , SI 
     mov al , 00h 
-    mov CX , pipx 
+    mov CX , px 
     mov ah , 0ch 
     int 10h
 
@@ -58,7 +58,7 @@ DeletePipe Macro px, tunnel
     Local plop ,Glop
 	mov SI , 0
    plop:  
-    mov CX , pipx
+    mov CX , px
     mov DX , SI
     mov al,00h 
     mov ah,0ch 

@@ -29,8 +29,10 @@ p2lives db 5h
 p1invc db 0h ;invincible
 p2invc db 0h ;invincible
 
-Pipx dw 0
-Gap dw 0
+Pipx1 dw 0;pipe of first player
+Pipx2 dw 0;pipe of second player
+Gap1 dw 0;gap in first pipe
+Gap2 dw 0;gap in second pip
 seed db 0
 Running db  0h
 P1Tunnel dw   0h
@@ -47,9 +49,10 @@ main proc far
     mov al,13h
     int 10h
 
-    mov Pipx ,159
-    getrandom Gap seed
-
+    mov Pipx1 ,159
+    getrandom Gap1 seed
+	mov Pipx2 ,159
+	getrandom Gap2 seed
     mov Running, 1
 
     ;------------------
@@ -101,8 +104,9 @@ Clear proc
 
     ClearP p1x, p1y, plen, m1x , m1y ; Clear Player1
 	ClearP p2x, p2y, plen, m2x , m2y ; Clear Player1
-    DeletePipe Pipx ,Gap
-    cmp s1x, 0
+    DeletePipe Pipx1 ,Gap1
+    DeletePipe Pipx2 ,Gap2
+	cmp s1x, 0
     je noclear
     DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
 noclear:
@@ -124,8 +128,12 @@ GetInput endp
 
 ;------Draw Function----
 Draw proc
-    DrawPipe Pipx , Gap
-    ; Draw Player 1
+	;draw first pipe
+    DrawPipe Pipx1 , Gap1
+	;draw second pipe
+    DrawPipe Pipx2 , Gap2
+    
+	; Draw Player 1
     DrawP p1x, p1y, plen, m1x , m1y , p1cl , p1cd
 	DrawP p2x, p2y, plen, m2x , m2y , p2cl , p2cd
     cmp s1x, 0
@@ -167,11 +175,13 @@ Update proc
     UpdatePlayer P1Tunnel, TunnelSize, p1y, plen
 	UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
     ;--------------
-    ; GENERATE PIP
-    GeneratePip  2,Pipx,-1,p1invc,Gap, seed
-    ;------------
+    ; GENERATE PIP 1
+    GeneratePip  2,Pipx1,-1,p1invc  ,Gap1, seed
+    ; GENERATE PIP 2
+    GeneratePip  -2,Pipx2,321,p2invc,Gap2, seed
+	;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap, P1Tunnel, Pipx, p1x, p1invc, p1lives, Running
+    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running
     
     ret
 Update endp
