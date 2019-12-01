@@ -144,7 +144,33 @@ noshoot:
     mov ah,2
     mov dx,0
     int 10h
+<<<<<<< HEAD
 	drawhearts p1lives,p2lives
+=======
+;drawing lives of player 1
+    mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, 3h ;heart
+    mov cl, p1lives
+    mov ch, 0
+    mov bl,09h
+    int 10h
+
+; move cursor 
+	mov ah, 2
+	mov dl,40
+	sub dl,p2lives
+	mov dh,0
+	mov bh,0
+	int 10h
+;drawing lives of player 2
+	mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, 3h ;heart
+    mov cl, p2lives
+    mov ch, 0
+    mov bl,04h
+    int 10h
     ret
 
 Draw endp
