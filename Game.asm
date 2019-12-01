@@ -162,9 +162,9 @@ Update proc
     UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
     ;--------------
     ; GENERATE PIP 1
-    GeneratePip  2,Pipx1,-1,p1invc  ,Gap1, seed
+    GeneratePip  2,Pipx1,ScreenWidth,p1invc  ,Gap1, seed
     ; GENERATE PIP 2
-    GeneratePip  -2,Pipx2,321,p2invc,Gap2, seed
+    GeneratePip  -2,Pipx2,ScreenWidth,p2invc,Gap2, seed
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running
