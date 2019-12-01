@@ -144,6 +144,7 @@ noshoot:
     mov ah,2
     mov dx,0
     int 10h
+
 	drawhearts p1lives,p2lives
     ret
 
