@@ -22,15 +22,12 @@ p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
 bul1x dw 0h   ;p1 bullet x
 bul1y dw 0h   ;p1 bullet y
-<<<<<<< HEAD
 p1lives db 5h
 p1invc db 0h ;invincible
 CurrentWeapon1 db 3  
 ;=====================================
 
 ;============Player 2=================
-=======
->>>>>>> db7ee2a00e71245d24c30e21f48a2cfaf0080576
 p2x    dw   300      ; left upper corner
 p2y    dw   2
 m2x    dw   0       ; right bottom corner
@@ -39,10 +36,6 @@ p2cl   db   0Ch     ; p2 body color
 p2cd   db   04h     ; p2 link color
 bul2x dw 0h   ;p2 bullet x
 bul2y dw 0h   ;p2 bullet y
-<<<<<<< HEAD
-=======
-p1lives db 5h
->>>>>>> db7ee2a00e71245d24c30e21f48a2cfaf0080576
 p2lives db 5h
 p2invc db 0h ;invincible
 CurrentWeapon2 db 3  
@@ -58,14 +51,8 @@ Running db  0h
 P1Tunnel dw   0h
 P2Tunnel dw   0h
 TunnelSize dw 24
-<<<<<<< HEAD
+
 ;------Weapon Colors-------------- 
-=======
-;------Weapons-----
-CurrentWeapon1 db 3
-b1x     dw   50      ; left upper cornder 
-b1y     dw   50      
->>>>>>> db7ee2a00e71245d24c30e21f48a2cfaf0080576
 djcolor   db   05h,05h,05h,05h,0dh,0dh,0dh,0dh,0dh,0dh,0dh,0dh,05h,05h,05h,05h  
 hjcolor   db   00h,0ah,02h,00h,0ah,02h,02h,02h,02h,02h,02h,0ah,00h,02h,0ah,00h
 ddcolor   db   04h,00h,00h,04h,00h,0ch,0ch,00h,00h,0ch,0ch,00h,04h,00h,00h,04h
