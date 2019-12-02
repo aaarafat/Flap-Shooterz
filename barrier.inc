@@ -91,7 +91,7 @@ ENDM DeletePipe
 ;========================================================================================
 
 ;========================================================================================
-getrandom  macro  Gap , seed
+getrandom  macro  Gap
     mov ah,2ch    ; To get System Time
     int 21h
     mov aL,dh    ; Seconds is in DH
@@ -107,7 +107,7 @@ getrandom  macro  Gap , seed
 endm getrandom
 ;========================================================================================
 ;========================================================================================
-GeneratePip macro speed,px,ScreenWidth,invc,Gap,seed,norm
+GeneratePip macro speed,px,invc,Gap,norm
 	local finish,gen
 	sub px,speed
     mov si, px

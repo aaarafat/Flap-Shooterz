@@ -1,5 +1,5 @@
 ;========================================================================================
-CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, Running, norm
+CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, norm
     LOCAL NoCollision,Complete
     ; CHECK IF PLAYER HIT THE PIP
     ; CHECK IF PLAYER TUNNEL != PIP TUNNEL
@@ -26,6 +26,6 @@ CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, Running, norm
     ;-------------------------
     NoCollision:
     mov invc, 0
-    Complete:	
+    Complete:
 ENDM CheckCollision
 ;========================================================================================

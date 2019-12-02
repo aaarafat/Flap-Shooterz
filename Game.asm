@@ -24,7 +24,7 @@ bul1x dw 0h   ;p1 bullet x
 bul1y dw 0h   ;p1 bullet y
 p1lives db 5h
 p1invc db 0h ;invincible
-CurrentWeapon1 db 3  
+CurrentWeapon1 db 3
 ;=====================================
 
 ;============Player 2=================
@@ -38,7 +38,7 @@ bul2x dw 0h   ;p2 bullet x
 bul2y dw 0h   ;p2 bullet y
 p2lives db 5h
 p2invc db 0h ;invincible
-CurrentWeapon2 db 3  
+CurrentWeapon2 db 3
 ;======================================
 
 
@@ -52,11 +52,11 @@ P1Tunnel dw   0h
 P2Tunnel dw   0h
 TunnelSize dw 24
 
-;------Weapon Colors-------------- 
-djcolor   db   05h,05h,05h,05h,0dh,0dh,0dh,0dh,0dh,0dh,0dh,0dh,05h,05h,05h,05h  
+;------Weapon Colors--------------
+djcolor   db   05h,05h,05h,05h,0dh,0dh,0dh,0dh,0dh,0dh,0dh,0dh,05h,05h,05h,05h
 hjcolor   db   00h,0ah,02h,00h,0ah,02h,02h,02h,02h,02h,02h,0ah,00h,02h,0ah,00h
 ddcolor   db   04h,00h,00h,04h,00h,0ch,0ch,00h,00h,0ch,0ch,00h,04h,00h,00h,04h
-fcolor    db   0fh,03h,03h,0fh,03h,0fh,0fh,03h,03h,0fh,0fh,03h,0fh,00h,03h,0fh  
+fcolor    db   0fh,03h,03h,0fh,03h,0fh,0fh,03h,03h,0fh,0fh,03h,0fh,00h,03h,0fh
 ;---------------------------------
 
 
@@ -70,9 +70,9 @@ main proc far
     int 10h
 
     mov Pipx1 ,155
-    getrandom Gap1 seed
+    getrandom Gap1
     mov Pipx2 ,160
-    getrandom Gap2 seed
+    getrandom Gap2
     mov Running, 1
 
     ;------------------
@@ -109,14 +109,14 @@ main endp
 ;------Clear Screen-----
 Clear proc
     clearhearts p1lives, p2lives
-    ClearP p1x, p1y, plen, m1x , m1y ; Clear Player1
-    ClearP p2x, p2y, plen, m2x , m2y ; Clear Player1
+    ClearP p1x, p1y, m1x , m1y ; Clear Player1
+    ClearP p2x, p2y, m2x , m2y ; Clear Player1
     DeletePipe Pipx1 ,Gap1
     DeletePipe Pipx2 ,Gap2
     cmp bul1x, 0
     je noclear
 	ClearB bul1x, bul1y
-    ;DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
+    ;DrawShoot s1x, s1y, 0h, 0h, 0h
 noclear:
     ret
 Clear endp
@@ -124,8 +124,8 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , bul1x , bul1y , slen
-    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , plen , bul2x , bul2y , slen
+    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , bul1x , bul1y
+    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , bul2x , bul2y
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -148,9 +148,9 @@ Draw proc
     ;draw second pipe
     DrawPipe Pipx2 , Gap2
     ; Draw Player 1
-    DrawP p1x, p1y, plen, m1x , m1y , p1cl , p1cd
+    DrawP p1x, p1y, m1x , m1y , p1cl , p1cd
     ; Draw Player 2
-    DrawP p2x, p2y, plen, m2x , m2y , p2cl , p2cd
+    DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
     cmp bul1x, 0
     jz noshoot
 	Fire CurrentWeapon1, bul1x, bul1y
@@ -185,17 +185,17 @@ Update proc
 
     MoveB bul1x
     ; UPDATE PLAYER
-    UpdatePlayer P1Tunnel, TunnelSize, p1y, plen
-    UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
+    UpdatePlayer P1Tunnel, p1y
+    UpdatePlayer P2Tunnel, p2y
     ;--------------
     ; GENERATE PIP 1
-    GeneratePip  2,Pipx1,ScreenWidth,p1invc,Gap1, seed, 0
+    GeneratePip  2,Pipx1,p1invc,Gap1, 0
     ; GENERATE PIP 2
-    GeneratePip  -2,Pipx2,ScreenWidth,p2invc,Gap2, seed, 4
+    GeneratePip  -2,Pipx2,p2invc,Gap2, 4
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running, 0
-    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, Running, 4
+    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0
+    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4
 
     ret
 Update endp

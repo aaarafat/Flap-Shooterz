@@ -1,5 +1,5 @@
 ;-------------------------------------------------
-DrawShoot MACRO sxpos, sypos, slen, swidquart, color1, color2, color3
+DrawShoot MACRO sxpos, sypos, color1, color2, color3
 local colcount1, Continue1, colcount2,Continue2, colcount3, Continue3
 
 mov cx, sxpos  ;col
