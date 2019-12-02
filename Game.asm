@@ -98,7 +98,7 @@ Clear proc
     DeletePipe Pipx2 ,Gap2
     cmp s1x, 0
     je noclear
-    ;  DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
+    DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
 noclear:
     ret
 Clear endp
@@ -106,15 +106,15 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen   
+    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen
     PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , plen , s2x , s2y , slen
-    
+
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
     JNE FLUSH
     MOV Running, 0
     ;-------------------
-FLUSH:    
+FLUSH:
     ; Flush Keyboard Buffer
     mov ah,0ch
     mov al,0
@@ -128,14 +128,14 @@ Draw proc
     ;draw first pipe
     DrawPipe Pipx1 , Gap1
     ;draw second pipe
-    DrawPipe Pipx2 , Gap2   
+    DrawPipe Pipx2 , Gap2
     ; Draw Player 1
     DrawP p1x, p1y, plen, m1x , m1y , p1cl , p1cd
     ; Draw Player 2
     DrawP p2x, p2y, plen, m2x , m2y , p2cl , p2cd
     cmp s1x, 0
-    jz noshoot 
-    ; DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh 
+    jz noshoot
+    DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh
 noshoot:
     drawhearts p1lives,p2lives
     ret
@@ -145,10 +145,18 @@ Draw endp
 
 ;------Delay Function----
 Delay proc
-    mov ah, 86h        ;  1/10 second
-    mov cx, 1h
-    mov dx, 86A0h
-    int 15h
+mov di, 1
+mov ah, 0
+int 1Ah ; actual time
+mov bx,dx
+delayloop:
+        mov ah, 0
+        int 1Ah
+        sub dx,bx
+        cmp di,dx
+ja delayloop
+
+
     ret
 
 Delay endp
@@ -156,7 +164,7 @@ Delay endp
 ;----Update Function--
 Update proc
 
-   ; MoveShoot s1x, ScreenWidth
+    MoveShoot s1x, ScreenWidth
     ; UPDATE PLAYER
     UpdatePlayer P1Tunnel, TunnelSize, p1y, plen
     UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
@@ -169,7 +177,7 @@ Update proc
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running
     CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, Running
-    
+
     ret
 Update endp
 ;-----------------------

@@ -229,6 +229,7 @@ clearhearts Macro p1lives,p2lives
 ; move cursor    
     mov ah,2
     mov dx,0
+    mov bh, 0
     int 10h
 ;clearing lives of player 1
     mov ah,9 ;Display
