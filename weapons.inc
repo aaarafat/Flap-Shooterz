@@ -2,7 +2,7 @@
 ;------------Weapons Macro--------------
 
 DrawB Macro bulx,buly,W
-	Local w1,w2,w3,w4,d,inlop,outlop
+	Local w1,w2,w3,w4,d,inlop,outlop,finish
 	cmp W,1
      je w1 
      cmp W,2
@@ -31,6 +31,8 @@ DrawB Macro bulx,buly,W
      add SI , 4
      add DI , 4   
      outlop:
+		 cmp dx, ScreenWidth
+		 jge finish
          mov cx , bulx
          inlop:
          mov al,[bx]
@@ -43,12 +45,13 @@ DrawB Macro bulx,buly,W
      inc dx  
      cmp dx , DI
      jl outlop
+    finish:
 ENDM DrawB
 ;========================================================================================
 
 ;========================================================================================
 ClearB Macro bulx, buly
-	Local olop,ilop
+	Local olop,ilop,finish
 	 mov cx , bulx
      mov dx , buly 
      mov SI , cx  
@@ -57,7 +60,9 @@ ClearB Macro bulx, buly
      add DI , 4   
      olop:
          mov cx , bulx
-         inlop:
+		 cmp dx, ScreenWidth
+		 jge finish
+         ilop:
          mov al,00
          mov ah,0ch 
          int 10h   
@@ -66,6 +71,31 @@ ClearB Macro bulx, buly
          jl ilop 
      inc dx  
      cmp dx , DI
-     jl outlop
-	
+     jl olop
+	finish:
 ENDM ClearB
+;========================================================================================
+
+;========================================================================================
+Fire MACRO CurrentWeapon, bulx, buly
+	LOCAL finish
+	cmp bulx, 0
+	je finish
+	DrawB bulx, buly, CurrentWeapon
+finish:
+ENDM Fire
+;========================================================================================
+
+;========================================================================================
+MoveB MACRO bulx
+    LOCAL noupdate
+    cmp bulx, 0 ;check if there's a shoot
+    jz noupdate
+    add bulx, 4 ;move the shoot
+    cmp bulx, ScreenWidth ;if we reached to the end of screen
+    jb noupdate
+    mov bulx, 0
+noupdate:
+
+ENDM MoveB
+;========================================================================================
