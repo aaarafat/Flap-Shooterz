@@ -149,7 +149,7 @@ UpdatePlayer Macro Tunnel, TunnelSize, p1y, plen
 ENDM UpdatePlayer
 ;========================================================================================
 ;========================================================================================
-PlayerInput Macro Up , Down , Shoot , Tunnel , px , py , plen , sx , sy , slen
+PlayerInput Macro Up , Down , Shoot , Tunnel , px , py , plen , bulx , buly , slen
 	LOCAL MoveUp,MoveDown,PShoot,Return
 	mov ah, 1
     int 16h   ; Get Key Pressed
@@ -180,14 +180,14 @@ MoveDown:
     INC Tunnel
     jmp Return
 PShoot:
-    cmp s1x, 0       ; IF SHOOT.X = 0 RETURN
+    cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
     jne Return
     mov ax, px
     add ax, plen     ; MOVE SHOOT TO THE PLAYER HEAD
-    mov sx, ax
+    mov bulx, ax
     mov ax, py
     add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
-    mov sy, ax
+    mov buly, ax
 
 Return:
 		NOP
