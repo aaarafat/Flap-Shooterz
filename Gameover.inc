@@ -1,5 +1,5 @@
-writewinner macro playercolor1,playercolor2,lives1,lives2,mesg1,mesg2 ,size
-  LOCAL print, win2
+writewinner macro playercolor1,playercolor2,lives1,lives2,mesg1,mesg2,drawresult ,size
+  LOCAL print, win2,draw
    mov ah,0
     mov al,13h
     int 10h
@@ -9,10 +9,17 @@ writewinner macro playercolor1,playercolor2,lives1,lives2,mesg1,mesg2 ,size
     mov bp, offset mesg1
 	mov bl,playercolor1
     jmp print
-    win2: 
+    win2:
+	cmp lives2,0
+	jz draw
     mov bp, offset mesg2
 	mov bl,playercolor2
+	jmp print
+	draw:
+	mov bp,offset drawresult
+	mov bl,08h
 	print:
+	
     mov al, 1
     mov bh, 0
     mov cx, size
