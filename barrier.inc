@@ -113,13 +113,17 @@ GeneratePip macro speed,px,ScreenWidth,invc,Gap,seed,norm
     mov si, px
     add si, norm
     cmp si, ScreenWidth
-	jge gen
+	jg gen
     cmp si, -1
 	jnl finish
 gen:
     mov invc ,0
-    mov px,158 ;center of the screen
+    mov px,160 ;center of the screen
     getrandom Gap, seed
+	mov ax, norm
+	cmp ax, 0
+	jnz finish
+	sub px, 5
 	finish:
 	endm GeneratePip
 ;========================================================================================

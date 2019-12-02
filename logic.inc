@@ -1,5 +1,5 @@
 ;========================================================================================
-CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, Running
+CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, Running, norm
     LOCAL NoCollision,Complete
     ; CHECK IF PLAYER HIT THE PIP
     ; CHECK IF PLAYER TUNNEL != PIP TUNNEL
@@ -8,6 +8,7 @@ CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, Running
     JE NoCollision   ; If Equal No Collision
     ; CHECK THAAT PX + PLEN >= PIPX >= PX
     mov ax, Pipx
+	add ax, norm
     cmp ax, px     ; IF equal or greater
     JL  NoCollision ; IF LOWER JUMP
     sub ax, plen    ; TO MAKE (Px + PLEN >= PIPX)  ==> (PX >= PIPX - PLEN)

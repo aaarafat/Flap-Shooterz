@@ -52,9 +52,9 @@ main proc far
     mov al,13h
     int 10h
 
-    mov Pipx1 ,159
+    mov Pipx1 ,155
     getrandom Gap1 seed
-    mov Pipx2 ,159
+    mov Pipx2 ,160
     getrandom Gap2 seed
     mov Running, 1
 
@@ -175,8 +175,8 @@ Update proc
     GeneratePip  -2,Pipx2,ScreenWidth,p2invc,Gap2, seed, 4
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running
-    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, Running
+    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running, 0
+    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, Running, 4
 
     ret
 Update endp
