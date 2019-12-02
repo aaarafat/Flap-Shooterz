@@ -98,7 +98,7 @@ GeneratePip macro speed,px,ScreenWidth,invc,Gap,seed
 	local finish,gen
 	sub px,speed
     cmp px, ScreenWidth
-	jg gen
+	jge gen
     cmp px, -1
 	jnl finish
 gen:
