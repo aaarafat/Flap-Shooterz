@@ -1,7 +1,8 @@
 include p1m.inc
 include barrier.inc
-include shoot.inc
+;include shoot.inc
 include logic.inc
+include weapons.inc
 .model small
 .stack
 .data
@@ -11,26 +12,35 @@ ScreenWidth equ 320
 plen   equ  20      ; height and width of player
 slen    equ 4
 swidquart    equ 2
+
+;============Player 1================
 p1x    dw   0      ; left upper corner
 p1y    dw   2
 m1x    dw   0       ; right bottom corner
 m1y    dw   0
 p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
-s1x dw 0h   ;p2 shoot x
-s1y dw 0h   ;p2 shoot y
+bul1x dw 0h   ;p1 bullet x
+bul1y dw 0h   ;p1 bullet y
+p1lives db 5h
+p1invc db 0h ;invincible
+CurrentWeapon1 db 3  
+;=====================================
+
+;============Player 2=================
 p2x    dw   300      ; left upper corner
 p2y    dw   2
 m2x    dw   0       ; right bottom corner
 m2y    dw   0
 p2cl   db   0Ch     ; p2 body color
 p2cd   db   04h     ; p2 link color
-s2x dw 0h   ;p2 shoot x
-s2y dw 0h   ;p2 shoot y
-p1lives db 5h
+bul2x dw 0h   ;p2 bullet x
+bul2y dw 0h   ;p2 bullet y
 p2lives db 5h
-p1invc db 0h ;invincible
 p2invc db 0h ;invincible
+CurrentWeapon2 db 3  
+;======================================
+
 
 Pipx1 dw 0;pipe of first player
 Pipx2 dw 0;pipe of second player
@@ -41,6 +51,12 @@ Running db  0h
 P1Tunnel dw   0h
 P2Tunnel dw   0h
 TunnelSize dw 24
+;------Weapon Colors-------------- 
+djcolor   db   05h,05h,05h,05h,0dh,0dh,0dh,0dh,0dh,0dh,0dh,0dh,05h,05h,05h,05h  
+hjcolor   db   00h,0ah,02h,00h,0ah,02h,02h,02h,02h,02h,02h,0ah,00h,02h,0ah,00h
+ddcolor   db   04h,00h,00h,04h,00h,0ch,0ch,00h,00h,0ch,0ch,00h,04h,00h,00h,04h
+fcolor    db   0fh,03h,03h,0fh,03h,0fh,0fh,03h,03h,0fh,0fh,03h,0fh,00h,03h,0fh  
+;---------------------------------
 
 
 .code
@@ -96,9 +112,10 @@ Clear proc
     ClearP p2x, p2y, plen, m2x , m2y ; Clear Player1
     DeletePipe Pipx1 ,Gap1
     DeletePipe Pipx2 ,Gap2
-    cmp s1x, 0
+    cmp bul1x, 0
     je noclear
-    DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
+	ClearB bul1x, bul1y
+    ;DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
 noclear:
     ret
 Clear endp
@@ -106,8 +123,8 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen
-    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , plen , s2x , s2y , slen
+    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , bul1x , bul1y , slen
+    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , plen , bul2x , bul2y , slen
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -133,9 +150,10 @@ Draw proc
     DrawP p1x, p1y, plen, m1x , m1y , p1cl , p1cd
     ; Draw Player 2
     DrawP p2x, p2y, plen, m2x , m2y , p2cl , p2cd
-    cmp s1x, 0
+    cmp bul1x, 0
     jz noshoot
-    DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh
+	Fire CurrentWeapon1, bul1x, bul1y
+    ;DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh
 noshoot:
     drawhearts p1lives,p2lives
     ret
@@ -164,7 +182,7 @@ Delay endp
 ;----Update Function--
 Update proc
 
-    MoveShoot s1x, ScreenWidth
+    MoveB bul1x
     ; UPDATE PLAYER
     UpdatePlayer P1Tunnel, TunnelSize, p1y, plen
     UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
