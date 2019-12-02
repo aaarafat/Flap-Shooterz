@@ -149,8 +149,8 @@ UpdatePlayer Macro Tunnel, p1y
 ENDM UpdatePlayer
 ;========================================================================================
 ;========================================================================================
-PlayerInput Macro Up , Down , Shoot , Tunnel , px , py , bulx , buly
-	LOCAL MoveUp,MoveDown,PShoot,Return
+PlayerInput Macro Up , Down , Shoot , Tunnel , px , py , bulx , buly, IsPlayer1
+	LOCAL MoveUp,MoveDown,PShoot,Return, PLAYER2
 	mov ah, 1
     int 16h   ; Get Key Pressed
     jz Return ; If no Key Pressed Return
@@ -167,7 +167,6 @@ PlayerInput Macro Up , Down , Shoot , Tunnel , px , py , bulx , buly
 
     jmp Return
     ;------------
-
 MoveUp:
     cmp Tunnel, 0
     je Return
@@ -183,7 +182,11 @@ PShoot:
     cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
     jne Return
     mov ax, px
+	mov bx, IsPlayer1
+    cmp bx, 0
+	jz PLAYER2
     add ax, plen     ; MOVE SHOOT TO THE PLAYER HEAD
+PLAYER2:
     mov bulx, ax
     mov ax, py
     add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER

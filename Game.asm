@@ -38,7 +38,7 @@ bul2x dw 0h   ;p2 bullet x
 bul2y dw 0h   ;p2 bullet y
 p2lives db 5h
 p2invc db 0h ;invincible
-CurrentWeapon2 db 3
+CurrentWeapon2 db 4
 ;======================================
 
 
@@ -114,18 +114,21 @@ Clear proc
     DeletePipe Pipx1 ,Gap1
     DeletePipe Pipx2 ,Gap2
     cmp bul1x, 0
-    je noclear
+    je noclear1
 	ClearB bul1x, bul1y
-    ;DrawShoot s1x, s1y, 0h, 0h, 0h
-noclear:
+noclear1:
+	cmp bul2x, 0
+	je noclear2
+    ClearB bul2x, bul2y
+noclear2:
     ret
 Clear endp
 ;-----------------------
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , bul1x , bul1y
-    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , bul2x , bul2y
+    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , bul1x , bul1y, 1
+    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , bul2x , bul2y, 0
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -152,10 +155,13 @@ Draw proc
     ; Draw Player 2
     DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
     cmp bul1x, 0
-    jz noshoot
+    jz noshoot1
 	Fire CurrentWeapon1, bul1x, bul1y
-    ;DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh
-noshoot:
+noshoot1:
+	cmp bul2x, 0
+    jz noshoot2	
+	Fire CurrentWeapon2, bul2x, bul2y
+noshoot2:
     drawhearts p1lives,p2lives
     ret
 
@@ -183,7 +189,8 @@ Delay endp
 ;----Update Function--
 Update proc
 
-    MoveB bul1x
+    MoveB bul1x, 1
+	MoveB bul2x, 0
     ; UPDATE PLAYER
     UpdatePlayer P1Tunnel, p1y
     UpdatePlayer P2Tunnel, p2y
