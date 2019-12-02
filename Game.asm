@@ -5,6 +5,9 @@ include logic.inc
 .model small
 .stack
 .data
+
+ScreenWidth equ 320
+
 plen   equ  20      ; height and width of player
 slen    equ 4
 swidquart    equ 2
@@ -29,8 +32,10 @@ p2lives db 5h
 p1invc db 0h ;invincible
 p2invc db 0h ;invincible
 
-Pipx dw 0
-Gap dw 0
+Pipx1 dw 0;pipe of first player
+Pipx2 dw 0;pipe of second player
+Gap1 dw 0;gap in first pipe
+Gap2 dw 0;gap in second pip
 seed db 0
 Running db  0h
 P1Tunnel dw   0h
@@ -47,9 +52,10 @@ main proc far
     mov al,13h
     int 10h
 
-    mov Pipx ,159
-    getrandom Gap seed
-
+    mov Pipx1 ,159
+    getrandom Gap1 seed
+    mov Pipx2 ,159
+    getrandom Gap2 seed
     mov Running, 1
 
     ;------------------
@@ -85,23 +91,11 @@ main endp
 
 ;------Clear Screen-----
 Clear proc
-
-    ;clearing the hearts of player 1
-    mov ah,2
-    mov dx,0
-    int 10h
-
-    mov ah,9 ;Display
-    mov bh,0 ;Page 0
-    mov al, ' ' ;space
-    mov cl, 5
-    mov ch, 0
-    mov bl,04h
-    int 10h
-
+    clearhearts p1lives, p2lives
     ClearP p1x, p1y, plen, m1x , m1y ; Clear Player1
-	ClearP p2x, p2y, plen, m2x , m2y ; Clear Player1
-    DeletePipe Pipx ,Gap
+    ClearP p2x, p2y, plen, m2x , m2y ; Clear Player1
+    DeletePipe Pipx1 ,Gap1
+    DeletePipe Pipx2 ,Gap2
     cmp s1x, 0
     je noclear
     DrawShoot s1x, s1y, slen, swidquart, 0h, 0h, 0h
@@ -112,9 +106,16 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen   
-	PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , plen , s2x , s2y , slen
-	; Flush Keyboard Buffer
+    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , plen , s1x , s1y , slen
+    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , plen , s2x , s2y , slen
+
+    ; IF Q PRESSED CLOSE
+    CMP AH, 10H     ; Q
+    JNE FLUSH
+    MOV Running, 0
+    ;-------------------
+FLUSH:
+    ; Flush Keyboard Buffer
     mov ah,0ch
     mov al,0
     int 21h
@@ -124,26 +125,19 @@ GetInput endp
 
 ;------Draw Function----
 Draw proc
-    DrawPipe Pipx , Gap
+    ;draw first pipe
+    DrawPipe Pipx1 , Gap1
+    ;draw second pipe
+    DrawPipe Pipx2 , Gap2
     ; Draw Player 1
     DrawP p1x, p1y, plen, m1x , m1y , p1cl , p1cd
-	DrawP p2x, p2y, plen, m2x , m2y , p2cl , p2cd
+    ; Draw Player 2
+    DrawP p2x, p2y, plen, m2x , m2y , p2cl , p2cd
     cmp s1x, 0
-    jz noshoot 
-    DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh 
-
+    jz noshoot
+    DrawShoot s1x, s1y, slen, swidquart, 0fh, 04h, 0Bh
 noshoot:
-    mov ah,2
-    mov dx,0
-    int 10h
-;drawing lives of player 1
-    mov ah,9 ;Display
-    mov bh,0 ;Page 0
-    mov al, 3h ;heart
-    mov cl, p1lives
-    mov ch, 0
-    mov bl,04h
-    int 10h
+    drawhearts p1lives,p2lives
     ret
 
 Draw endp
@@ -151,10 +145,18 @@ Draw endp
 
 ;------Delay Function----
 Delay proc
-    mov ah, 86h        ;  1/10 second
-    mov cx, 1h
-    mov dx, 86A0h
-    int 15h
+mov di, 1
+mov ah, 0
+int 1Ah ; actual time
+mov bx,dx
+delayloop:
+        mov ah, 0
+        int 1Ah
+        sub dx,bx
+        cmp di,dx
+ja delayloop
+
+
     ret
 
 Delay endp
@@ -162,17 +164,20 @@ Delay endp
 ;----Update Function--
 Update proc
 
-    MoveShoot s1x, 320
+    MoveShoot s1x, ScreenWidth
     ; UPDATE PLAYER
     UpdatePlayer P1Tunnel, TunnelSize, p1y, plen
-	UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
+    UpdatePlayer P2Tunnel, TunnelSize, p2y, plen
     ;--------------
-    ; GENERATE PIP
-    GeneratePip  2,Pipx,-1,p1invc,Gap, seed
+    ; GENERATE PIP 1
+    GeneratePip  2,Pipx1,ScreenWidth,p1invc  ,Gap1, seed
+    ; GENERATE PIP 2
+    GeneratePip  -2,Pipx2,ScreenWidth,p2invc,Gap2, seed
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap, P1Tunnel, Pipx, p1x, p1invc, p1lives, Running
-    
+    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, Running
+    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, Running
+
     ret
 Update endp
 ;-----------------------

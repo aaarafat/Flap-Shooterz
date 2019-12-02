@@ -4,7 +4,7 @@ DrawPipe Macro px, tunnel
     Local plop, Glop
 	mov SI , 0
    plop:  
-    mov CX , pipx
+    mov CX , px
     mov DX , SI
     mov al,07h 
     mov ah,0ch 
@@ -34,7 +34,7 @@ DrawPipe Macro px, tunnel
     glop:
     mov DX , SI 
     mov al , 00h 
-    mov CX , pipx 
+    mov CX , px 
     mov ah , 0ch 
     int 10h
 
@@ -58,7 +58,7 @@ DeletePipe Macro px, tunnel
     Local plop ,Glop
 	mov SI , 0
    plop:  
-    mov CX , pipx
+    mov CX , px
     mov DX , SI
     mov al,00h 
     mov ah,0ch 
@@ -82,7 +82,8 @@ getrandom  macro  Gap , seed
     mov ah,2ch    ; To get System Time
     int 21h
     mov aL,dh    ; Seconds is in DH 
-    inc seed
+    mov ah,0
+	inc seed
 	add al,seed
 	mov dl,6	
     mov ah,0
@@ -93,12 +94,15 @@ getrandom  macro  Gap , seed
 endm getrandom 
 ;========================================================================================
 ;========================================================================================
-GeneratePip macro speed,px,endpip,invc,Gap,seed
-	local finish
+GeneratePip macro speed,px,ScreenWidth,invc,Gap,seed
+	local finish,gen
 	sub px,speed
-    cmp px, endpip
-	jnz finish
-	mov invc ,0
+    cmp px, ScreenWidth
+	jge gen
+    cmp px, -1
+	jnl finish
+gen:
+    mov invc ,0
     mov px,159 ;center of the screen    
     getrandom Gap seed
 	finish:

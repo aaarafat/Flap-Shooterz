@@ -72,7 +72,7 @@ MoveShoot MACRO sx, ScreenWidth
     cmp sx, 0 ;check if there's a shoot
     jz noupdate
     add sx, 4 ;move the shoot
-    mov si, sx
+    ;mov si, sx
     cmp sx, ScreenWidth ;if we reached to the end of screen
     jb noupdate
     mov sx, 0
