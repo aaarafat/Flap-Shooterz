@@ -1,10 +1,9 @@
 include p1m.inc
 include barrier.inc
-;include shoot.inc
 include logic.inc
 include weapons.inc
 .model small
-.stack
+.stack 64
 .data
 
 ScreenWidth equ 320
@@ -13,8 +12,9 @@ plen   equ  20      ; height and width of player
 slen    equ 4
 swidquart    equ 2
 
+
 ;============Player 1================
-p1x    dw   0      ; left upper corner
+p1x    dw   20      ; left upper corner
 p1y    dw   2
 m1x    dw   0       ; right bottom corner
 m1y    dw   0
@@ -24,11 +24,12 @@ bul1x dw 0h   ;p1 bullet x
 bul1y dw 0h   ;p1 bullet y
 p1lives db 5h
 p1invc db 0h ;invincible
-CurrentWeapon1 db 3
+CurrentWeapon1 db 4
+CurrentBullet1 db 4
 ;=====================================
 
 ;============Player 2=================
-p2x    dw   300      ; left upper corner
+p2x    dw   280      ; left upper corner
 p2y    dw   2
 m2x    dw   0       ; right bottom corner
 m2y    dw   0
@@ -38,7 +39,8 @@ bul2x dw 0h   ;p2 bullet x
 bul2y dw 0h   ;p2 bullet y
 p2lives db 5h
 p2invc db 0h ;invincible
-CurrentWeapon2 db 4
+CurrentWeapon2 db 2
+CurrentBullet2 db 2
 ;======================================
 
 
@@ -107,7 +109,9 @@ main endp
 
 
 ;------Clear Screen-----
-Clear proc
+Clear proc 
+	ClearB 0, 50
+	ClearB 316, 50
     clearhearts p1lives, p2lives
     ClearP p1x, p1y, m1x , m1y ; Clear Player1
     ClearP p2x, p2y, m2x , m2y ; Clear Player1
@@ -127,8 +131,8 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , P1Tunnel , p1x , p1y , bul1x , bul1y, 1
-    PlayerInput  48h , 50h  , 1Ch , P2Tunnel , p2x , p2y , bul2x , bul2y, 0
+    PlayerInput  11h , 1fh  , 39h , 1eh, 20h, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1
+    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -146,6 +150,8 @@ GetInput endp
 
 ;------Draw Function----
 Draw proc
+	DrawB 0, 10, CurrentWeapon1
+	DrawB 316, 10, CurrentWeapon2
     ;draw first pipe
     DrawPipe Pipx1 , Gap1
     ;draw second pipe
@@ -156,11 +162,11 @@ Draw proc
     DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
     cmp bul1x, 0
     jz noshoot1
-	Fire CurrentWeapon1, bul1x, bul1y
+	Fire CurrentBullet1, bul1x, bul1y
 noshoot1:
 	cmp bul2x, 0
     jz noshoot2	
-	Fire CurrentWeapon2, bul2x, bul2y
+	Fire CurrentBullet2, bul2x, bul2y
 noshoot2:
     drawhearts p1lives,p2lives
     ret

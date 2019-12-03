@@ -77,11 +77,11 @@ ENDM ClearB
 ;========================================================================================
 
 ;========================================================================================
-Fire MACRO CurrentWeapon, bulx, buly
+Fire MACRO W, bulx, buly
 	LOCAL finish
 	cmp bulx, 0
 	je finish
-	DrawB bulx, buly, CurrentWeapon
+	DrawB bulx, buly, W
 finish:
 ENDM Fire
 ;========================================================================================

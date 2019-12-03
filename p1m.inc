@@ -149,30 +149,29 @@ UpdatePlayer Macro Tunnel, p1y
 ENDM UpdatePlayer
 ;========================================================================================
 ;========================================================================================
-PlayerInput Macro Up , Down , Shoot , Tunnel , px , py , bulx , buly, IsPlayer1
-	LOCAL MoveUp,MoveDown,PShoot,Return, PLAYER2
+PlayerInput Macro Up , Down , Shoot , ChangeWeaponR, ChangeWeaponL, Tunnel , px , py , bulx , buly , W, CurrentBullet, IsPlayer1
+	LOCAL MoveUp,MoveDown,PShoot,Return, PLAYER2, WeaponL, WeaponR, ToRightMostWeapon, ToLeftMostWeapon, CheckWeapon, SmallJmp
 	mov ah, 1
     int 16h   ; Get Key Pressed
-    jz Return ; If no Key Pressed Return
-
+    jz SmallJmp ; If no Key Pressed Return
     ; Key Pressed
     cmp ah, Up     ; IF UP ARROW MOVE UP
     je MoveUp
-
     cmp ah, Down     ; IF DOWN ARROW MOVE DOWN
     je MoveDown
-
     cmp ah, Shoot     ; IF SPACE SHOOT
     je PShoot
-
+	cmp ah, ChangeWeaponR
+	je WeaponR	
+	cmp ah, ChangeWeaponL
+	je WeaponL
+SmallJmp:
     jmp Return
-    ;------------
 MoveUp:
     cmp Tunnel, 0
     je Return
     DEC Tunnel
     jmp Return
-
 MoveDown:
     cmp Tunnel, 5
     je Return
@@ -181,6 +180,8 @@ MoveDown:
 PShoot:
     cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
     jne Return
+	mov ah, W
+	mov CurrentBullet, ah
     mov ax, px
 	mov bx, IsPlayer1
     cmp bx, 0
@@ -191,7 +192,24 @@ PLAYER2:
     mov ax, py
     add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
     mov buly, ax
-
+	jmp Return
+WeaponR:
+	inc W
+	jmp CheckWeapon
+WeaponL:
+	dec W
+CheckWeapon:
+    mov ah, W
+	cmp ah, 1
+	jl ToRightMostWeapon
+	cmp ah, 4           
+	jg ToLeftMostWeapon
+	jmp Return
+ToRightMostWeapon:
+	mov W, 4
+	jmp Return
+ToLeftMostWeapon:
+	mov W, 1
 Return:
 		NOP
 ENDM	PlayerInput
