@@ -26,6 +26,11 @@ p1lives db 5h
 p1invc db 0h ;invincible
 CurrentWeapon1 db 4
 CurrentBullet1 db 4
+timer1         db 100
+DoubleDamageFlag1 db 0
+FreezeFlag1 db 0
+DoubleJumpFlag1 db 0
+InvertFlag1 db 1
 ;=====================================
 
 ;============Player 2=================
@@ -41,6 +46,11 @@ p2lives db 5h
 p2invc db 0h ;invincible
 CurrentWeapon2 db 2
 CurrentBullet2 db 2
+timer2         db 100
+DoubleDamageFlag2 db 0
+FreezeFlag2 db 0
+DoubleJumpFlag2 db 0
+InvertFlag2 db 1
 ;======================================
 
 
@@ -209,6 +219,11 @@ Update proc
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0
     CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4
+	;------------
+	; CHECK IF PLAYER HITTED BY BULLET
+	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, DoubleDamageFlag1
+	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, DoubleDamageFlag2
+	;----- test----
 
     ret
 Update endp
