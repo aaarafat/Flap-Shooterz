@@ -162,7 +162,7 @@ PlayerInput Macro Up , Down , Shoot , ChangeWeaponR, ChangeWeaponL, Tunnel , px 
     cmp ah, Shoot     ; IF SPACE SHOOT
     je PShoot
 	cmp ah, ChangeWeaponR
-	je WeaponR	
+	je WeaponR
 	cmp ah, ChangeWeaponL
 	je WeaponL
 SmallJmp:
@@ -202,7 +202,7 @@ CheckWeapon:
     mov ah, W
 	cmp ah, 1
 	jl ToRightMostWeapon
-	cmp ah, 4           
+	cmp ah, 4
 	jg ToLeftMostWeapon
 	jmp Return
 ToRightMostWeapon:
@@ -216,34 +216,41 @@ ENDM	PlayerInput
 ;========================================================================================
 ;========================================================================================
 drawhearts Macro p1lives,p2lives
-; move cursor
-    mov ah,2
-    mov dx,0
-    int 10h
+	push es
+	mov ax, ds
+	mov es, ax
+
+	add p1lives, '0'
+	add p2lives, '0'
 ;drawing lives of player 1
-    mov ah,9 ;Display
+    mov ah,13h ;Display
+	mov al, 0h ;text mode
     mov bh,0 ;Page 0
-    mov al, 3h ;heart
-    mov cl, p1lives
-    mov ch, 0
-    mov bl,09h
+    ;mov al, 3h ;heart
+    ;mov cl, p1lives
+    ;mov ch, 0
+	mov cx, 3 ;string length
+    mov bl,09h ;color
+	mov dx, 0h ;set row, col
+	lea bp, p1livesstr
     int 10h
 
-; move cursor
-	mov ah, 2
-	mov dl,40
-	sub dl,p2lives
-	mov dh,0
-	mov bh,0
-	int 10h
 ;drawing lives of player 2
-	mov ah,9 ;Display
+	mov ah,13h ;Display
+	mov al, 0h ;text mode
     mov bh,0 ;Page 0
-    mov al, 3h ;heart
-    mov cl, p2lives
-    mov ch, 0
-    mov bl,04h
+    ;mov al, 3h ;heart
+    ;mov cl, p1lives
+    ;mov ch, 0
+	mov cx, 3 ;string length
+    mov bl,04h ;color
+	mov dx, 25h
+	lea bp, p2livesstr
+
     int 10h
+	pop es
+	sub p1lives, '0'
+	sub p2lives, '0'
 endm drawhearts
 ;========================================================================================
 clearhearts Macro p1lives,p2lives
@@ -256,15 +263,14 @@ clearhearts Macro p1lives,p2lives
     mov ah,9 ;Display
     mov bh,0 ;Page 0
     mov al, ' ' ;space
-    mov cl, p1lives
+    mov cl, 3
     mov ch, 0
     mov bl,09h
     int 10h
 
 ; move cursor
 	mov ah, 2
-	mov dl,40
-	sub dl,p2lives
+	mov dl,37
 	mov dh,0
 	mov bh,0
 	int 10h
@@ -272,7 +278,7 @@ clearhearts Macro p1lives,p2lives
 	mov ah,9 ;Display
     mov bh,0 ;Page 0
     mov al, ' ' ;space
-    mov cl, p2lives
+    mov cl, 3
     mov ch, 0
     mov bl,04h
     int 10h
