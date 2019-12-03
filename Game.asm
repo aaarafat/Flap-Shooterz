@@ -22,7 +22,9 @@ p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
 bul1x dw 0h   ;p1 bullet x
 bul1y dw 0h   ;p1 bullet y
+p1livesstr label byte
 p1lives db 5h
+        db 'x',3h
 p1invc db 0h ;invincible
 CurrentWeapon1 db 1
 CurrentBullet1 db 1
@@ -42,6 +44,8 @@ p2cl   db   0Ch     ; p2 body color
 p2cd   db   04h     ; p2 link color
 bul2x dw 0h   ;p2 bullet x
 bul2y dw 0h   ;p2 bullet y
+p2livesstr label byte
+        db 3h,'x'
 p2lives db 5h
 p2invc db 0h ;invincible
 CurrentWeapon2 db 2
@@ -119,7 +123,7 @@ main endp
 
 
 ;------Clear Screen-----
-Clear proc 
+Clear proc
 	ClearB 0, 50
 	ClearB 316, 50
     clearhearts p1lives, p2lives
@@ -175,7 +179,7 @@ Draw proc
 	Fire CurrentBullet1, bul1x, bul1y
 noshoot1:
 	cmp bul2x, 0
-    jz noshoot2	
+    jz noshoot2
 	Fire CurrentBullet2, bul2x, bul2y
 noshoot2:
     drawhearts p1lives,p2lives
