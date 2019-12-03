@@ -149,33 +149,55 @@ UpdatePlayer Macro Tunnel, p1y
 ENDM UpdatePlayer
 ;========================================================================================
 ;========================================================================================
-PlayerInput Macro Up , Down , Shoot , ChangeWeaponR, ChangeWeaponL, Tunnel , px , py , bulx , buly , W, CurrentBullet, IsPlayer1
-	LOCAL MoveUp,MoveDown,PShoot,Return, PLAYER2, WeaponL, WeaponR, ToRightMostWeapon, ToLeftMostWeapon, CheckWeapon, SmallJmp
+PlayerInput Macro Up,Down,Shoot,ChangeWeaponR,ChangeWeaponL,Tunnel,px,py,bulx,buly,W,CurrentBullet,IsPlayer1,FreezeFlag,InvertFlag,DoubleJumpFlag
+	LOCAL MoveUp,MoveDown,PShoot,Return,PLAYER2,WeaponL,WeaponR,ToRightMostWeapon,ToLeftMostWeapon,CheckWeapon,SmallJmp1,SmallJmp2,SkipMove,CheckDown
 	mov ah, 1
     int 16h   ; Get Key Pressed
-    jz SmallJmp ; If no Key Pressed Return
+    jz SmallJmp1 ; If no Key Pressed Return
+	cmp FreezeFlag, 1
+	je SkipMove
     ; Key Pressed
     cmp ah, Up     ; IF UP ARROW MOVE UP
-    je MoveUp
+    jne CheckDown
+	cmp InvertFlag, 1
+	je MoveDown
+	jmp MoveUp
+CheckDown:
     cmp ah, Down     ; IF DOWN ARROW MOVE DOWN
-    je MoveDown
+    jne SkipMove
+	cmp InvertFlag, 1
+	je MoveUp
+	jmp MoveDown
+SkipMove:
     cmp ah, Shoot     ; IF SPACE SHOOT
     je PShoot
 	cmp ah, ChangeWeaponR
 	je WeaponR	
 	cmp ah, ChangeWeaponL
 	je WeaponL
-SmallJmp:
-    jmp Return
+SmallJmp1:
+    jmp SmallJmp2
 MoveUp:
     cmp Tunnel, 0
-    je Return
-    DEC Tunnel
-    jmp Return
+    je SmallJmp2
+    dec Tunnel
+	cmp Tunnel, 0
+    je SmallJmp2
+	cmp DoubleJumpFlag, 0
+	je SmallJmp2
+	dec Tunnel
+	jmp SmallJmp2
 MoveDown:
     cmp Tunnel, 5
-    je Return
-    INC Tunnel
+    je SmallJmp2
+    inc Tunnel
+	cmp Tunnel, 5
+    je SmallJmp2
+	cmp DoubleJumpFlag, 0
+	je SmallJmp2
+	inc Tunnel
+	jmp SmallJmp2
+SmallJmp2: 
     jmp Return
 PShoot:
     cmp bulx, 0       ; IF SHOOT.X = 0 RETURN

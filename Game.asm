@@ -28,9 +28,9 @@ CurrentWeapon1 db 1
 CurrentBullet1 db 1
 timer1         db 0
 DoubleDamageFlag1 dw 0
-FreezeFlag1 dw 0
 DoubleJumpFlag1 dw 0
-InvertFlag1 dw 1
+InvertFlag1 dw 0
+FreezeFlag1 dw 0
 ;=====================================
 
 ;============Player 2=================
@@ -48,9 +48,9 @@ CurrentWeapon2 db 2
 CurrentBullet2 db 2
 timer2         db 0
 DoubleDamageFlag2 dw 0
-FreezeFlag2 dw 0
 DoubleJumpFlag2 dw 0
-InvertFlag2 dw 1
+InvertFlag2 dw 0
+FreezeFlag2 dw 0
 ;======================================
 
 
@@ -141,8 +141,8 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , 1eh, 20h, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1
-    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0
+    PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1
+    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2 
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -238,7 +238,7 @@ UpdateTimer proc
 	mov DoubleDamageFlag1, 0
 	mov FreezeFlag1, 0
 	mov DoubleJumpFlag1, 0
-	mov DoubleJumpFlag1, 0
+	mov InvertFlag1, 0
 NoUpdate1:
 	dec timer2
 	cmp timer2, 0
@@ -247,7 +247,7 @@ NoUpdate1:
 	mov DoubleDamageFlag2, 0
 	mov FreezeFlag2, 0
 	mov DoubleJumpFlag2, 0
-	mov DoubleJumpFlag2, 0
+	mov InvertFlag2, 0
 NoUpdate2:
 	ret
 UpdateTimer endp

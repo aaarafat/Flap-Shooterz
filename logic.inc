@@ -66,24 +66,21 @@ PLAYER2:
 	cmp ax, bx
 	jg finish
 HandleEff:
-	mov flag, 0
+	mov flag + 0, 0
 	mov flag + 1, 0
 	mov flag + 2, 0
 	mov flag + 3, 0
 	mov al, BulletType
 	dec al
+	mov bl, 2
+	mul bl
 	mov ah, 0
 	mov si, ax
     Add si, offset flag
 	mov ax, 1
 	mov [si], ax
-	mov ax, flag + 3
-	mov dl, -1
-	imul dl
-	mov flag + 3, ax
 	mov bulx, 0
 	mov timer, 100   ; 100 Iterations
-	
 finish:
 ENDM CheckCollisionBullet
 ;========================================================================================
