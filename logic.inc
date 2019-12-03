@@ -1,6 +1,6 @@
 ;========================================================================================
-CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, norm
-    LOCAL NoCollision,Complete
+CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, norm, DoubleDamageFlag, timer
+    LOCAL NoCollision,Complete,Return
     ; CHECK IF PLAYER HIT THE PIP
     ; CHECK IF PLAYER TUNNEL != PIP TUNNEL
     mov ax, GAP
@@ -18,10 +18,13 @@ CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, norm
     ; If player is invincible then lives are the same
     cmp invc, 1
     jz Complete
-    dec plives
+	mov ax, DoubleDamageFlag
+	inc ax
+    sub plives, al
     mov invc, 1
     cmp plives, 0
     jg Complete
+	mov plives, 0      ; Check that lives can't be negative
     mov Running ,0     ; Exit
     ;-------------------------
     NoCollision:
@@ -31,7 +34,7 @@ ENDM CheckCollision
 ;========================================================================================
 
 ;========================================================================================
-CheckCollisionBullet Macro px, py, bulx, buly, BulletType, IsPlayer1, flag
+CheckCollisionBullet Macro px, py, bulx, buly, BulletType, IsPlayer1, flag, timer
  	LOCAL finish, PLAYER2, HandleEff, ShortJmp
 	; If player 1 norm = plen normBul = 0 , player2 norm = 0 normBul = 4
 	mov ax, bulx 
@@ -79,8 +82,8 @@ HandleEff:
 	imul dl
 	mov flag + 3, ax
 	mov bulx, 0
+	mov timer, 100   ; 100 Iterations
 	
-;dec p1lives
 finish:
 ENDM CheckCollisionBullet
 ;========================================================================================

@@ -24,9 +24,9 @@ bul1x dw 0h   ;p1 bullet x
 bul1y dw 0h   ;p1 bullet y
 p1lives db 5h
 p1invc db 0h ;invincible
-CurrentWeapon1 db 4
-CurrentBullet1 db 4
-timer1         db 100
+CurrentWeapon1 db 1
+CurrentBullet1 db 1
+timer1         db 0
 DoubleDamageFlag1 dw 0
 FreezeFlag1 dw 0
 DoubleJumpFlag1 dw 0
@@ -46,7 +46,7 @@ p2lives db 5h
 p2invc db 0h ;invincible
 CurrentWeapon2 db 2
 CurrentBullet2 db 2
-timer2         db 100
+timer2         db 0
 DoubleDamageFlag2 dw 0
 FreezeFlag2 dw 0
 DoubleJumpFlag2 dw 0
@@ -217,15 +217,38 @@ Update proc
     GeneratePip  -2,Pipx2,p2invc,Gap2, 4
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0
-    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4
+    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0, DoubleDamageFlag1, timer1
+    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4, DoubleDamageFlag2, timer2
 	;------------
 	; CHECK IF PLAYER HITTED BY BULLET
-	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, DoubleDamageFlag1
-	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, DoubleDamageFlag2
-	;----- test----
-
+	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, DoubleDamageFlag1, timer1
+	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, DoubleDamageFlag2, timer2
+	;-----timer----
+	Call UpdateTimer
+	
     ret
 Update endp
 ;-----------------------
+;------Update Timer-----
+UpdateTimer proc
+	dec timer1
+	cmp timer1, 0
+	jg NoUpdate1
+	mov timer1, 0
+	mov DoubleDamageFlag1, 0
+	mov FreezeFlag1, 0
+	mov DoubleJumpFlag1, 0
+	mov DoubleJumpFlag1, 0
+NoUpdate1:
+	dec timer2
+	cmp timer2, 0
+	jg NoUpdate2
+	mov timer2, 0
+	mov DoubleDamageFlag2, 0
+	mov FreezeFlag2, 0
+	mov DoubleJumpFlag2, 0
+	mov DoubleJumpFlag2, 0
+NoUpdate2:
+	ret
+UpdateTimer endp
 end main
