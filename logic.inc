@@ -36,7 +36,7 @@ CheckCollisionBullet Macro px, py, bulx, buly, BulletType, IsPlayer1, flag
 	; If player 1 norm = plen normBul = 0 , player2 norm = 0 normBul = 4
 	mov ax, bulx 
 	cmp ax, 0
-	jle ShortJmp
+	je ShortJmp
 	; Todo (py + plen >= buly >= py) 
 	mov ax, py
 	cmp ax, buly
@@ -45,6 +45,7 @@ CheckCollisionBullet Macro px, py, bulx, buly, BulletType, IsPlayer1, flag
 	cmp ax, buly
 	jl ShortJmp
 	mov ax, IsPlayer1
+	cmp ax, 1
 	jne PLAYER2
 	; PLAYER1
 	mov ax, px
@@ -60,7 +61,7 @@ PLAYER2:
 	mov bx, bulx
 	add bx, 4
 	cmp ax, bx
-	jl finish
+	jg finish
 HandleEff:
 	mov flag, 0
 	mov flag + 1, 0
@@ -73,12 +74,13 @@ HandleEff:
     Add si, offset flag
 	mov ax, 1
 	mov [si], ax
-	mov al, flag + 3
+	mov ax, flag + 3
 	mov dl, -1
 	imul dl
+	mov flag + 3, ax
 	mov bulx, 0
 	
-dec p1lives
+;dec p1lives
 finish:
 ENDM CheckCollisionBullet
 ;========================================================================================

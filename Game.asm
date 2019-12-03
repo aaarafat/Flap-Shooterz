@@ -27,10 +27,10 @@ p1invc db 0h ;invincible
 CurrentWeapon1 db 4
 CurrentBullet1 db 4
 timer1         db 100
-DoubleDamageFlag1 db 0
-FreezeFlag1 db 0
-DoubleJumpFlag1 db 0
-InvertFlag1 db 1
+DoubleDamageFlag1 dw 0
+FreezeFlag1 dw 0
+DoubleJumpFlag1 dw 0
+InvertFlag1 dw 1
 ;=====================================
 
 ;============Player 2=================
@@ -47,10 +47,10 @@ p2invc db 0h ;invincible
 CurrentWeapon2 db 2
 CurrentBullet2 db 2
 timer2         db 100
-DoubleDamageFlag2 db 0
-FreezeFlag2 db 0
-DoubleJumpFlag2 db 0
-InvertFlag2 db 1
+DoubleDamageFlag2 dw 0
+FreezeFlag2 dw 0
+DoubleJumpFlag2 dw 0
+InvertFlag2 dw 1
 ;======================================
 
 
