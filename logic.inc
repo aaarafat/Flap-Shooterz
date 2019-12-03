@@ -1,5 +1,5 @@
 ;========================================================================================
-CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, norm, DoubleDamageFlag, timer
+CheckCollision Macro Gap, Tunnel, Pipx, px, invc, plives, norm, DoubleDamageFlag
     LOCAL NoCollision,Complete,Return
     ; CHECK IF PLAYER HIT THE PIP
     ; CHECK IF PLAYER TUNNEL != PIP TUNNEL
@@ -70,6 +70,7 @@ HandleEff:
 	mov flag + 1, 0
 	mov flag + 2, 0
 	mov flag + 3, 0
+	mov ah, 0
 	mov al, BulletType
 	dec al
 	mov bl, 2

@@ -57,7 +57,6 @@ DoubleDamageFlag2 dw 0
 FreezeFlag2 dw 0
 ;======================================
 
-
 Pipx1 dw 0;pipe of first player
 Pipx2 dw 0;pipe of second player
 Gap1 dw 0;gap in first pipe
@@ -221,12 +220,12 @@ Update proc
     GeneratePip  -2,Pipx2,p2invc,Gap2, 4
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0, DoubleDamageFlag1, timer1
-    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4, DoubleDamageFlag2, timer2
+    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0, DoubleDamageFlag1
+    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4, DoubleDamageFlag2
 	;------------
 	; CHECK IF PLAYER HITTED BY BULLET
-	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, DoubleDamageFlag1, timer1
-	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, DoubleDamageFlag2, timer2
+	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, InvertFlag1, timer1
+	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, InvertFlag2, timer2
 	;-----timer----
 	Call UpdateTimer
 	
