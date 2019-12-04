@@ -67,9 +67,9 @@ PLAYER2:
 	jg finish
 HandleEff:
 	mov flag + 0, 0
-	mov flag + 1, 0
 	mov flag + 2, 0
-	mov flag + 3, 0
+	mov flag + 4, 0
+	mov flag + 6, 0
 	mov ah, 0
 	mov al, BulletType
 	dec al
