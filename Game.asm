@@ -138,6 +138,7 @@ noclear1:
 	je noclear2
     ClearB bul2x, bul2y
 noclear2:
+	ClearTimer timer1, timer2
     ret
 Clear endp
 ;-----------------------
@@ -182,6 +183,7 @@ noshoot1:
 	Fire CurrentBullet2, bul2x, bul2y
 noshoot2:
     drawhearts p1lives,p2lives
+	DrawTimer timer1, InvertFlag1, timer2, InvertFlag2
     ret
 
 Draw endp

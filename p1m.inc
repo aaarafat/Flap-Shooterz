@@ -305,3 +305,135 @@ clearhearts Macro p1lives,p2lives
     mov bl,04h
     int 10h
 endm clearhearts
+;========================================================================================
+DrawTimer Macro timer1, flag1, timer2, flag2
+	Local back1, back2, return1, return2, flag21, flag31, flag41, flag22, flag32, flag42
+	mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	div bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	div bl
+	mov timer2, al
+	
+	cmp timer1, 0
+	je return1
+	mov bh, 0h
+	mov cx,0
+	mov cl, timer1
+	mov dx, 10h
+	mov ah, 0ch
+	cmp flag1, 1
+	jne flag21
+	mov al, 05h
+	jmp back1
+flag21:
+	cmp flag1+2, 1
+	jne flag31
+	mov al, 02h
+	jmp back1
+flag31:
+	cmp flag1 + 4, 1
+	jne flag41
+	mov al, 04h
+    jmp back1	
+flag41:
+	mov al, 0fh	
+back1: int 10h
+	loop back1
+return1:
+	cmp timer2, 0
+	je return2
+	mov bh, 0h
+	mov cx, 0
+	mov cl, timer2
+	mov dx, 10h
+	mov ah, 0ch
+	cmp flag2, 1
+	jne flag22
+	mov al, 05h
+	jmp back2
+flag22:
+	cmp flag2+2, 1
+	jne flag32
+	mov al, 02h
+	jmp back2
+flag32:
+	cmp flag2 + 4, 1
+	jne flag42
+	mov al, 04h
+    jmp back2	
+flag42:
+	mov al, 0fh	
+back2: push cx
+	mov bx, 320
+	sub bx, cx
+	mov cx, bx
+	mov bx, 0
+	int 10h
+	pop cx
+	loop back2
+return2:	
+	mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	mul bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	mul bl
+	mov timer2, al
+endm DrawTimer
+;========================================================================================
+ClearTimer Macro timer1, timer2
+	Local back1, back2, return1, return2
+	mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	div bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	div bl
+	mov timer2, al
+	
+	cmp timer1, 0
+	je return1
+	mov bh, 0h
+	mov cx, 0
+	mov cl, timer1
+	mov dx, 10h
+	mov ah, 0ch
+	mov al, 00h
+back1: int 10h
+	loop back1
+return1:
+	cmp timer2, 0
+	je return2
+	mov bh, 0h
+	mov cx, 0
+	mov cl, timer2
+	mov dx, 10h
+	mov ah, 0ch
+	mov al, 00h
+back2: push cx
+	mov bx, 320
+	sub bx, cx
+	mov cx, bx
+	mov bx, 0
+	int 10h
+	pop cx
+	loop back2
+return2:
+    mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	mul bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	mul bl
+	mov timer2, al
+endm ClearTimer
