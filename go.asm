@@ -266,6 +266,7 @@ mgy dw 0
 gh  equ 30
 gw  equ 66
 color db 0fh
+ci    db 0
 frameincrease dw 0
 mesg1 db "PLAYER1 WIN!"
 mesg2 db "PLAYER2 WIN!"
@@ -341,9 +342,13 @@ gameover proc far
 	 mov cx ,0FFFFh
      cmp frame , 8
      jl skip
-	 inc color 
      mov frame , 0
-	skip:NOP
+	skip:inc ci
+	cmp ci , 3
+	jl skipc
+	mov ci , 0
+	inc color 
+	skipc:
 	mov ah,1
     int 16h 
 	jz noquit
