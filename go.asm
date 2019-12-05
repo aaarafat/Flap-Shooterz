@@ -1,4 +1,12 @@
-
+        EXTRN currentoption:word
+        EXTRN option1:BYTE
+        EXTRN optionssize:word
+		EXTRN p1cl:BYTE
+		EXTRN p2cl:BYTE
+		EXTRN p1lives:BYTE
+		EXTRN p2lives:BYTE
+        PUBLIC gameover
+include Gameover.inc
 .model small
 .stack
 .data
@@ -259,15 +267,19 @@ gh  equ 30
 gw  equ 66
 color db 0fh
 
+mesg1 db "PLAYER1 WIN!"
+mesg2 db "PLAYER2 WIN!"
+drawresult db "    draw!   "
+wordsize dw 12  
 .code
-main proc far 
+gameover proc far 
     mov ax,@data
     mov ds,ax 
     ; change graphics mode
     mov ah,0
     mov al,13h
     int 10h 
-    
+	writewinner p1cl,p2cl,p1lives,p2lives,mesg1,mesg2,drawresult ,wordsize    
     gl: 
      cmp frame ,0 
      je g0 
@@ -329,10 +341,98 @@ main proc far
 	 inc color 
      mov frame , 0
 	skip:NOP
+	;print winner
+;print options
+	mov ah,1
+    int 16h 
+    jz nopress
+    cmp ah,048h
+    jz up
+    cmp ah,050h
+    jz down
+	cmp ah,01ch
+	jz quit
+    jmp press
+    up:
+    dec currentoption
+    jns press
+	mov ax,optionssize
+	dec ax
+    mov currentoption,ax
+    jmp press
+    down:
+    inc currentoption
+    jmp press
+    press:
+    mov ah,0ch
+    mov al,0
+    int 21h
+	;mod to wrap
+    mov ax,currentoption
+    mov dx,optionssize
+    div dl
+    mov al,0            
+    xchg al,ah
+    mov currentoption,ax
+    nopress:
+	;init for int 10h
+    mov dh, 18;row
+	mov bh,0 ;Page 0
+    mov cx,optionssize;loop to print option
+    mov bp,offset option1
+    mov si,offset option1;to change cx because [bp]==ss:bp
+    push ds;to make es equal to ds
+    pop es;int 10h es:bp 
+    printoptions:
+    push cx
+    mov bl,8h
+    mov ax,optionssize
+    sub ax, currentoption
+    cmp ax,cx
+	jnz white	
+	mov bl,0fh
+	white:
+    mov al, 1
+    mov cx, [si]
+    mov ch,0
+    inc si
+    add si,cx
+    inc bp
+	;set cursor to middel of screen
+    mov dl,40
+	sub dl,cl
+	shr dl,1
+	mov ah, 13h
+    int 10h
+	;increas bp for the upcoming message
+	add bp,cx
+	dec dl
+	mov ah, 2
+	int 10h
+	inc dh;new line/row
+	pop cx
+    loop printoptions
+	call Delay
 	jmp gl
-	mov ah, 4ch
-	int 21h
-	
-main endp 
+quit: 
+	mov color , 0fh  
+	ret 
+gameover endp 
+Delay proc 
+mov di, 1
+mov ah, 0
+int 1Ah ; actual time
+mov bx,dx
+delayloop:
+        mov ah, 0
+        int 1Ah
+        sub dx,bx
+        cmp di,dx
+ja delayloop
 
-end main
+
+    ret
+
+Delay endp
+end
+

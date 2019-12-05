@@ -23,18 +23,19 @@ writewinner macro playercolor1,playercolor2,lives1,lives2,mesg1,mesg2,drawresult
     mov al, 1
     mov bh, 0
     mov cx, size
-    mov dl, 12
-    mov dh, 16
+    mov dl, 14
+    mov dh, 17
     push ds
     pop es
     mov ah, 13h
     int 10h
+
 endm  writewinner    
 ;=======================================
 ;=======================================
 WriteGameoverUI macro currentoption,option1,optionssize
  local uiloop,printoptions
-	uiloop:             
+	             
     mov ah,1
     int 16h 
     jz nopress
@@ -102,7 +103,6 @@ WriteGameoverUI macro currentoption,option1,optionssize
 	inc dh;new line/row
 	pop cx
     loop printoptions
-    jmp uiloop
 quit:   
 	nop  
 endm WriteGameoverUI  

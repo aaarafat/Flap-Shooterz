@@ -1,7 +1,11 @@
+	EXTRN gameover:far
+	PUBLIC currentoption,option1,optionssize
+	PUBLIC p1cl,p2cl,p1lives,p2lives
 include p1m.inc
 include barrier.inc
 include logic.inc
 include weapons.inc
+include Gameover.inc
 .model small
 .stack 64
 .data
@@ -12,7 +16,10 @@ plen   equ  20      ; height and width of player
 slen    equ 4
 swidquart    equ 2
 
-
+currentoption dw 0
+option1 db 14,"start new game"
+option2 db 9 ,"quit game"
+optionssize dw 2
 ;============Player 1================
 p1x    dw   20      ; left upper corner
 p1y    dw   2
@@ -114,7 +121,10 @@ GameLoop:
     ;------------------
     ;GameOverLoop
     ;------------------
-
+	call gameover
+	call initailize	
+	cmp currentoption ,0
+	je GameLoop
     mov ah, 4ch
     int 21h
 
@@ -190,7 +200,7 @@ Draw endp
 ;-----------------------
 
 ;------Delay Function----
-Delay proc
+Delay proc 
 mov di, 1
 mov ah, 0
 int 1Ah ; actual time
@@ -256,4 +266,55 @@ NoUpdate1:
 NoUpdate2:
 	ret
 UpdateTimer endp
+initailize proc 
+mov p1y ,  2
+mov bul1x , 0h   ;p1 bullet x
+mov bul1y , 0h   ;p1 bullet y
+mov p1lives , 5h
+mov p1invc , 0h ;invincible
+mov CurrentWeapon1 , 1
+mov CurrentBullet1 , 1
+mov timer1         , 0
+mov InvertFlag1 , 0
+mov DoubleJumpFlag1 , 0
+mov DoubleDamageFlag1 , 0
+mov FreezeFlag1 , 0
+;=====================================
+
+;============Player 2=================
+mov p2y ,2
+mov bul2x, 0h   ;p2 bullet x
+mov bul2y, 0h   ;p2 bullet y
+mov p2lives , 5h
+mov p2invc , 0h ;invincible
+mov CurrentWeapon2 , 2
+mov CurrentBullet2 , 2
+mov timer2, 0
+mov InvertFlag2 , 0
+mov DoubleJumpFlag2 , 0
+mov DoubleDamageFlag2 , 0
+mov FreezeFlag2 , 0
+;======================================
+
+mov Pipx1 , 0;pipe of first player
+mov Pipx2 , 0;pipe of second player
+mov Gap1 , 0;gap in first pipe
+mov Gap2 , 0;gap in second pip
+mov seed , 0
+mov Running ,  1h
+mov P1Tunnel ,   0h
+mov P2Tunnel ,   0h
+ mov Pipx1 ,155
+    getrandom Gap1
+    mov Pipx2 ,160
+    getrandom Gap2
+    mov Running, 1
+	mov ah,0ch
+    mov al,0
+    int 21h
+	 mov ah,0
+    mov al,13h
+    int 10h
+	ret 
+initailize endp
 end main
