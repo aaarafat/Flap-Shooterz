@@ -121,6 +121,7 @@ GameLoop:
     ;------------------
     ;GameOverLoop
     ;------------------
+	
 	call gameover
 	call initailize	
 	cmp currentoption ,0

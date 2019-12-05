@@ -34,22 +34,23 @@ endm  writewinner
 ;=======================================
 ;=======================================
 WriteGameoverUI macro currentoption,option1,optionssize
- local uiloop,printoptions
+ local uiloop,printoptions,nopress,press,white
 	             
-    mov ah,1
+;print options
+	mov ah,1
     int 16h 
     jz nopress
     cmp ah,048h
     jz up
     cmp ah,050h
     jz down
-	cmp al,'a'
-	jz quit
     jmp press
     up:
     dec currentoption
     jns press
-    mov currentoption,optionssize-1
+	mov ax,optionssize
+	dec ax
+    mov currentoption,ax
     jmp press
     down:
     inc currentoption
@@ -102,9 +103,7 @@ WriteGameoverUI macro currentoption,option1,optionssize
 	int 10h
 	inc dh;new line/row
 	pop cx
-    loop printoptions
-quit:   
-	nop  
+    loop printoptions  
 endm WriteGameoverUI  
 
 

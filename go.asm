@@ -344,78 +344,18 @@ gameover proc far
 	 inc color 
      mov frame , 0
 	skip:NOP
-;print options
 	mov ah,1
     int 16h 
-    jz nopress
-    cmp ah,048h
-    jz up
-    cmp ah,050h
-    jz down
+	jz noquit
 	cmp ah,01ch
-	jz quit
-    jmp press
-    up:
-    dec currentoption
-    jns press
-	mov ax,optionssize
-	dec ax
-    mov currentoption,ax
-    jmp press
-    down:
-    inc currentoption
-    jmp press
-    press:
-    mov ah,0ch
-    mov al,0
-    int 21h
-	;mod to wrap
-    mov ax,currentoption
-    mov dx,optionssize
-    div dl
-    mov al,0            
-    xchg al,ah
-    mov currentoption,ax
-    nopress:
-	;init for int 10h
-    mov dh, 18;row
-	mov bh,0 ;Page 0
-    mov cx,optionssize;loop to print option
-    mov bp,offset option1
-    mov si,offset option1;to change cx because [bp]==ss:bp
-    push ds;to make es equal to ds
-    pop es;int 10h es:bp 
-    printoptions:
-    push cx
-    mov bl,8h
-    mov ax,optionssize
-    sub ax, currentoption
-    cmp ax,cx
-	jnz white	
-	mov bl,0fh
-	white:
-    mov al, 1
-    mov cx, [si]
-    mov ch,0
-    inc si
-    add si,cx
-    inc bp
-	;set cursor to middel of screen
-    mov dl,40
-	sub dl,cl
-	shr dl,1
-	mov ah, 13h
-    int 10h
-	;increas bp for the upcoming message
-	add bp,cx
-	dec dl
-	mov ah, 2
-	int 10h
-	inc dh;new line/row
-	pop cx
-    loop printoptions
+	jne noquit
+	jmp quit
+	noquit:
+	WriteGameoverUI currentoption,option1,optionssize
+
 	call Delay
 	jmp gl
+	
 quit: 
 	ret 
 gameover endp 
