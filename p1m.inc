@@ -149,33 +149,55 @@ UpdatePlayer Macro Tunnel, p1y
 ENDM UpdatePlayer
 ;========================================================================================
 ;========================================================================================
-PlayerInput Macro Up , Down , Shoot , ChangeWeaponR, ChangeWeaponL, Tunnel , px , py , bulx , buly , W, CurrentBullet, IsPlayer1
-	LOCAL MoveUp,MoveDown,PShoot,Return, PLAYER2, WeaponL, WeaponR, ToRightMostWeapon, ToLeftMostWeapon, CheckWeapon, SmallJmp
+PlayerInput Macro Up,Down,Shoot,ChangeWeaponR,ChangeWeaponL,Tunnel,px,py,bulx,buly,W,CurrentBullet,IsPlayer1,FreezeFlag,InvertFlag,DoubleJumpFlag
+	LOCAL MoveUp,MoveDown,PShoot,Return,PLAYER2,WeaponL,WeaponR,ToRightMostWeapon,ToLeftMostWeapon,CheckWeapon,SmallJmp1,SmallJmp2,SkipMove,CheckDown
 	mov ah, 1
     int 16h   ; Get Key Pressed
-    jz SmallJmp ; If no Key Pressed Return
+    jz SmallJmp1 ; If no Key Pressed Return
+	cmp FreezeFlag, 1
+	je SkipMove
     ; Key Pressed
     cmp ah, Up     ; IF UP ARROW MOVE UP
-    je MoveUp
+    jne CheckDown
+	cmp InvertFlag, 1
+	je MoveDown
+	jmp MoveUp
+CheckDown:
     cmp ah, Down     ; IF DOWN ARROW MOVE DOWN
-    je MoveDown
+    jne SkipMove
+	cmp InvertFlag, 1
+	je MoveUp
+	jmp MoveDown
+SkipMove:
     cmp ah, Shoot     ; IF SPACE SHOOT
     je PShoot
 	cmp ah, ChangeWeaponR
-	je WeaponR	
+	je WeaponR
 	cmp ah, ChangeWeaponL
 	je WeaponL
-SmallJmp:
-    jmp Return
+SmallJmp1:
+    jmp SmallJmp2
 MoveUp:
     cmp Tunnel, 0
-    je Return
-    DEC Tunnel
-    jmp Return
+    je SmallJmp2
+    dec Tunnel
+	cmp Tunnel, 0
+    je SmallJmp2
+	cmp DoubleJumpFlag, 0
+	je SmallJmp2
+	dec Tunnel
+	jmp SmallJmp2
 MoveDown:
     cmp Tunnel, 5
-    je Return
-    INC Tunnel
+    je SmallJmp2
+    inc Tunnel
+	cmp Tunnel, 5
+    je SmallJmp2
+	cmp DoubleJumpFlag, 0
+	je SmallJmp2
+	inc Tunnel
+	jmp SmallJmp2
+SmallJmp2: 
     jmp Return
 PShoot:
     cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
@@ -202,7 +224,7 @@ CheckWeapon:
     mov ah, W
 	cmp ah, 1
 	jl ToRightMostWeapon
-	cmp ah, 4           
+	cmp ah, 4
 	jg ToLeftMostWeapon
 	jmp Return
 ToRightMostWeapon:
@@ -216,34 +238,41 @@ ENDM	PlayerInput
 ;========================================================================================
 ;========================================================================================
 drawhearts Macro p1lives,p2lives
-; move cursor
-    mov ah,2
-    mov dx,0
-    int 10h
+	push es
+	mov ax, ds
+	mov es, ax
+
+	add p1lives, '0'
+	add p2lives, '0'
 ;drawing lives of player 1
-    mov ah,9 ;Display
+    mov ah,13h ;Display
+	mov al, 0h ;text mode
     mov bh,0 ;Page 0
-    mov al, 3h ;heart
-    mov cl, p1lives
-    mov ch, 0
-    mov bl,09h
+    ;mov al, 3h ;heart
+    ;mov cl, p1lives
+    ;mov ch, 0
+	mov cx, 3 ;string length
+    mov bl,09h ;color
+	mov dx, 0h ;set row, col
+	lea bp, p1livesstr
     int 10h
 
-; move cursor
-	mov ah, 2
-	mov dl,40
-	sub dl,p2lives
-	mov dh,0
-	mov bh,0
-	int 10h
 ;drawing lives of player 2
-	mov ah,9 ;Display
+	mov ah,13h ;Display
+	mov al, 0h ;text mode
     mov bh,0 ;Page 0
-    mov al, 3h ;heart
-    mov cl, p2lives
-    mov ch, 0
-    mov bl,04h
+    ;mov al, 3h ;heart
+    ;mov cl, p1lives
+    ;mov ch, 0
+	mov cx, 3 ;string length
+    mov bl,04h ;color
+	mov dx, 25h
+	lea bp, p2livesstr
+
     int 10h
+	pop es
+	sub p1lives, '0'
+	sub p2lives, '0'
 endm drawhearts
 ;========================================================================================
 clearhearts Macro p1lives,p2lives
@@ -256,15 +285,14 @@ clearhearts Macro p1lives,p2lives
     mov ah,9 ;Display
     mov bh,0 ;Page 0
     mov al, ' ' ;space
-    mov cl, p1lives
+    mov cl, 3
     mov ch, 0
     mov bl,09h
     int 10h
 
 ; move cursor
 	mov ah, 2
-	mov dl,40
-	sub dl,p2lives
+	mov dl,37
 	mov dh,0
 	mov bh,0
 	int 10h
@@ -272,8 +300,140 @@ clearhearts Macro p1lives,p2lives
 	mov ah,9 ;Display
     mov bh,0 ;Page 0
     mov al, ' ' ;space
-    mov cl, p2lives
+    mov cl, 3
     mov ch, 0
     mov bl,04h
     int 10h
 endm clearhearts
+;========================================================================================
+DrawTimer Macro timer1, flag1, timer2, flag2
+	Local back1, back2, return1, return2, flag21, flag31, flag41, flag22, flag32, flag42
+	mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	div bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	div bl
+	mov timer2, al
+	
+	cmp timer1, 0
+	je return1
+	mov bh, 0h
+	mov cx,0
+	mov cl, timer1
+	mov dx, 10h
+	mov ah, 0ch
+	cmp flag1, 1
+	jne flag21
+	mov al, 05h
+	jmp back1
+flag21:
+	cmp flag1+2, 1
+	jne flag31
+	mov al, 02h
+	jmp back1
+flag31:
+	cmp flag1 + 4, 1
+	jne flag41
+	mov al, 04h
+    jmp back1	
+flag41:
+	mov al, 0fh	
+back1: int 10h
+	loop back1
+return1:
+	cmp timer2, 0
+	je return2
+	mov bh, 0h
+	mov cx, 0
+	mov cl, timer2
+	mov dx, 10h
+	mov ah, 0ch
+	cmp flag2, 1
+	jne flag22
+	mov al, 05h
+	jmp back2
+flag22:
+	cmp flag2+2, 1
+	jne flag32
+	mov al, 02h
+	jmp back2
+flag32:
+	cmp flag2 + 4, 1
+	jne flag42
+	mov al, 04h
+    jmp back2	
+flag42:
+	mov al, 0fh	
+back2: push cx
+	mov bx, 320
+	sub bx, cx
+	mov cx, bx
+	mov bx, 0
+	int 10h
+	pop cx
+	loop back2
+return2:	
+	mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	mul bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	mul bl
+	mov timer2, al
+endm DrawTimer
+;========================================================================================
+ClearTimer Macro timer1, timer2
+	Local back1, back2, return1, return2
+	mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	div bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	div bl
+	mov timer2, al
+	
+	cmp timer1, 0
+	je return1
+	mov bh, 0h
+	mov cx, 0
+	mov cl, timer1
+	mov dx, 10h
+	mov ah, 0ch
+	mov al, 00h
+back1: int 10h
+	loop back1
+return1:
+	cmp timer2, 0
+	je return2
+	mov bh, 0h
+	mov cx, 0
+	mov cl, timer2
+	mov dx, 10h
+	mov ah, 0ch
+	mov al, 00h
+back2: push cx
+	mov bx, 320
+	sub bx, cx
+	mov cx, bx
+	mov bx, 0
+	int 10h
+	pop cx
+	loop back2
+return2:
+    mov bl, 3
+	mov ax, 0
+	mov al, timer1
+	mul bl
+	mov timer1, al
+	mov ax, 0
+	mov al, timer2
+	mul bl
+	mov timer2, al
+endm ClearTimer

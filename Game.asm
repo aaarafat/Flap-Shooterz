@@ -22,10 +22,17 @@ p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
 bul1x dw 0h   ;p1 bullet x
 bul1y dw 0h   ;p1 bullet y
+p1livesstr label byte
 p1lives db 5h
+        db 'x',3h
 p1invc db 0h ;invincible
-CurrentWeapon1 db 4
-CurrentBullet1 db 4
+CurrentWeapon1 db 1
+CurrentBullet1 db 1
+timer1         db 0
+InvertFlag1 dw 0
+DoubleJumpFlag1 dw 0
+DoubleDamageFlag1 dw 0
+FreezeFlag1 dw 0
 ;=====================================
 
 ;============Player 2=================
@@ -37,12 +44,18 @@ p2cl   db   0Ch     ; p2 body color
 p2cd   db   04h     ; p2 link color
 bul2x dw 0h   ;p2 bullet x
 bul2y dw 0h   ;p2 bullet y
+p2livesstr label byte
+        db 3h,'x'
 p2lives db 5h
 p2invc db 0h ;invincible
 CurrentWeapon2 db 2
 CurrentBullet2 db 2
+timer2         db 0
+InvertFlag2 dw 0
+DoubleJumpFlag2 dw 0
+DoubleDamageFlag2 dw 0
+FreezeFlag2 dw 0
 ;======================================
-
 
 Pipx1 dw 0;pipe of first player
 Pipx2 dw 0;pipe of second player
@@ -109,7 +122,7 @@ main endp
 
 
 ;------Clear Screen-----
-Clear proc 
+Clear proc
 	ClearB 0, 50
 	ClearB 316, 50
     clearhearts p1lives, p2lives
@@ -125,14 +138,15 @@ noclear1:
 	je noclear2
     ClearB bul2x, bul2y
 noclear2:
+	ClearTimer timer1, timer2
     ret
 Clear endp
 ;-----------------------
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , 1eh, 20h, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1
-    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0
+    PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1
+    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2 
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -165,10 +179,11 @@ Draw proc
 	Fire CurrentBullet1, bul1x, bul1y
 noshoot1:
 	cmp bul2x, 0
-    jz noshoot2	
+    jz noshoot2
 	Fire CurrentBullet2, bul2x, bul2y
 noshoot2:
     drawhearts p1lives,p2lives
+	DrawTimer timer1, InvertFlag1, timer2, InvertFlag2
     ret
 
 Draw endp
@@ -207,10 +222,38 @@ Update proc
     GeneratePip  -2,Pipx2,p2invc,Gap2, 4
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
-    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0
-    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4
-
+    CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0, DoubleDamageFlag1
+    CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4, DoubleDamageFlag2
+	;------------
+	; CHECK IF PLAYER HITTED BY BULLET
+	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, InvertFlag1, timer1
+	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, InvertFlag2, timer2
+	;-----timer----
+	Call UpdateTimer
+	
     ret
 Update endp
 ;-----------------------
+;------Update Timer-----
+UpdateTimer proc
+	dec timer1
+	cmp timer1, 0
+	jg NoUpdate1
+	mov timer1, 0
+	mov DoubleDamageFlag1, 0
+	mov FreezeFlag1, 0
+	mov DoubleJumpFlag1, 0
+	mov InvertFlag1, 0
+NoUpdate1:
+	dec timer2
+	cmp timer2, 0
+	jg NoUpdate2
+	mov timer2, 0
+	mov DoubleDamageFlag2, 0
+	mov FreezeFlag2, 0
+	mov DoubleJumpFlag2, 0
+	mov InvertFlag2, 0
+NoUpdate2:
+	ret
+UpdateTimer endp
 end main
