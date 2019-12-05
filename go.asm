@@ -266,7 +266,7 @@ mgy dw 0
 gh  equ 30
 gw  equ 66
 color db 0fh
-
+frameincrease dw 0
 mesg1 db "PLAYER1 WIN!"
 mesg2 db "PLAYER2 WIN!"
 drawresult db "    draw!   "
@@ -280,7 +280,8 @@ gameover proc far
     mov al,13h
     int 10h 
 	writewinner p1cl,p2cl,p1lives,p2lives,mesg1,mesg2,drawresult ,wordsize    
-    gl: 
+    mov color , 10h  
+	gl: 
      cmp frame ,0 
      je g0 
      cmp frame, 1 
@@ -333,15 +334,16 @@ gameover proc far
          jl inlop 
      inc dx  
      cmp dx , mgy
-     jl outlop  
-     inc frame
+     jl outlop 
+	 xor frameincrease,1
+	 mov ax ,frameincrease
+     add frame,ax 
 	 mov cx ,0FFFFh
      cmp frame , 8
      jl skip
 	 inc color 
      mov frame , 0
 	skip:NOP
-	;print winner
 ;print options
 	mov ah,1
     int 16h 
@@ -415,7 +417,6 @@ gameover proc far
 	call Delay
 	jmp gl
 quit: 
-	mov color , 0fh  
 	ret 
 gameover endp 
 Delay proc 
