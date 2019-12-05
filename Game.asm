@@ -35,7 +35,7 @@ p1lives db 5h
 p1invc db 0h ;invincible
 CurrentWeapon1 db 1
 CurrentBullet1 db 1
-timer1         db 0
+timer1         dw 0
 InvertFlag1 dw 0
 DoubleJumpFlag1 dw 0
 DoubleDamageFlag1 dw 0
@@ -57,7 +57,7 @@ p2lives db 5h
 p2invc db 0h ;invincible
 CurrentWeapon2 db 2
 CurrentBullet2 db 2
-timer2         db 0
+timer2         dw 0
 InvertFlag2 dw 0
 DoubleJumpFlag2 dw 0
 DoubleDamageFlag2 dw 0

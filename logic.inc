@@ -81,7 +81,7 @@ HandleEff:
 	mov ax, 1
 	mov [si], ax
 	mov bulx, 0
-	mov timer, 100   ; 100 Iterations
+	mov timer, 200   ; 200 Iterations
 finish:
 ENDM CheckCollisionBullet
 ;========================================================================================

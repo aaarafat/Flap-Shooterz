@@ -308,21 +308,20 @@ endm clearhearts
 ;========================================================================================
 DrawTimer Macro timer1, flag1, timer2, flag2
 	Local back1, back2, return1, return2, flag21, flag31, flag41, flag22, flag32, flag42
-	mov bl, 3
-	mov ax, 0
-	mov al, timer1
+	mov bl, 6
+	mov ax, timer1
 	div bl
-	mov timer1, al
-	mov ax, 0
-	mov al, timer2
+	mov ah, 0
+	mov timer1, ax
+	mov ax, timer2
 	div bl
-	mov timer2, al
+	mov ah, 0
+	mov timer2, ax
 	
 	cmp timer1, 0
 	je return1
 	mov bh, 0h
-	mov cx,0
-	mov cl, timer1
+	mov cx, timer1
 	mov dx, 10h
 	mov ah, 0ch
 	cmp flag1, 1
@@ -347,8 +346,7 @@ return1:
 	cmp timer2, 0
 	je return2
 	mov bh, 0h
-	mov cx, 0
-	mov cl, timer2
+	mov cx, timer2
 	mov dx, 10h
 	mov ah, 0ch
 	cmp flag2, 1
@@ -376,34 +374,31 @@ back2: push cx
 	pop cx
 	loop back2
 return2:	
-	mov bl, 3
-	mov ax, 0
-	mov al, timer1
+	mov bl, 6
+	mov ax, timer1
 	mul bl
-	mov timer1, al
-	mov ax, 0
-	mov al, timer2
+	mov timer1, ax
+	mov ax, timer2
 	mul bl
-	mov timer2, al
+	mov timer2, ax
 endm DrawTimer
 ;========================================================================================
 ClearTimer Macro timer1, timer2
 	Local back1, back2, return1, return2
-	mov bl, 3
-	mov ax, 0
-	mov al, timer1
+	mov bl, 6
+	mov ax, timer1
 	div bl
-	mov timer1, al
-	mov ax, 0
-	mov al, timer2
+	mov ah, 0
+	mov timer1, ax
+	mov ax, timer2
 	div bl
-	mov timer2, al
+	mov ah, 0
+	mov timer2, ax
 	
 	cmp timer1, 0
 	je return1
 	mov bh, 0h
-	mov cx, 0
-	mov cl, timer1
+	mov cx, timer1
 	mov dx, 10h
 	mov ah, 0ch
 	mov al, 00h
@@ -413,8 +408,7 @@ return1:
 	cmp timer2, 0
 	je return2
 	mov bh, 0h
-	mov cx, 0
-	mov cl, timer2
+	mov cx, timer2
 	mov dx, 10h
 	mov ah, 0ch
 	mov al, 00h
@@ -427,13 +421,11 @@ back2: push cx
 	pop cx
 	loop back2
 return2:
-    mov bl, 3
-	mov ax, 0
-	mov al, timer1
+    mov bl, 6
+	mov ax, timer1
 	mul bl
-	mov timer1, al
-	mov ax, 0
-	mov al, timer2
+	mov timer1, ax
+	mov ax, timer2
 	mul bl
-	mov timer2, al
+	mov timer2, ax
 endm ClearTimer
