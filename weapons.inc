@@ -107,3 +107,109 @@ noupdate:
 
 ENDM MoveB
 ;========================================================================================
+
+;========================================================================================
+DrawBullet Macro	
+	push es
+	mov ax, ds
+	mov es, ax
+
+	add CurrentBulletCount1, '0'
+	add CurrentBulletCount2, '0'
+	;---PLAYER 1---;
+	;DrawB 0, 10, CurrentWeapon1
+    mov ah,13h ;Display
+	mov al, 0h ;text mode
+    mov bh,0 ;Page 0
+	mov cx, 2 ;string length
+    mov bl,p1cl ;color
+	mov dh, 1h
+	mov dl, 1h ;set row, col
+	lea bp, Bulletstr1
+    int 10h
+	;--------------;
+	
+	;---PLAYER 2---;
+	mov ah,13h ;Display
+	mov al, 0h ;text mode
+    mov bh,0 ;Page 0
+	mov cx, 2 ;string length
+    mov bl,p2cl ;color
+	mov dh, 1h
+	mov dl, 38
+	lea bp, Bulletstr2
+    int 10h
+	;DrawB 308, 10, CurrentWeapon2
+	;--------------;
+	pop es
+	sub CurrentBulletCount1, '0'
+	sub CurrentBulletCount2, '0'
+endm DrawBullet
+;========================================================================================
+
+;========================================================================================
+ClearBullet Macro	
+	; move cursor
+    mov ah,2
+    mov dh, 1
+	mov dl, 0
+    mov bh, 0
+    int 10h
+	;---PLAYER 1---;
+	;ClearB 0, 10
+    mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, ' ' ;space
+    mov cl, 3
+    mov ch, 0
+    mov bl,09h
+    int 10h
+	;--------------;
+
+	; move cursor
+	mov ah, 1
+	mov dl,37
+	mov dh,02h
+	mov bh,0
+	int 10h
+	;---PLAYER 2---;
+	mov ah,9 ;Display
+    mov bh,0 ;Page 0
+    mov al, ' ' ;space
+    mov cl, 3
+    mov ch, 0
+    mov bl,04h
+    int 10h
+	;ClearB 308, 10
+	;--------------;
+endm ClearBullet
+;========================================================================================
+
+;========================================================================================
+UpdateBullet macro
+	;---PLAYER 1---;
+	mov si, offset Bullet1
+	mov ax, 0
+	mov al , CurrentWeapon1
+	dec ax
+	mov bx, 2
+	mul bl
+	add si, ax
+	mov ax, [si]
+	mov CurrentBulletCount1, al
+	;--------------;
+	
+	;---PLAYER 2---;
+	mov si, offset Bullet2
+	mov ax, 0
+	mov al , CurrentWeapon2
+	dec ax
+	mov bx, 2
+	mul bl
+	add si, ax
+	mov ax, [si]
+	mov CurrentBulletCount2, al
+	;--------------;
+	
+endm UpdateBullet
+;========================================================================================
