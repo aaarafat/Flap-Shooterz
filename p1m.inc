@@ -307,7 +307,7 @@ clearhearts Macro p1lives,p2lives
 endm clearhearts
 ;========================================================================================
 DrawTimer Macro timer1, flag1, timer2, flag2
-	Local back1, back2, return1, return2, flag21, flag31, flag41, flag22, flag32, flag42
+	Local back1, back2, return1, return2, flag21, flag31, flag41, flag22, flag32, flag42,lp1,lp2,preLp1,preLp2
 	mov bl, 6
 	mov ax, timer1
 	div bl
@@ -327,21 +327,28 @@ DrawTimer Macro timer1, flag1, timer2, flag2
 	cmp flag1, 1
 	jne flag21
 	mov al, 05h
-	jmp back1
+	jmp preLp1
 flag21:
 	cmp flag1+2, 1
 	jne flag31
 	mov al, 02h
-	jmp back1
+	jmp preLp1
 flag31:
 	cmp flag1 + 4, 1
 	jne flag41
 	mov al, 04h
-    jmp back1	
+    jmp preLp1	
 flag41:
-	mov al, 0fh	
+	mov al, 0fh
+preLp1:
+	mov cx, 4
+lp1:push cx
+	mov cx, timer1
 back1: int 10h
 	loop back1
+	inc dx
+	pop cx
+	loop lp1
 return1:
 	cmp timer2, 0
 	je return2
@@ -352,19 +359,23 @@ return1:
 	cmp flag2, 1
 	jne flag22
 	mov al, 05h
-	jmp back2
+	jmp preLp2
 flag22:
 	cmp flag2+2, 1
 	jne flag32
 	mov al, 02h
-	jmp back2
+	jmp preLp2
 flag32:
 	cmp flag2 + 4, 1
 	jne flag42
 	mov al, 04h
-    jmp back2	
+    jmp preLp2	
 flag42:
 	mov al, 0fh	
+preLp2:
+	mov cx, 4
+lp2: push cx
+	mov cx, timer2
 back2: push cx
 	mov bx, 320
 	sub bx, cx
@@ -373,6 +384,9 @@ back2: push cx
 	int 10h
 	pop cx
 	loop back2
+	inc dx
+	pop cx
+	Loop lp2
 return2:	
 	mov bl, 6
 	mov ax, timer1
@@ -384,7 +398,7 @@ return2:
 endm DrawTimer
 ;========================================================================================
 ClearTimer Macro timer1, timer2
-	Local back1, back2, return1, return2
+	Local back1, back2, return1, return2, lp2, lp1
 	mov bl, 6
 	mov ax, timer1
 	div bl
@@ -402,8 +416,14 @@ ClearTimer Macro timer1, timer2
 	mov dx, 10h
 	mov ah, 0ch
 	mov al, 00h
+	mov cx, 4
+lp1:push cx
+	mov cx, timer1
 back1: int 10h
 	loop back1
+	inc dx
+	pop cx
+	loop lp1
 return1:
 	cmp timer2, 0
 	je return2
@@ -412,6 +432,9 @@ return1:
 	mov dx, 10h
 	mov ah, 0ch
 	mov al, 00h
+	mov cx, 4
+lp2: push cx
+	mov cx, timer2
 back2: push cx
 	mov bx, 320
 	sub bx, cx
@@ -420,6 +443,9 @@ back2: push cx
 	int 10h
 	pop cx
 	loop back2
+	inc dx
+	pop cx
+	Loop lp2
 return2:
     mov bl, 6
 	mov ax, timer1
