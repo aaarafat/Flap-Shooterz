@@ -1,6 +1,8 @@
 	EXTRN gameover:far
+	EXTRN choosecolor:far
 	PUBLIC currentoption,option1,optionssize
 	PUBLIC p1cl,p2cl,p1lives,p2lives
+	PUBLIC p1cd,p2cd
 include p1m.inc
 include barrier.inc
 include logic.inc
@@ -90,13 +92,14 @@ main proc far
     mov ah,0
     mov al,13h
     int 10h
-
+	choose:
+	call choosecolor
     mov Pipx1 ,155
     getrandom Gap1
     mov Pipx2 ,160
     getrandom Gap2
     mov Running, 1
-
+	
     ;------------------
     ;MainMenuLoop
     ;------------------
@@ -125,7 +128,7 @@ GameLoop:
 	call gameover
 	call initailize	
 	cmp currentoption ,0
-	je GameLoop
+	je choose
     mov ah, 4ch
     int 21h
 
