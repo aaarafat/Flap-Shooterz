@@ -230,6 +230,9 @@ choosecolor proc far
 	mov ah,0
 	mov al,13h
 	int 10h
+		mov ah,0ch
+    mov al,0
+    int 21h
 	ret
    choosecolor endp  
 end
