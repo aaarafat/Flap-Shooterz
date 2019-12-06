@@ -42,6 +42,10 @@ InvertFlag1 dw 0
 DoubleJumpFlag1 dw 0
 DoubleDamageFlag1 dw 0
 FreezeFlag1 dw 0
+Bullet1 dw 5,5,5,5
+Bulletstr1 label byte
+        db 'x'
+CurrentBulletCount1 db 0h
 ;=====================================
 
 ;============Player 2=================
@@ -64,6 +68,10 @@ InvertFlag2 dw 0
 DoubleJumpFlag2 dw 0
 DoubleDamageFlag2 dw 0
 FreezeFlag2 dw 0
+Bullet2 dw 5,5,5,5
+Bulletstr2 label byte
+        db 'x'
+CurrentBulletCount2 db 0h
 ;======================================
 
 Pipx1 dw 0;pipe of first player
@@ -137,8 +145,7 @@ main endp
 
 ;------Clear Screen-----
 Clear proc
-	ClearB 0, 50
-	ClearB 316, 50
+	ClearBullet
     clearhearts p1lives, p2lives
     ClearP p1x, p1y, m1x , m1y ; Clear Player1
     ClearP p2x, p2y, m2x , m2y ; Clear Player1
@@ -159,8 +166,8 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1
-    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2 
+    PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
+    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2 
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -178,8 +185,9 @@ GetInput endp
 
 ;------Draw Function----
 Draw proc
-	DrawB 0, 10, CurrentWeapon1
-	DrawB 316, 10, CurrentWeapon2
+	DrawBullet
+	DrawB 2, 10, CurrentWeapon1
+	DrawB 298, 10, CurrentWeapon2
     ;draw first pipe
     DrawPipe Pipx1 , Gap1
     ;draw second pipe
@@ -244,7 +252,8 @@ Update proc
 	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, InvertFlag2, timer2
 	;-----timer----
 	Call UpdateTimer
-	
+	;---Update Bullet Count---
+	UpdateBullet
     ret
 Update endp
 ;-----------------------
@@ -283,6 +292,10 @@ mov InvertFlag1 , 0
 mov DoubleJumpFlag1 , 0
 mov DoubleDamageFlag1 , 0
 mov FreezeFlag1 , 0
+mov Bullet1, 5
+mov Bullet1 + 1, 5
+mov Bullet1 + 2, 5
+mov Bullet1 + 3, 5
 ;=====================================
 
 ;============Player 2=================
@@ -298,6 +311,10 @@ mov InvertFlag2 , 0
 mov DoubleJumpFlag2 , 0
 mov DoubleDamageFlag2 , 0
 mov FreezeFlag2 , 0
+mov Bullet2, 5
+mov Bullet2 + 1, 5
+mov Bullet2 + 2, 5
+mov Bullet2 + 3, 5
 ;======================================
 
 mov Pipx1 , 0;pipe of first player

@@ -149,8 +149,8 @@ UpdatePlayer Macro Tunnel, p1y
 ENDM UpdatePlayer
 ;========================================================================================
 ;========================================================================================
-PlayerInput Macro Up,Down,Shoot,ChangeWeaponR,ChangeWeaponL,Tunnel,px,py,bulx,buly,W,CurrentBullet,IsPlayer1,FreezeFlag,InvertFlag,DoubleJumpFlag
-	LOCAL MoveUp,MoveDown,PShoot,Return,PLAYER2,WeaponL,WeaponR,ToRightMostWeapon,ToLeftMostWeapon,CheckWeapon,SmallJmp1,SmallJmp2,SkipMove,CheckDown
+PlayerInput Macro Up,Down,Shoot,ChangeWeaponR,ChangeWeaponL,Tunnel,px,py,bulx,buly,W,CurrentBullet,IsPlayer1,FreezeFlag,InvertFlag,DoubleJumpFlag,BulletCount
+	LOCAL MoveUp,MoveDown,PShoot,Return,PLAYER2,WeaponL,WeaponR,ToRightMostWeapon,ToLeftMostWeapon,CheckWeapon,SmallJmp1,SmallJmp2,SkipMove,CheckDown,SmallJmp3,WeaponLSmallJmp,WeaponRSmallJmp
 	mov ah, 1
     int 16h   ; Get Key Pressed
     jz SmallJmp1 ; If no Key Pressed Return
@@ -172,9 +172,9 @@ SkipMove:
     cmp ah, Shoot     ; IF SPACE SHOOT
     je PShoot
 	cmp ah, ChangeWeaponR
-	je WeaponR
+	je WeaponRSmallJmp
 	cmp ah, ChangeWeaponL
-	je WeaponL
+	je WeaponLSmallJmp
 SmallJmp1:
     jmp SmallJmp2
 MoveUp:
@@ -198,10 +198,26 @@ MoveDown:
 	inc Tunnel
 	jmp SmallJmp2
 SmallJmp2: 
-    jmp Return
+    jmp SmallJmp3
+WeaponLSmallJmp:
+	jmp WeaponL
+WeaponRSmallJmp:
+	jmp WeaponR
 PShoot:
     cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
-    jne Return
+    jne SmallJmp3
+	mov ax, 0
+	mov al, W
+	dec ax
+	mov dl, 2
+	mul dl
+	mov si, offset BulletCount
+	add si, ax
+	mov ax, 0
+	cmp [si], ax
+	je SmallJmp3
+	mov ax, 1
+	sub [si], ax
 	mov ah, W
 	mov CurrentBullet, ah
     mov ax, px
@@ -214,6 +230,7 @@ PLAYER2:
     mov ax, py
     add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
     mov buly, ax
+SmallJmp3:
 	jmp Return
 WeaponR:
 	inc W
@@ -252,7 +269,7 @@ drawhearts Macro p1lives,p2lives
     ;mov cl, p1lives
     ;mov ch, 0
 	mov cx, 3 ;string length
-    mov bl,09h ;color
+    mov bl,p1cl ;color
 	mov dx, 0h ;set row, col
 	lea bp, p1livesstr
     int 10h
@@ -265,7 +282,7 @@ drawhearts Macro p1lives,p2lives
     ;mov cl, p1lives
     ;mov ch, 0
 	mov cx, 3 ;string length
-    mov bl,04h ;color
+    mov bl,p2cl ;color
 	mov dx, 25h
 	lea bp, p2livesstr
 
