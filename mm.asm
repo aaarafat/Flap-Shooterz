@@ -1,8 +1,12 @@
 include fs.inc
+include Gameover.inc
 .model small
 .stack
 .data
-
+esckey equ 01h
+upkey equ 48h
+downkey equ 50h
+enterkey equ 1Ch
 FH  DB 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
     DB 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
     DB 1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,2,2,2,2,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -54,7 +58,7 @@ FH  DB 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1
     DB 0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,2,1,1,1,1,1,1,1,1,1,1,1,1,2,0,0,2,1,1,1,1,1,1,1,1,1,1,1,1,2,0
     DB 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,2,1,1,1,1,1,2,0,0,0,1,1,1,2,2,0,0,0,2,1,1,1,1,1,1,1,1,1,1,2,0,0,0,0,2,1,1,1,1,1,1,1,1,1,1,2,0,0
     DB 0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,2,2,2,2,2,0,0,0,0,2,2,2,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,0,0,0
-    
+
 SH  DB 0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0
     DB 0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0
     DB 0,0,0,0,0,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0
@@ -107,46 +111,118 @@ SH  DB 0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
     DB 0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,2,2,1,1,1,1,2,2,0,0,0,2,1,1,2,0,0,2,1,1,1,1,1,1,1,1,1,1,1,1,2,0
     DB 0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0
 fsx DW 96
-fsy DW 25 
+fsy DW 25
 msx DW 0
 msy Dw 0
-clr DB 01h    
+clr DB 01h
+option1 db 8,'NEW GAME'
+option2 db 4,'CHAT'
+option3 db 4,'EXIT'
+optionsize EQU 3
+currentoption dw 0
+Running db 1
+drawcount db 9
 .code
-main proc far 
-    mov ax , @data
-    mov ds , ax
+menu proc far
+    mov ax, @data
+    mov ds, ax
+
     mov ah,0
     mov al,13h
-    int 10h  
-    lp:
+    int 10h
+
+
+MenuLoop:
+    call Draw
+
+    call delay
+
+    call GetInput
+
+    cmp Running, 1
+    jz MenuLoop
+
+    mov ah, 4ch
+    int 21h
+
+menu endp
+
+GetInput proc
+
+mov ah, 1
+int 16h   ; Get Key Pressed
+jz NOFLUSH ; If no Key Pressed Return
+
+
+    cmp ah,upkey
+    jz NOFLUSH
+
+    cmp ah,downkey
+    jz NOFLUSH
+
+    cmp ah,enterkey
+    jnz Continue
+    cmp currentoption, 0
+    ;TODO Call Game
+    jz FLUSH
+    cmp currentoption, 1
+    ;TODO Call Chat
+    jz FLUSH
+    cmp currentoption, 2 ;exit
+    mov ah, esckey
+
+
+Continue:
+    cmp ah,esckey
+    jnz FLUSH
+    mov Running, 0
+
+
+FLUSH:
+    ; Flush Keyboard Buffer
+    mov ah,0ch
+    mov al,0
+    int 21h
+NOFLUSH:
+
+    ret
+GetInput endp
+
+Draw proc
+
+    WriteGameoverUI currentoption,option1,optionsize
     CALL FpShtrz
-    ic:inc clr 
+    ic:inc clr
     cmp clr , 06h
-    je ic 
+    je ic
     cmp clr , 0eh
     jl dly
     mov clr,1
-    dly:NOP
-    call delay
-    jmp lp
-    mov ah, 4ch
-	int 21h
-    
-    
-    
-main endp 
+    dly:
+    NOP
+    ret
+
+Draw endp
 
 FpShtrz proc
-    DrawHalfMM  fsx,fsy,clr,0fh,FH 
+
+    inc drawcount
+    cmp drawcount, 10
+    jz update
+    jmp noupdate
+update:
+    DrawHalfMM  fsx,fsy,clr,0fh,FH
     mov BX,fsx
     add BX,65
     DrawHalfMM  BX,fsy,clr,0fh,SH
-    RET    
+    mov drawcount, 0
+noupdate:
+    RET
 FpShtrz endp
 
 
 
-Delay proc 
+Delay proc
 mov di, 1
 mov ah, 0
 int 1Ah ; actual time
@@ -163,4 +239,4 @@ ja delayloop
 
 Delay endp
 
-end main
+end
