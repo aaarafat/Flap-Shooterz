@@ -293,9 +293,9 @@ mov DoubleJumpFlag1 , 0
 mov DoubleDamageFlag1 , 0
 mov FreezeFlag1 , 0
 mov Bullet1, 5
-mov Bullet1 + 1, 5
 mov Bullet1 + 2, 5
-mov Bullet1 + 3, 5
+mov Bullet1 + 4, 5
+mov Bullet1 + 6s, 5
 ;=====================================
 
 ;============Player 2=================
@@ -312,9 +312,9 @@ mov DoubleJumpFlag2 , 0
 mov DoubleDamageFlag2 , 0
 mov FreezeFlag2 , 0
 mov Bullet2, 5
-mov Bullet2 + 1, 5
 mov Bullet2 + 2, 5
-mov Bullet2 + 3, 5
+mov Bullet2 + 4, 5
+mov Bullet2 + 6, 5
 ;======================================
 
 mov Pipx1 , 0;pipe of first player
