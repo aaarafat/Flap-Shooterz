@@ -114,13 +114,8 @@ choosecolor proc far
     
     ClearP p1x, p1y, m1x , m1y
     DrawP p1x, p1y, m1x , m1y , p1cl , p1cd
-    mov di, 1 
-    mov cx, 7      ;HIGH WORD.
-    mov dx, 0A120h ;LOW WORD.
-     mov ah, 86h    ;WAIT.
-    int 15h
-    
 
+	call Delay
 	jmp uiloop 
 	quit:
 	mov ah,0ch
@@ -218,13 +213,8 @@ choosecolor proc far
     
     ClearP p2x, p2y, m2x , m2y
     DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
-    mov di, 1 
-    mov cx, 7      ;HIGH WORD.
-    mov dx, 0A120h ;LOW WORD.
-     mov ah, 86h    ;WAIT.
-    int 15h
-    
 
+	call Delay
 	jmp uiloop2 
 	quit2:
 	mov ah,0
@@ -235,4 +225,20 @@ choosecolor proc far
     int 21h
 	ret
    choosecolor endp  
+   Delay proc 
+mov di, 5
+mov ah, 0
+int 1Ah ; actual time
+mov bx,dx
+delayloop:
+        mov ah, 0
+        int 1Ah
+        sub dx,bx
+        cmp di,dx
+ja delayloop
+
+
+    ret
+
+Delay endp
 end
