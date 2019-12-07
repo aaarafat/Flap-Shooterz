@@ -1,8 +1,8 @@
 	EXTRN gameover:far
 	EXTRN choosecolor:far
-	PUBLIC currentoption,option1,optionssize
-	PUBLIC p1cl,p2cl,p1lives,p2lives
-	PUBLIC p1cd,p2cd
+	PUBLIC p1lives,p2lives
+	EXTRN p1cd:byte,p2cd:byte,p1cl:byte,p2cl:byte
+	PUBLIC Game
 include p1m.inc
 include barrier.inc
 include logic.inc
@@ -18,17 +18,14 @@ plen   equ  20      ; height and width of player
 slen    equ 4
 swidquart    equ 2
 
-currentoption dw 0
-option1 db 14,"start new game"
-option2 db 9 ,"quit game"
-optionssize dw 2
+
 ;============Player 1================
 p1x    dw   20      ; left upper corner
 p1y    dw   2
 m1x    dw   0       ; right bottom corner
 m1y    dw   0
-p1cl   db   09h     ; p1 body color
-p1cd   db   01h     ; p1 link color
+;p1cl   db   09h     ; p1 body color
+;p1cd   db   01h     ; p1 link color
 bul1x dw 0h   ;p1 bullet x
 bul1y dw 0h   ;p1 bullet y
 p1livesstr label byte
@@ -53,8 +50,8 @@ p2x    dw   280      ; left upper corner
 p2y    dw   2
 m2x    dw   0       ; right bottom corner
 m2y    dw   0
-p2cl   db   0Ch     ; p2 body color
-p2cd   db   04h     ; p2 link color
+;p2cl   db   0Ch     ; p2 body color
+;p2cd   db   04h     ; p2 link color
 bul2x dw 0h   ;p2 bullet x
 bul2y dw 0h   ;p2 bullet y
 p2livesstr label byte
@@ -93,20 +90,11 @@ fcolor    db   0fh,03h,03h,0fh,03h,0fh,0fh,03h,03h,0fh,0fh,03h,0fh,00h,03h,0fh
 
 
 .code
-main proc far
+Game proc far
     mov ax,@data
     mov ds,ax
-    ; change graphics mode
-    mov ah,0
-    mov al,13h
-    int 10h
-	choose:
-	call choosecolor
-    mov Pipx1 ,155
-    getrandom Gap1
-    mov Pipx2 ,160
-    getrandom Gap2
-    mov Running, 1
+    ; init all
+   call initailize
 	
     ;------------------
     ;MainMenuLoop
@@ -133,14 +121,14 @@ GameLoop:
     ;GameOverLoop
     ;------------------
 	
-	call gameover
-	call initailize	
-	cmp currentoption ,0
-	je choose
-    mov ah, 4ch
-    int 21h
+	;call gameover
+	;call initailize	
+	;cmp currentoption ,0
+	;je choose
+    ;mov ah, 4ch
+    ;int 21h
 
-main endp
+Game endp
 
 
 ;------Clear Screen-----
@@ -279,6 +267,9 @@ NoUpdate1:
 NoUpdate2:
 	ret
 UpdateTimer endp
+
+;=======================================================
+
 initailize proc 
 mov p1y ,  2
 mov bul1x , 0h   ;p1 bullet x
@@ -295,7 +286,7 @@ mov FreezeFlag1 , 0
 mov Bullet1, 5
 mov Bullet1 + 2, 5
 mov Bullet1 + 4, 5
-mov Bullet1 + 6s, 5
+mov Bullet1 + 6, 5
 ;=====================================
 
 ;============Player 2=================
@@ -338,4 +329,4 @@ mov P2Tunnel ,   0h
     int 10h
 	ret 
 initailize endp
-end main
+end

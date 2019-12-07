@@ -1,5 +1,9 @@
 include fs.inc
 include Gameover.inc
+EXTRN choosecolor:far
+EXTRN status:byte
+EXTRN p1cl:byte, p2cl:byte, p1cd:byte, p2cd:byte
+PUBLIC menu
 .model small
 .stack
 .data
@@ -133,18 +137,27 @@ menu proc far
 
 
 MenuLoop:
+	cmp status, 1   ; if Change color
+	je CC
     call Draw
 
     call delay
 
     call GetInput
+	
+	cmp status, 3
+	je Close
 
-    cmp Running, 1
-    jz MenuLoop
-
-    mov ah, 4ch
+    jmp MenuLoop
+	
+CC:
+	; Flush Keyboard Buffer
+    mov ah,0ch
+    mov al,0
     int 21h
-
+	call choosecolor
+	mov status, 2
+Close:
 menu endp
 
 GetInput proc
@@ -161,21 +174,19 @@ jz NOFLUSH ; If no Key Pressed Return
     jz NOFLUSH
 
     cmp ah,enterkey
-    jnz Continue
-    cmp currentoption, 0
-    ;TODO Call Game
-    jz FLUSH
-    cmp currentoption, 1
-    ;TODO Call Chat
-    jz FLUSH
-    cmp currentoption, 2 ;exit
-    mov ah, esckey
-
-
-Continue:
-    cmp ah,esckey
     jnz FLUSH
-    mov Running, 0
+   ; cmp currentoption, 0
+    ;TODO Call Game
+   ; jz FLUSH
+   ; cmp currentoption, 1
+    ;TODO Call Chat
+   ; jz FLUSH
+   ; cmp currentoption, 2 ;exit
+   ; mov ah, esckey
+	mov ax, currentoption
+	inc ax
+	mov status, al
+
 
 
 FLUSH:
