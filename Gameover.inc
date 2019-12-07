@@ -24,7 +24,7 @@ writewinner macro playercolor1,playercolor2,lives1,lives2,mesg1,mesg2,drawresult
     mov bh, 0
     mov cx, size
     mov dl, 14
-    mov dh, 17
+    mov dh, 12
     push ds
     pop es
     mov ah, 13h
@@ -68,7 +68,7 @@ WriteGameoverUI macro currentoption,option1,optionssize
     mov currentoption,ax
     nopress:
 	;init for int 10h
-    mov dh, 18;row
+    mov dh, 15;row
 	mov bh,0 ;Page 0
     mov cx,optionssize;loop to print option
     mov bp,offset option1
@@ -101,7 +101,7 @@ WriteGameoverUI macro currentoption,option1,optionssize
 	dec dl
 	mov ah, 2
 	int 10h
-	inc dh;new line/row
+	add dh,2;new line/row
 	pop cx
     loop printoptions  
 endm WriteGameoverUI  

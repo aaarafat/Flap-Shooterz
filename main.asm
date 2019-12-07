@@ -15,8 +15,8 @@ p1cd db 0
 p2cl db 0
 p2cd db 0
 currentoption dw 0
-option1 db 14,"start new game"
-option2 db 9 ,"quit game"
+option1 db 14,"START NEW GAME"
+option2 db 9 ,"QUIT GAME"
 optionssize dw 2
 .code
 main proc far

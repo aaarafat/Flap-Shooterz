@@ -268,10 +268,10 @@ gw  equ 66
 color db 0fh
 ci    db 0
 frameincrease dw 0
-mesg1 db "PLAYER1 WIN!"
-mesg2 db "PLAYER2 WIN!"
-drawresult db "    draw!   "
-wordsize dw 12  
+mesg1 db "PLAYER1 WIN !"
+mesg2 db "PLAYER2 WIN !"
+drawresult db "    DRAW!   "
+wordsize dw 13  
 .code
 gameover proc far 
     mov ax,@data
