@@ -325,7 +325,7 @@ endm clearhearts
 ;========================================================================================
 DrawTimer Macro timer1, flag1, timer2, flag2
 	Local back1, back2, return1, return2, flag21, flag31, flag41, flag22, flag32, flag42,lp1,lp2,preLp1,preLp2
-	mov bl, 6
+	mov bl, timerWdP
 	mov ax, timer1
 	div bl
 	mov ah, 0
@@ -405,7 +405,7 @@ back2: push cx
 	pop cx
 	Loop lp2
 return2:	
-	mov bl, 6
+	mov bl, timerWdP
 	mov ax, timer1
 	mul bl
 	mov timer1, ax
@@ -416,7 +416,7 @@ endm DrawTimer
 ;========================================================================================
 ClearTimer Macro timer1, timer2
 	Local back1, back2, return1, return2, lp2, lp1
-	mov bl, 6
+	mov bl, timerWdP
 	mov ax, timer1
 	div bl
 	mov ah, 0
@@ -464,7 +464,7 @@ back2: push cx
 	pop cx
 	Loop lp2
 return2:
-    mov bl, 6
+    mov bl, timerWdP
 	mov ax, timer1
 	mul bl
 	mov timer1, ax
