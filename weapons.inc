@@ -94,12 +94,12 @@ MoveB MACRO bulx, IsPlayer1
 	mov ax, IsPlayer1
 	cmp ax, 0
 	je PLAYER2
-    add bulx, 4 ;move the shoot
+    add bulx, 8 ;move the shoot
     cmp bulx, ScreenWidth ;if we reached to the end of screen
     jb noupdate
     mov bulx, 0
 PLAYER2:
-	sub bulx, 4
+	sub bulx, 8
 	cmp bulx, 0
 	jg noupdate
 	mov bulx, 0
