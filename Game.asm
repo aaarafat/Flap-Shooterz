@@ -89,7 +89,56 @@ hjcolor   db   00h,0ah,02h,00h,0ah,02h,02h,02h,02h,02h,02h,0ah,00h,02h,0ah,00h
 ddcolor   db   04h,00h,00h,04h,00h,0ch,0ch,00h,00h,0ch,0ch,00h,04h,00h,00h,04h
 fcolor    db   0fh,03h,03h,0fh,03h,0fh,0fh,03h,03h,0fh,0fh,03h,0fh,00h,03h,0fh
 ;---------------------------------
-
+;--------THURSTS------------------
+p1th0	DB  00h,00h,2Ah,2Ah,2Ah,2Ah
+		DB  00h,2Ah,2Ah,2Ch,2Ch,2Ch
+		DB  2Ah,2Ah,2Ch,2Ch,2Ch,2Ch
+		DB  2Ah,2Ah,2Ch,2Ch,2Ch,2Ch
+		DB  00h,2Ah,2Ah,2Ch,2Ch,2Ch
+		DB  00h,00h,2Ah,2Ah,2Ah,2Ah
+p1th1	DB  00h,00h,00h,2Ah,2Ah,2Ah
+		DB  00h,00h,2Ah,2Ch,2Ch,2Ch
+		DB  00h,2Ah,2Ch,2Ch,2Ch,2Ch
+		DB  00h,2Ah,2Ch,2Ch,2Ch,2Ch
+		DB  00h,00h,2Ah,2Ch,2Ch,2Ch
+		DB  00h,00h,00h,2Ah,2Ah,2Ah
+p1th2	DB  00h,00h,00h,2Ah,2Ah,2Ah
+		DB  00h,00h,2Ah,2Ah,2Ch,2Ch
+		DB  00h,2Ah,2Ah,2Ch,2Ch,2Ch
+		DB  00h,2Ah,2Ah,2Ch,2Ch,2Ch
+		DB  00h,00h,2Ah,2Ah,2Ch,2Ch
+		DB  00h,00h,00h,2Ah,2Ah,2Ah
+p1th3	DB  00h,00h,2Ah,2Ah,2Ah,2Ah
+		DB  00h,2Ah,2Ah,2Ah,2Ch,2Ch
+		DB  2Ah,2Ah,2Ah,2Ch,2Ch,2Ch
+		DB  2Ah,2Ah,2Ah,2Ch,2Ch,2Ch
+		DB  00h,2Ah,2Ah,2Ah,2Ch,2Ch
+		DB  00h,00h,2Ah,2Ah,2Ah,2Ah				
+p2th0	DB  2Ah,2Ah,2Ah,2Ah,2Ah,00h
+		DB  2Ch,2Ch,2Ch,2Ah,2Ah,00h
+		DB  2Ch,2Ch,2Ch,2Ch,2Ah,2Ah
+		DB  2Ch,2Ch,2Ch,2Ch,2Ah,2Ah
+		DB  2Ch,2Ch,2Ch,2Ah,2Ah,00h
+		DB  2Ah,2Ah,2Ah,2Ah,2Ah,00h
+p2th1	DB  2Ah,2Ah,2Ah,00h,00h,00h
+		DB  2Ch,2Ch,2Ch,2Ah,00h,00h
+		DB  2Ch,2Ch,2Ch,2Ch,2Ah,00h
+		DB  2Ch,2Ch,2Ch,2Ch,2Ah,00h
+		DB  2Ch,2Ch,2Ch,2Ah,00h,00h
+		DB  2Ah,2Ah,2Ah,00h,00h,00h
+p2th2	DB  2Ah,2Ah,2Ah,00h,00h,00h
+		DB  2Ch,2Ch,2Ah,2Ah,00h,00h
+		DB  2Ch,2Ch,2Ch,2Ah,2Ah,00h
+		DB  2Ch,2Ch,2Ch,2Ah,2Ah,00h
+		DB  2Ch,2Ch,2Ah,2Ah,00h,00h
+		DB  2Ah,2Ah,2Ah,00h,00h,00h
+p2th3	DB  2Ah,2Ah,2Ah,2Ah,00h,00h
+		DB  2Ch,2Ch,2Ah,2Ah,2Ah,00h
+		DB  2Ch,2Ch,2Ch,2Ah,2Ah,2Ah
+		DB  2Ch,2Ch,2Ch,2Ah,2Ah,2Ah
+		DB  2Ch,2Ch,2Ah,2Ah,2Ah,00h
+		DB  2Ah,2Ah,2Ah,2Ah,00h,00h
+;---------------------------------
 
 .code
 Game proc far
