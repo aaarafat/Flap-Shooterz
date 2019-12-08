@@ -120,6 +120,8 @@ ClearP Macro px, py, mx, my
 	add mx , plen
 	add my , plen
 	mov DI , py
+	sub px , 6 
+	add mx , 6
 olop:mov SI , px
 ilop:mov cx , SI
 		mov dx , DI
@@ -132,7 +134,8 @@ ilop:mov cx , SI
     inc DI
     cmp DI , my
     jle olop ;end outterloop
-
+	add px , 6 
+	sub mx , 6
 ENDM ClearP1
 ;========================================================================================
 ;========================================================================================
@@ -472,3 +475,91 @@ return2:
 	mul bl
 	mov timer2, ax
 endm ClearTimer
+;=======================================================================================================================
+DrawThrust MACRO p1x,p1y,p2x,p2y
+	LOCAL g0,g1,g2,g3,olop1,olop2,ilop1,ilop2,ret,then
+	 cmp currSpr ,0 
+     je g0 
+     cmp currSpr, 1 
+     je g1
+     cmp currSpr, 2 
+     je g2
+     cmp currSpr, 3 
+     je g3
+     g0:lea SI , p1th0
+	 lea DI , p2th0
+     jmp then  
+     g1:lea SI , p1th1
+	 lea DI , p2th1
+     jmp then
+     g2:lea SI , p1th2
+	 lea DI , p2th2
+     jmp then
+     g3:lea SI , p1th3
+	 lea DI , p2th3
+then:mov ax , p1x
+	 mov bx , p1y
+	 mov th1x , ax
+	 mov th1y , bx
+	 mov mt1x , ax
+	 mov mt1y , bx
+	 mov ax , p2x 
+	 add ax , plen
+	 mov bx , p2y
+	 mov th2x , ax
+	 mov th2y , bx
+	 mov mt2x , ax
+	 mov mt2y , bx
+	 mov ax ,plen
+	 sub ax , 6 
+	 mov cl , 1
+	 shr ax , cl  ; move thurst to the center of player 
+	 add th1y , ax
+	 add th2y , ax
+	 add mt1y , ax
+	 add mt1y , 6
+	 add mt2y , ax
+	 add mt2y , 6	 
+        ;align the thrust in the X axes
+
+	 add mt2x , 6 
+	 sub th1x , 6 
+	 
+		 ;player one
+	 mov dx , th1y
+	 olop1:
+	 mov cx , th1x
+	 ilop1:
+		 mov al , [SI]
+		 mov ah,0ch 
+         int 10h   
+         inc cx 
+         inc SI
+         cmp cx,mt1x
+         jl ilop1  
+	inc dx  
+    cmp dx , mt1y
+    jl olop1
+	;player two
+	 mov dx , th2y
+	 olop2:
+	 mov cx , th2x
+	 ilop2:
+		 mov al , [DI]
+		 mov ah,0ch 
+         int 10h   
+         inc cx 
+         inc DI
+         cmp cx,mt2x
+         jl ilop2 
+	inc dx  
+    cmp dx , mt2y
+    jl olop2 
+	inc currSpr
+	cmp currSpr , 4
+	jl ret 
+	mov currSpr , 0
+	ret:NOP
+	 
+ENDM DrawThrust
+	

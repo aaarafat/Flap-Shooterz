@@ -138,6 +138,17 @@ p2th3	DB  2Ah,2Ah,2Ah,2Ah,00h,00h
 		DB  2Ch,2Ch,2Ch,2Ah,2Ah,2Ah
 		DB  2Ch,2Ch,2Ah,2Ah,2Ah,00h
 		DB  2Ah,2Ah,2Ah,2Ah,00h,00h
+currSpr DB 0
+frame   DB 0
+th1x    DW 0
+th1y    DW 0
+th2x    DW 0
+th2y	DW 0 
+mt1x	DW 0
+mt1y	DW 0
+mt2x	DW 0
+mt2y	DW 0
+
 ;---------------------------------
 
 .code
@@ -235,6 +246,8 @@ Draw proc
     DrawP p1x, p1y, m1x , m1y , p1cl , p1cd
     ; Draw Player 2
     DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
+	; Thrust 
+	DrawThrust p1x,p1y,p2x,p2y
     cmp bul1x, 0
     jz noshoot1
 	Fire CurrentBullet1, bul1x, bul1y
@@ -270,7 +283,7 @@ Delay endp
 ;---------------------
 ;----Update Function--
 Update proc
-
+	inc frame
     MoveB bul1x, 1
 	MoveB bul2x, 0
     ; UPDATE PLAYER

@@ -9,6 +9,14 @@ m1x    dw   0       ; right bottom corner
 m1y    dw   0  
 p1cl   db   09h     ; p1 body color
 p1cd   db   01h     ; p1 link color
+th1x    DW 0
+th1y    DW 0
+th2x    DW 0
+th2y	DW 0 
+mt1x	DW 0
+mt1y	DW 0
+mt2x	DW 0
+mt2y	DW 0
 Running db  0h   
 Tunnel dw   0h  
 TunnelSize dw 24
@@ -21,20 +29,36 @@ main proc far
     mov al,13h
     int 10h
     
-    mov Running, 1
-GameLoop:
-
-    ; Clear
-    Call Clear 
-    ; Get Input
-    Call GetInput   
-    ; Draw
-    Call Draw
-    ; Delay
-    Call Delay
-    
-    cmp Running, 1                                  
-    je GameLoop 
+	 ;player one
+	 mov dx , th1y
+	 olop1 :
+	 mov cx , th1x
+	 ilop1:
+		 mov al , [SI]
+		 ah,0ch 
+         int 10h   
+         inc cx 
+         inc SI
+         cmp cx,mt1x
+         jl ilop1  
+	inc dx  
+    cmp dx , mt1y
+    jl olop1
+	;player two
+	 mov dx , th2y
+	 olop2 :
+	 mov cx , th2x
+	 ilop2:
+		 mov al , [DI]
+		 ah,0ch 
+         int 10h   
+         inc cx 
+         inc DI
+         cmp cx,mt2x
+         jl ilop2 
+	inc dx  
+    cmp dx , mt2y
+    jl olop2 
     
     
 	mov ah, 4ch
