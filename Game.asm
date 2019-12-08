@@ -198,7 +198,7 @@ Clear proc
 	ClearBullet
     clearhearts p1lives, p2lives
     ClearP p1x, p1y, m1x , m1y ; Clear Player1
-    ClearP p2x, p2y, m2x , m2y ; Clear Player1
+    ClearP p2x, p2y, m2x , m2y ; Clear Player2
     DeletePipe Pipx1 ,Gap1
     DeletePipe Pipx2 ,Gap2
     cmp bul1x, 0
@@ -235,9 +235,7 @@ GetInput endp
 
 ;------Draw Function----
 Draw proc
-	DrawBullet
-	DrawB 2, 10, CurrentWeapon1
-	DrawB 298, 10, CurrentWeapon2
+	
     ;draw first pipe
     DrawPipe Pipx1 , Gap1
     ;draw second pipe
@@ -248,6 +246,9 @@ Draw proc
     DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
 	; Thrust 
 	DrawThrust p1x,p1y,p2x,p2y
+	DrawBullet
+	DrawB 2, 10, CurrentWeapon1
+	DrawB 298, 10, CurrentWeapon2
     cmp bul1x, 0
     jz noshoot1
 	Fire CurrentBullet1, bul1x, bul1y
