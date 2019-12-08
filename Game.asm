@@ -113,7 +113,7 @@ p1th3	DB  00h,00h,2Ah,2Ah,2Ah,2Ah
 		DB  2Ah,2Ah,2Ah,2Ch,2Ch,2Ch
 		DB  2Ah,2Ah,2Ah,2Ch,2Ch,2Ch
 		DB  00h,2Ah,2Ah,2Ah,2Ch,2Ch
-		DB  00h,00h,2Ah,2Ah,2Ah,2Ah				
+		DB  00h,00h,2Ah,2Ah,2Ah,2Ah
 p2th0	DB  2Ah,2Ah,2Ah,2Ah,2Ah,00h
 		DB  2Ch,2Ch,2Ch,2Ah,2Ah,00h
 		DB  2Ch,2Ch,2Ch,2Ch,2Ah,2Ah
@@ -143,7 +143,7 @@ frame   DB 0
 th1x    DW 0
 th1y    DW 0
 th2x    DW 0
-th2y	DW 0 
+th2y	DW 0
 mt1x	DW 0
 mt1y	DW 0
 mt2x	DW 0
@@ -157,7 +157,7 @@ Game proc far
     mov ds,ax
     ; init all
    call initailize
-	
+
     ;------------------
     ;MainMenuLoop
     ;------------------
@@ -178,6 +178,21 @@ GameLoop:
     cmp Running, 1
     je GameLoop
 
+<<<<<<< HEAD
+=======
+
+    ;------------------
+    ;GameOverLoop
+    ;------------------
+
+	;call gameover
+	;call initailize
+	;cmp currentoption ,0
+	;je choose
+    ;mov ah, 4ch
+    ;int 21h
+
+>>>>>>> 6eea883660006d9b35b2949bf79f345ac0ed991e
 Game endp
 
 
@@ -205,7 +220,7 @@ Clear endp
 ;------Get Input-----
 GetInput proc
     PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
-    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2 
+    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
@@ -223,7 +238,7 @@ GetInput endp
 
 ;------Draw Function----
 Draw proc
-	
+
     ;draw first pipe
     DrawPipe Pipx1 , Gap1
     ;draw second pipe
@@ -232,7 +247,7 @@ Draw proc
     DrawP p1x, p1y, m1x , m1y , p1cl , p1cd
     ; Draw Player 2
     DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
-	; Thrust 
+	; Thrust
 	DrawThrust p1x,p1y,p2x,p2y
 	DrawBullet                    ; Draw bullet counter
 	DrawB 2, 10, CurrentWeapon1   ; Draw bullet 1 
@@ -253,16 +268,16 @@ Draw endp
 ;-----------------------
 
 ;------Delay Function----
-Delay proc 
+Delay proc
 mov di, 1
 mov ah, 0
-int 1Ah ; actual time
-mov bx,dx
+int 1Ah ; number of ticks since midnight (each 18.2 ticks approx 1 sec, so 1 tick is approx 0.05 sec ie 20 fps)
+mov bx,dx ;store prev ticks
 delayloop:
         mov ah, 0
         int 1Ah
-        sub dx,bx
-        cmp di,dx
+        sub dx,bx ;sub newticks - prevticks
+        cmp di,dx ;if 1 > (newticks - prevticks) then one tick has passed
 ja delayloop
 
 
@@ -323,7 +338,7 @@ UpdateTimer endp
 
 ;=======================================================
 
-initailize proc 
+initailize proc
 mov p1y ,  2
 mov bul1x , 0h   ;p1 bullet x
 mov bul1y , 0h   ;p1 bullet y
@@ -380,6 +395,6 @@ mov P2Tunnel ,   0h
 	 mov ah,0
     mov al,13h
     int 10h
-	ret 
+	ret
 initailize endp
 end
