@@ -1,6 +1,11 @@
 writewinner macro playercolor1,playercolor2,lives1,lives2,p1name,p2name,drawresult
   LOCAL print, win2,draw,finish
-; move cursor
+    ;delete all drawn objects
+	mov ah,0
+    mov al,13h
+    int 10h
+	; move cursor
+	;decied who wins
     cmp lives1,0
     jz win2
     mov bp, offset p1name
@@ -13,7 +18,7 @@ writewinner macro playercolor1,playercolor2,lives1,lives2,p1name,p2name,drawresu
     mov bp, offset p2name
 	mov bl,playercolor2
 
-    print:
+	print:
 
     mov al, 1
     mov bh, 0
@@ -57,7 +62,8 @@ endm  writewinner
 WriteGameoverUI macro currentoption,option1,optionssize
  local uiloop,printoptions,nopress,press,white
 
-;print options
+	;print options
+	;get input
 	mov ah,1
     int 16h
     jz nopress
@@ -77,6 +83,7 @@ WriteGameoverUI macro currentoption,option1,optionssize
     inc currentoption
     jmp press
     press:
+	;flush keyboard buffer
     mov ah,0ch
     mov al,0
     int 21h

@@ -32,11 +32,14 @@ m2y dw 0
 choosecolor proc far
     mov ax,@data
     mov ds,ax
+	;delete previous drawn objects
 	mov ah,0
 	mov al,13h
 	int 10h
+	
 	uiloop:
-    mov ah,1
+    ;get input from user
+	mov ah,1
     int 16h
     jz nopress
     cmp ah,048h
@@ -57,6 +60,7 @@ choosecolor proc far
     inc currentcolor1
     jmp press
     press:
+	;flush the keyboard buffer
     mov ah,0ch
     mov al,0
     int 21h
@@ -80,23 +84,23 @@ choosecolor proc far
     mov ch, 0
     inc bp
     ;set cursor to middel of screen
-    ;mov dl,40
-	;sub dl,cl
-	;shr dl,1
-	mov dl,10
+    mov dl,10
 	mov ah, 13h
     int 10h
+	;get forecolor to draw with it 
     lea si,colors
     add si,currentcolor1
-    mov ax,6
-    add si,ax
+    ;get backcolorto draw with it
+	mov ax,6
+    add si,ax	
     mov bl,[si]
     mov p1cd,bl
     sub si,ax
 	mov bl,[si]
     mov p1cl,bl
-
 	mov dh, 3;row
+	;varible that changes from 0 to 1
+	;to make arrows move 
 	cmp count,1
 	je float
 	jne float2
@@ -121,6 +125,8 @@ choosecolor proc far
 	call Delay
 	jmp uiloop
 	quit:
+	;mov selected color by the first player
+	; to end of the array
 	mov ah,0ch
     mov al,0
     int 21h
@@ -137,6 +143,7 @@ choosecolor proc far
     mov backcolors+colorssize2,bl
     mov [si],al
 	uiloop2:
+	;get input
     mov ah,1
     int 16h
     jz nopress2
@@ -158,6 +165,7 @@ choosecolor proc far
     inc currentcolor2
     jmp press2
     press2:
+	;flush keyboard buffer
     mov ah,0ch
     mov al,0
     int 21h
@@ -181,12 +189,10 @@ choosecolor proc far
     mov ch, 0
     inc bp
     ;set cursor to middel of screen
-    ;mov dl,40
-	;sub dl,cl
-	;shr dl,1
 	mov dl,10
 	mov ah, 13h
     int 10h
+	;get the selected colors
     lea si,colors
     add si,currentcolor2
     mov ax,6
@@ -196,7 +202,8 @@ choosecolor proc far
     sub si,ax
 	mov bl,[si]
     mov p2cl,bl
-
+	;make arrows move up and down
+	;as in the above segment
 	mov dh, 10;row
 	cmp count,1
 	je float1
@@ -222,14 +229,16 @@ choosecolor proc far
 	call Delay
 	jmp uiloop2
 	quit2:
+	;delete all the drawn objects
 	mov ah,0
 	mov al,13h
 	int 10h
-		mov ah,0ch
+	mov ah,0ch
     mov al,0
     int 21h
 	ret
    choosecolor endp
+   ;delay proc
    Delay proc
 mov di, 5
 mov ah, 0
