@@ -5,6 +5,8 @@
 		EXTRN p2cl:BYTE
 		EXTRN p1lives:BYTE
 		EXTRN p2lives:BYTE
+        EXTRN p1name:BYTE
+        EXTRN p2name:BYTE
         PUBLIC gameover
 include Gameover.inc
 .model small
@@ -40,7 +42,7 @@ go1 DB 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1
     DB 0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0
     DB 0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0
     DB 0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0
-    
+
 go2 DB 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     DB 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     DB 0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0
@@ -70,7 +72,7 @@ go2 DB 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1
     DB 0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0
     DB 0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0
     DB 0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0
-    DB 0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0 
+    DB 0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0
 
 go3 DB 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     DB 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
@@ -268,39 +270,40 @@ gw  equ 66
 color db 0fh
 ci    db 0
 frameincrease dw 0
-mesg1 db "PLAYER1 WIN !"
-mesg2 db "PLAYER2 WIN !"
+winstr db " WIN !" ;len = 6
+winsize equ 6
+;mesg1 db "PLAYER1 WIN !"
+;mesg2 db "PLAYER2 WIN !"
 drawresult db "    DRAW!   "
-wordsize dw 13  
 .code
-gameover proc far 
+gameover proc far
     mov ax,@data
-    mov ds,ax 
+    mov ds,ax
     ; change graphics mode
     mov ah,0
     mov al,13h
-    int 10h 
-	writewinner p1cl,p2cl,p1lives,p2lives,mesg1,mesg2,drawresult ,wordsize    
-    mov color , 10h  
-	gl: 
-     cmp frame ,0 
-     je g0 
-     cmp frame, 1 
+    int 10h
+	writewinner p1cl,p2cl,p1lives,p2lives,p1name,p2name,drawresult
+    mov color , 10h
+	gl:
+     cmp frame ,0
+     je g0
+     cmp frame, 1
      je g1
-     cmp frame, 2 
+     cmp frame, 2
      je g2
-     cmp frame, 3 
+     cmp frame, 3
      je g3
-     cmp frame, 4 
+     cmp frame, 4
      je g4
-     cmp frame, 5 
+     cmp frame, 5
      je g5
-     cmp frame, 6 
+     cmp frame, 6
      je g6
-     cmp frame ,7 
+     cmp frame ,7
      je g7
      g0:lea SI , go1
-     jmp then  
+     jmp then
      g1:lea SI , go2
      jmp then
      g2:lea SI , go3
@@ -308,18 +311,18 @@ gameover proc far
      g3:lea SI , go4
      jmp then
      g4:lea SI , go5
-     jmp then  
+     jmp then
      g5:lea SI , go6
      jmp then
      g6:lea SI , go7
-     jmp then 
+     jmp then
      g7:lea SI , go8
      then:mov cx , gx
-     mov dx , gy 
-     mov mgx , cx  
+     mov dx , gy
+     mov mgx , cx
      mov mgy , dx
      add mgx , 66
-     add mgy , 30   
+     add mgy , 30
      outlop:
          mov cx , gx
          inlop:
@@ -327,18 +330,18 @@ gameover proc far
 		 and al , al
 		 jz dbp
 		 mov al , color
-         dbp:mov ah,0ch 
-         int 10h   
-         inc cx 
+         dbp:mov ah,0ch
+         int 10h
+         inc cx
          inc SI
          cmp cx,mgx
-         jl inlop 
-     inc dx  
+         jl inlop
+     inc dx
      cmp dx , mgy
-     jl outlop 
+     jl outlop
 	 xor frameincrease,1
 	 mov ax ,frameincrease
-     add frame,ax 
+     add frame,ax
 	 mov cx ,0FFFFh
      cmp frame , 8
      jl skip
@@ -347,10 +350,10 @@ gameover proc far
 	cmp ci , 3
 	jl skipc
 	mov ci , 0
-	inc color 
+	inc color
 	skipc:
 	mov ah,1
-    int 16h 
+    int 16h
 	jz noquit
 	cmp ah,01ch
 	jne noquit
@@ -360,11 +363,11 @@ gameover proc far
 
 	call Delay
 	jmp gl
-	
-quit: 
-	ret 
-gameover endp 
-Delay proc 
+
+quit:
+	ret
+gameover endp
+Delay proc
 mov di, 1
 mov ah, 0
 int 1Ah ; actual time
@@ -381,4 +384,3 @@ ja delayloop
 
 Delay endp
 end
-
