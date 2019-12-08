@@ -17,7 +17,7 @@ writewinner macro playercolor1,playercolor2,lives1,lives2,mesg1,mesg2,drawresult
 	jmp print
 	draw:
 	mov bp,offset drawresult
-	mov bl,08h
+	mov bl,0Fh
 	print:
 	
     mov al, 1
