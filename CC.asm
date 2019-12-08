@@ -18,7 +18,6 @@ currentcolor1 dw 0
 currentcolor2 dw 0
 colorpicker1  db 32,08,10,31,10,08,10,10,10,30,10,08,32
 colorpicker2  db 31,08,10,32,10,08,10,10,10,32,10,08,30
-choosecolor2 db "PLAYER2"
 count db 1
 p1x dw 154
 p1y dw 41
@@ -36,7 +35,7 @@ choosecolor proc far
 	mov ah,0
 	mov al,13h
 	int 10h
-	
+
 	uiloop:
     ;get input from user
 	mov ah,1
@@ -82,17 +81,19 @@ choosecolor proc far
     mov al, 1
     mov cl, ds:[bp]
     mov ch, 0
-    inc bp
     ;set cursor to middel of screen
-    mov dl,10
+    mov dl, 20
+    sub dl, ds:[bp]
+    shr dl, 1
 	mov ah, 13h
+    inc bp
     int 10h
-	;get forecolor to draw with it 
+	;get forecolor to draw with it
     lea si,colors
     add si,currentcolor1
     ;get backcolorto draw with it
 	mov ax,6
-    add si,ax	
+    add si,ax
     mov bl,[si]
     mov p1cd,bl
     sub si,ax
@@ -100,7 +101,7 @@ choosecolor proc far
     mov p1cl,bl
 	mov dh, 3;row
 	;varible that changes from 0 to 1
-	;to make arrows move 
+	;to make arrows move
 	cmp count,1
 	je float
 	jne float2
@@ -187,10 +188,12 @@ choosecolor proc far
     mov al, 1
     mov cl, ds:[bp]
     mov ch, 0
-    inc bp
     ;set cursor to middel of screen
-	mov dl,10
+    mov dl, 20
+    sub dl, ds:[bp]
+    shr dl, 1
 	mov ah, 13h
+    inc bp
     int 10h
 	;get the selected colors
     lea si,colors

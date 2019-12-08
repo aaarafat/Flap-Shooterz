@@ -7,6 +7,7 @@ public selname
 org 0h
 esckey equ 27
 enterkey equ 13
+bckspace equ 8
 p1name db 0, 16 dup('$')
 
 str1 db 'Please enter your name:$'
@@ -69,7 +70,25 @@ selname proc far
     mov ah,0
     int 16h
 
+    cmp al, bckspace
+    jnz notbckspace
+    cmp p1name, 0
+    jz notbckspace
 
+    mov ah,2
+    mov dl, bckspace
+    int 21h
+
+    mov dl, ' '
+    int 21h
+
+    mov dl, bckspace
+    int 21h
+    dec p1name
+    dec di
+
+
+    notbckspace:
     cmp al, esckey
     jz exit
 
