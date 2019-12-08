@@ -184,9 +184,9 @@ MoveUp:
     cmp Tunnel, 0
     je SmallJmp2
     dec Tunnel
-	cmp Tunnel, 0
+	cmp Tunnel, 0            ; if tunnel = 0 don't dec tunnel again
     je SmallJmp2
-	cmp DoubleJumpFlag, 0
+	cmp DoubleJumpFlag, 0    ; if DJflag = 0 don't dec tunnel again
 	je SmallJmp2
 	dec Tunnel
 	jmp SmallJmp2
@@ -194,9 +194,9 @@ MoveDown:
     cmp Tunnel, 5
     je SmallJmp2
     inc Tunnel
-	cmp Tunnel, 5
+	cmp Tunnel, 5            ; if tunnel = 5 don't inc tunnel again
     je SmallJmp2
-	cmp DoubleJumpFlag, 0
+	cmp DoubleJumpFlag, 0    ; if DJflag = 0 don't inc tunnel again
 	je SmallJmp2
 	inc Tunnel
 	jmp SmallJmp2
@@ -211,15 +211,15 @@ PShoot:
     jne SmallJmp3
 	mov ax, 0
 	mov al, W
-	dec ax
+	dec ax           ; as current weapon starts from 1x
 	mov dl, 2
 	mul dl
 	mov si, offset BulletCount
 	add si, ax
 	mov ax, 0
-	cmp [si], ax
+	cmp [si], ax     ; if not bullet no shoot
 	je SmallJmp3
-	mov ax, 1
+	mov ax, 1        ; dec bullet count
 	sub [si], ax
 	mov ah, W
 	mov CurrentBullet, ah
@@ -227,9 +227,9 @@ PShoot:
 	mov bx, IsPlayer1
     cmp bx, 0
 	jz PLAYER2
-    add ax, plen     ; MOVE SHOOT TO THE PLAYER HEAD
+    add ax, plen     ; SHIFT THE X POS TO THE HEAD OF THE PLAYER
 PLAYER2:
-    mov bulx, ax
+    mov bulx, ax     ; MOVE SHOOT TO THE PLAYER HEAD
     mov ax, py
     add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
     mov buly, ax
@@ -242,9 +242,9 @@ WeaponL:
 	dec W
 CheckWeapon:
     mov ah, W
-	cmp ah, 1
+	cmp ah, 1       ; IF W < 1 ==> W = 4
 	jl ToRightMostWeapon
-	cmp ah, 4
+	cmp ah, 4       ; IF W > 4 ==> W = 1
 	jg ToLeftMostWeapon
 	jmp Return
 ToRightMostWeapon:

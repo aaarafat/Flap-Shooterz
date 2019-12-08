@@ -178,38 +178,26 @@ GameLoop:
     cmp Running, 1
     je GameLoop
 
-
-    ;------------------
-    ;GameOverLoop
-    ;------------------
-	
-	;call gameover
-	;call initailize	
-	;cmp currentoption ,0
-	;je choose
-    ;mov ah, 4ch
-    ;int 21h
-
 Game endp
 
 
 ;------Clear Screen-----
 Clear proc
-	ClearBullet
-    clearhearts p1lives, p2lives
+	ClearBullet                 ; clear bullet counter
+    clearhearts p1lives, p2lives 
     ClearP p1x, p1y, m1x , m1y ; Clear Player1
     ClearP p2x, p2y, m2x , m2y ; Clear Player2
     DeletePipe Pipx1 ,Gap1
     DeletePipe Pipx2 ,Gap2
-    cmp bul1x, 0
-    je noclear1
+    cmp bul1x, 0  
+    je noclear1  ; if bullet.x = 0 don't clear
 	ClearB bul1x, bul1y
 noclear1:
-	cmp bul2x, 0
+	cmp bul2x, 0 ; if bullet.x = 0 don't clear
 	je noclear2
     ClearB bul2x, bul2y
 noclear2:
-	ClearTimer timer1, timer2
+	ClearTimer timer1, timer2   ; clear effect timer bar
     ret
 Clear endp
 ;-----------------------
@@ -246,19 +234,19 @@ Draw proc
     DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
 	; Thrust 
 	DrawThrust p1x,p1y,p2x,p2y
-	DrawBullet
-	DrawB 2, 10, CurrentWeapon1
-	DrawB 298, 10, CurrentWeapon2
+	DrawBullet                    ; Draw bullet counter
+	DrawB 2, 10, CurrentWeapon1   ; Draw bullet 1 
+	DrawB 298, 10, CurrentWeapon2 ; Draw bullet 2
     cmp bul1x, 0
-    jz noshoot1
-	Fire CurrentBullet1, bul1x, bul1y
+    jz noshoot1                   ; if bullet.x = 0 don't draw
+	Fire CurrentBullet1, bul1x, bul1y   ; Draw bullet 1
 noshoot1:
 	cmp bul2x, 0
-    jz noshoot2
-	Fire CurrentBullet2, bul2x, bul2y
+    jz noshoot2                   ; if bullet.x = 0 don't draw
+	Fire CurrentBullet2, bul2x, bul2y ; Draw bullet 1
 noshoot2:
     drawhearts p1lives,p2lives
-	DrawTimer timer1, InvertFlag1, timer2, InvertFlag2
+	DrawTimer timer1, InvertFlag1, timer2, InvertFlag2  ; Draw effect timer
     ret
 
 Draw endp
@@ -305,7 +293,7 @@ Update proc
 	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, InvertFlag2, timer2
 	;-----timer----
 	Call UpdateTimer
-	;---Update Bullet Count---
+	;---Update Bullet Counter---
 	UpdateBullet
     ret
 Update endp

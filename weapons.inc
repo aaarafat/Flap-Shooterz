@@ -79,7 +79,7 @@ ENDM ClearB
 ;========================================================================================
 Fire MACRO W, bulx, buly
 	LOCAL finish
-	cmp bulx, 0
+	cmp bulx, 0     ; if bullet.x = 0 don't draw
 	je finish
 	DrawB bulx, buly, W
 finish:
@@ -92,7 +92,7 @@ MoveB MACRO bulx, IsPlayer1
     cmp bulx, 0 ;check if there's a shoot
     jz noupdate
 	mov ax, IsPlayer1
-	cmp ax, 0
+	cmp ax, 0     
 	je PLAYER2
     add bulx, 8 ;move the shoot
     cmp bulx, ScreenWidth ;if we reached to the end of screen
@@ -123,8 +123,8 @@ DrawBullet Macro
     mov bh,0 ;Page 0
 	mov cx, 2 ;string length
     mov bl,p1cl ;color
-	mov dh, 1h
-	mov dl, 1h ;set row, col
+	mov dh, 1h ; row
+	mov dl, 1h ; col
 	lea bp, Bulletstr1
     int 10h
 	;--------------;
@@ -156,7 +156,6 @@ ClearBullet Macro
     mov bh, 0
     int 10h
 	;---PLAYER 1---;
-	;ClearB 0, 10
     mov ah,9 ;Display
     mov bh,0 ;Page 0
     mov al, ' ' ;space
@@ -180,7 +179,6 @@ ClearBullet Macro
     mov ch, 0
     mov bl,04h
     int 10h
-	;ClearB 308, 10
 	;--------------;
 endm ClearBullet
 ;========================================================================================
@@ -191,9 +189,9 @@ UpdateBullet macro
 	mov si, offset Bullet1
 	mov ax, 0
 	mov al , CurrentWeapon1
-	dec ax
+	dec ax           ; as Current weapon starts from 1
 	mov bx, 2
-	mul bl
+	mul bl           
 	add si, ax
 	mov ax, [si]
 	mov CurrentBulletCount1, al
