@@ -1,5 +1,6 @@
 include fs.inc
 include Gameover.inc
+include p1m.inc
 EXTRN choosecolor:far
 EXTRN status:byte
 EXTRN p1cl:byte, p2cl:byte, p1cd:byte, p2cd:byte
@@ -115,7 +116,7 @@ SH  DB 0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
     DB 0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,2,2,1,1,1,1,2,2,0,0,0,2,1,1,2,0,0,2,1,1,1,1,1,1,1,1,1,1,1,1,2,0
     DB 0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0
 fsx DW 96
-fsy DW 25
+fsy DW 10
 msx DW 0
 msy Dw 0
 clr DB 01h
@@ -126,6 +127,15 @@ optionsize EQU 3
 currentoption dw 0
 Running db 1
 drawcount db 9
+p1x dw 0
+p1y dw 65
+p2x dw 300
+p2y dw 90
+m1x dw 0
+m1y dw 0
+m2x dw 0 
+m2y dw 0 
+plen equ 20
 .code
 menu proc far
     mov ax, @data
@@ -147,7 +157,7 @@ MenuLoop:
 	
 	cmp status, 3
 	je Close
-
+	
     jmp MenuLoop
 	
 CC:
@@ -202,6 +212,8 @@ GetInput endp
 Draw proc
 
     WriteGameoverUI currentoption,option1,optionsize
+	DrawP p1x,p1y,m1x,m1y,12,4
+	DrawP p2x,p2y,m2x,m2y,9,1
     CALL FpShtrz
     ic:inc clr
     cmp clr , 06h
@@ -245,7 +257,18 @@ delayloop:
         cmp di,dx
 ja delayloop
 
-
+ClearP p1x, p1y, m1x , m1y 
+ClearP p2x, p2y, m2x , m2y
+add p1x , 6
+cmp p1x , 320
+jle p2
+mov p1x , 0 
+p2:
+sub p2x,6
+cmp p2x , -20
+jge no
+mov p2x , 300
+no:
     ret
 
 Delay endp
