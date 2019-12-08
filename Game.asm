@@ -178,21 +178,6 @@ GameLoop:
     cmp Running, 1
     je GameLoop
 
-<<<<<<< HEAD
-=======
-
-    ;------------------
-    ;GameOverLoop
-    ;------------------
-
-	;call gameover
-	;call initailize
-	;cmp currentoption ,0
-	;je choose
-    ;mov ah, 4ch
-    ;int 21h
-
->>>>>>> 6eea883660006d9b35b2949bf79f345ac0ed991e
 Game endp
 
 
