@@ -270,7 +270,7 @@ gw  equ 66
 color db 0fh
 ci    db 0
 frameincrease dw 0
-winstr db " WIN !" ;len = 6
+winstr db " WON !" ;len = 6
 winsize equ 6
 ;mesg1 db "PLAYER1 WIN !"
 ;mesg2 db "PLAYER2 WIN !"
