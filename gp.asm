@@ -14,7 +14,7 @@ include Gameover.inc
 
 ScreenWidth equ 320
 
-plen   equ  20      ; height and width of player
+plen   equ  20     ; height and width of player
 slen    equ 4
 swidquart    equ 2
 

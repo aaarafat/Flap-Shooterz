@@ -477,7 +477,7 @@ return2:
 endm ClearTimer
 ;=======================================================================================================================
 DrawThrust MACRO p1x,p1y,p2x,p2y
-	LOCAL g0,g1,g2,g3,olop1,olop2,ilop1,ilop2,ret,then
+	LOCAL g0,g1,g2,g3,olop1,olop2,ilop1,ilop2,p2,ret,then,cont
 	 cmp currSpr ,0 
      je g0 
      cmp currSpr, 1 
@@ -525,7 +525,9 @@ then:mov ax , p1x
 	 add mt2x , 6 
 	 sub th1x , 6 
 	 
-		 ;player one
+	;player one
+	 cmp FreezeFlag1 , 1
+	 je p2
 	 mov dx , th1y
 	 olop1:
 	 mov cx , th1x
@@ -540,7 +542,12 @@ then:mov ax , p1x
 	inc dx  
     cmp dx , mt1y
     jl olop1
+	
+	
 	;player two
+	p2:
+	 cmp FreezeFlag2 , 1
+	 je cont
 	 mov dx , th2y
 	 olop2:
 	 mov cx , th2x
@@ -555,7 +562,7 @@ then:mov ax , p1x
 	inc dx  
     cmp dx , mt2y
     jl olop2 
-	inc currSpr
+	cont:inc currSpr
 	cmp currSpr , 4
 	jl ret 
 	mov currSpr , 0
