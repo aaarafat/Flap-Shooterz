@@ -274,7 +274,7 @@ winstr db " WON !" ;len = 6
 winsize equ 6
 ;mesg1 db "PLAYER1 WIN !"
 ;mesg2 db "PLAYER2 WIN !"
-drawresult db "    DRAW!   "
+drawresult db "    DRAW!    "
 .code
 gameover proc far
     mov ax,@data
