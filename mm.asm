@@ -234,10 +234,10 @@ FpShtrz proc
     jz update
     jmp noupdate
 update:
-    DrawHalfMM  fsx,fsy,clr,0fh,FH
+    DrawHalfMM  fsx,fsy,clr,0fh,FH ; draw the first half 
     mov BX,fsx
-    add BX,65
-    DrawHalfMM  BX,fsy,clr,0fh,SH
+    add BX,65 ; move 65 pixel in x  (the first half width)
+    DrawHalfMM  BX,fsy,clr,0fh,SH 
     mov drawcount, 0
 noupdate:
     RET
@@ -259,6 +259,7 @@ ja delayloop
 
 ClearP p1x, p1y, m1x , m1y 
 ClearP p2x, p2y, m2x , m2y
+;move the players dolls in the main menu and wrap them around
 add p1x , 6
 cmp p1x , 320
 jle p2

@@ -2,7 +2,7 @@ include weapons.inc
 .model small
 .stack
 .data
-b1x     dw   50      ; left upper cornder 
+b1x     dw   50      ; left upper corner 
 b1y     dw   50 
 Weapon1 dw   1        
 djcolor   db   05h,05h,05h,05h,0dh,0dh,0dh,0dh,0dh,0dh,0dh,0dh,05h,05h,05h,05h  

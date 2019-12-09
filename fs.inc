@@ -1,12 +1,12 @@
 
 
 
-
-DrawHalfMM Macro x,y,color1,color2,off
+; draw half the photo as it so large 
+DrawHalfMM Macro x,y,color1,color2,off 
 		local ilop , olop , skip , c1 ,d
 		  mov cx , x
           mov dx , y
-          lea SI , off 
+          lea SI , off  ;load the offest 
           mov msx , cx
           mov msy , dx
           add msx , 65
@@ -14,7 +14,8 @@ DrawHalfMM Macro x,y,color1,color2,off
      olop:
          mov cx , x 
      ilop:
-         mov al,[SI]
+         mov al,[SI] 
+		 ;representation of the 2 colors 
 		 cmp al , 2
 		 jl c1
 		 mov al , color2

@@ -3,7 +3,7 @@
 DrawPipe Macro px, tunnel
     Local plop, Glop
 	mov SI , 0
-   plop:
+   plop:			;draw a 4 pixels width pipe
     mov CX , px
     mov DX , SI
     mov al,07h
@@ -26,17 +26,17 @@ DrawPipe Macro px, tunnel
     int 10h
 
     inc SI
-    cmp SI , 144
+    cmp SI , 144    ; the height of the gameplay screen 
     jl plop
     ;mutiply tunnel by 24
-    mov ax,tunnel
+    mov ax,tunnel		
     mov ah,0
     mov dl,24
     mul dl
     mov SI , ax ; random value
     mov BX , SI
     add BX , 24
-    glop:
+    glop:			; draw the gap 
     mov DX , SI
     mov al , 00h
     mov CX , px
@@ -66,7 +66,7 @@ ENDM DrawPipe
 DeletePipe Macro px, tunnel
     Local plop ,Glop
 	mov SI , 0
-   plop:
+   plop:        ; draw 4 black pixels 144 times 
     mov CX , px
     mov DX , SI
     mov al,00h
@@ -112,7 +112,8 @@ GeneratePip macro speed,px,invc,Gap,norm
 	sub px,speed
     mov si, px
     add si, norm
-    cmp si, ScreenWidth
+	;checks if the pipe went out of sight
+    cmp si, ScreenWidth 
 	jg gen
     cmp si, -1
 	jnl finish

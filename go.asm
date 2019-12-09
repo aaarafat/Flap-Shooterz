@@ -285,7 +285,7 @@ gameover proc far
     int 10h
 	writewinner p1cl,p2cl,p1lives,p2lives,p1name,p2name,drawresult
     mov color , 10h
-	gl:
+	gl:          ;check which sprite will be drawn due to the current frame
      cmp frame ,0
      je g0
      cmp frame, 1
@@ -329,7 +329,7 @@ gameover proc far
          mov al,[SI]
 		 and al , al
 		 jz dbp
-		 mov al , color
+		 mov al , color   ; as the photo only contains 2 colors black and white we didn't need to map them
          dbp:mov ah,0ch
          int 10h
          inc cx
@@ -346,8 +346,8 @@ gameover proc far
      cmp frame , 8
      jl skip
      mov frame , 0
-	skip:inc ci
-	cmp ci , 3
+	skip:inc ci    
+	cmp ci , 3  ;change color every 4 frames
 	jl skipc
 	mov ci , 0
 	inc color
