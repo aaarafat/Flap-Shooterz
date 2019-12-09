@@ -35,7 +35,8 @@ p1invc db 0h ;invincible
 CurrentWeapon1 db 1
 CurrentBullet1 db 1
 timerDur       equ 500
-timerWdP       equ 12
+timerWdP       equ 6
+Bspeed		   equ 12
 timer1         dw 0
 InvertFlag1 dw 0
 DoubleJumpFlag1 dw 0
