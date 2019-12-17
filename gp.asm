@@ -73,6 +73,10 @@ Bulletstr2 label byte
         db 'x'
 CurrentBulletCount2 db 0h
 ;======================================
+cp1d db 0
+cp1l db 0
+cp2d db 0
+cp2l db 0
 
 Pipx1 dw 0;pipe of first player
 Pipx2 dw 0;pipe of second player
@@ -185,12 +189,12 @@ Game endp
 ;------Clear Screen-----
 Clear proc
 	ClearBullet                 ; clear bullet counter
-    clearhearts p1lives, p2lives 
+    clearhearts p1lives, p2lives
     ClearP p1x, p1y, m1x , m1y ; Clear Player1
     ClearP p2x, p2y, m2x , m2y ; Clear Player2
     DeletePipe Pipx1 ,Gap1
     DeletePipe Pipx2 ,Gap2
-    cmp bul1x, 0  
+    cmp bul1x, 0
     je noclear1  ; if bullet.x = 0 don't clear
 	ClearB bul1x, bul1y
 noclear1:
@@ -225,18 +229,44 @@ GetInput endp
 ;------Draw Function----
 Draw proc
 
+	cmp InvertFlag1 , 1
+	jne sc1
+	mov dl , p1cd
+	mov dh , p1cl
+	mov cp1d , dh
+	mov cp1l , dl
+	jmp xp2
+	sc1:
+	mov dl , p1cd
+	mov dh , p1cl
+	mov cp1d , dl
+	mov cp1l , dh
+	xp2:
+	cmp InvertFlag2 , 1
+	jne sc2
+	mov dl , p2cd
+	mov dh , p2cl
+	mov cp2d , dh
+	mov cp2l , dl
+	jmp nx
+	sc2:
+	mov dl , p2cd
+	mov dh , p2cl
+	mov cp2d , dl
+	mov cp2l , dh
+	nx:
     ;draw first pipe
     DrawPipe Pipx1 , Gap1
     ;draw second pipe
     DrawPipe Pipx2 , Gap2
     ; Draw Player 1
-    DrawP p1x, p1y, m1x , m1y , p1cl , p1cd
+    DrawP p1x, p1y, m1x , m1y , cp1l , cp1d
     ; Draw Player 2
-    DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
+    DrawP p2x, p2y, m2x , m2y , cp2l , cp2d
 	; Thrust
 	DrawThrust p1x,p1y,p2x,p2y
 	DrawBullet                    ; Draw bullet counter
-	DrawB 2, 10, CurrentWeapon1   ; Draw bullet 1 
+	DrawB 2, 10, CurrentWeapon1   ; Draw bullet 1
 	DrawB 298, 10, CurrentWeapon2 ; Draw bullet 2
     cmp bul1x, 0
     jz noshoot1                   ; if bullet.x = 0 don't draw
@@ -341,6 +371,14 @@ mov Bullet1, 5
 mov Bullet1 + 2, 5
 mov Bullet1 + 4, 5
 mov Bullet1 + 6, 5
+mov dl , p1cd
+mov dh , p1cl
+mov cp1d , dl
+mov cp1l , dh
+mov dl , p2cd
+mov dh , p2cl
+mov cp2l , dl
+mov cp2l , dh
 ;=====================================
 
 ;============Player 2=================
