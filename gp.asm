@@ -1,5 +1,6 @@
 	EXTRN gameover:far
 	EXTRN choosecolor:far
+	EXTRN chat:far
 	PUBLIC p1lives,p2lives
 	EXTRN p1cd:byte,p2cd:byte,p1cl:byte,p2cl:byte
 	PUBLIC Game
@@ -214,9 +215,11 @@ GetInput proc
 
     ; IF Q PRESSED CLOSE
     CMP AH, 10H     ; Q
-    JNE FLUSH
+    JNE chatlop
     MOV Running, 0
     ;-------------------
+	chatlop:
+	call chat
 FLUSH:
     ; Flush Keyboard Buffer
     mov ah,0ch
