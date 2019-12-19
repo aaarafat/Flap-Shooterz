@@ -1,8 +1,9 @@
+public chat
 .MODEL SMALL
 .STACK 64
 .DATA
 upperx db 0
-uppery EQU 12
+uppery EQU 22
 lowerx db 0
 lowery EQU 23
 value db 0
@@ -14,10 +15,7 @@ chat	PROC FAR
 		call init
 		call transmit
 
-
-		mov ah, 4ch
-		int 21h
-main endp
+chat endp
 
 init proc
 	mov dx,3fbh 			; Line Control Register
@@ -39,20 +37,22 @@ init proc
 
 	mov ah,6       ; function 6
 	mov al,0       ; clear
+	mov bl, 0
 	mov bh,4Fh      ; normal video attribute
-	mov ch,0       ; upper left Y
+	mov ch,22       ; upper left Y
 	mov cl,0        ; upper left X
-	mov dh,12     ; lower right Y
-	mov dl,79      ; lower right X
+	mov dh,22     ; lower right Y
+	mov dl,39      ; lower right X
 	int 10h
 
 	mov ah,6       ; function 6
 	mov al,0       ; clear
 	mov bh,7      ; normal video attribute
-	mov ch,13       ; upper left Y
+	mov bl, 0
+	mov ch,24       ; upper left Y
 	mov cl,0        ; upper left X
 	mov dh,24     ; lower right Y
-	mov dl,79      ; lower right X
+	mov dl,39      ; lower right X
 	int 10h
 
 	mov ah, 2
@@ -66,11 +66,12 @@ init endp
 scrollupper proc
 mov ah,6 ; function 6
 mov al,1 ; scroll by 1 line
+mov bl, 0
 mov bh,4Fh      ; normal video attribute
-mov ch,0       ; upper left Y
+mov ch,22       ; upper left Y
 mov cl,0        ; upper left X
-mov dh,12     ; lower right Y
-mov dl,79      ; lower right X
+mov dh,22     ; lower right Y
+mov dl,39      ; lower right X
 int 10h
 
 ret
@@ -79,11 +80,12 @@ scrollupper endp
 scrolllower proc
 mov ah,6 ; function 6
 mov al,1 ; scroll by 1 line
+mov bl, 0
 mov bh,7      ; normal video attribute
-mov ch,13       ; upper left Y
+mov ch,24       ; upper left Y
 mov cl,0        ; upper left X
 mov dh,24     ; lower right Y
-mov dl,79      ; lower right X
+mov dl,39      ; lower right X
 int 10h
 
 ret
@@ -91,6 +93,13 @@ scrolllower endp
 
 transmit proc
 	send:
+
+	cmp upperx, 39
+	jnz nolimitsend
+	call scrollupper
+	mov upperx, 0
+
+nolimitsend:
 	;get input from KB
 	mov ah, 1
 	int 16h
@@ -133,10 +142,10 @@ BKSPCont:
 	int 16h
 
 	;scroll if upperx == 79 (right end of the window)
-	cmp upperx, 79
-	jnz contsend
-	call scrollupper
-	mov upperx, 0
+	;cmp upperx, 40
+	;jnz contsend
+	;call scrollupper
+	;mov upperx, 0
 	jmp contsend
 ShortReceive:
 	jmp receive
@@ -161,6 +170,13 @@ contsend:
 	mov upperx, 0
 
 receive:
+	;scroll if lowerx == 79 (right end of the window)
+	cmp lowerx, 39
+	jnz nolimitrec
+	call scrolllower
+	mov lowerx, 0
+
+nolimitrec:
 	;Check that Data is Ready
 	mov dx , 3FDH ; Line Status Register
 	in al , dx
@@ -206,12 +222,12 @@ BKSP2:
 	je SKIP
 	dec lowerx
 
-SKIP:
+;SKIP:
 	;scroll if lowerx == 79 (right end of the window)
-	cmp lowerx, 79
-	jnz contrec
-	call scrolllower
-	mov lowerx, 0
+	;cmp lowerx, 40
+	;jnz contrec
+	;call scrolllower
+	;mov lowerx, 0
 
 contrec:
 	cmp value, 27
@@ -225,4 +241,4 @@ contrec:
 	close:
 	ret
 transmit endp
-		end main
+		end
