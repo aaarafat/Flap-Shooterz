@@ -178,6 +178,7 @@ SkipMove:
 	je WeaponRSmallJmp
 	cmp ah, ChangeWeaponL
 	je WeaponLSmallJmp
+	jmp chatlop
 SmallJmp1:
     jmp SmallJmp2
 MoveUp:
@@ -252,8 +253,10 @@ ToRightMostWeapon:
 	jmp Return
 ToLeftMostWeapon:
 	mov W, 1
+	jmp Return
+chatlop:
+	call sendproc
 Return:
-		NOP
 ENDM	PlayerInput
 ;========================================================================================
 ;========================================================================================

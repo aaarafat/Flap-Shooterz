@@ -1,77 +1,77 @@
-public chat
+EXTRN status:byte
+public chatproc
 .MODEL SMALL
 .STACK 64
 .DATA
 upperx db 0
-uppery EQU 22
+uppery EQU 12
 lowerx db 0
 lowery EQU 23
 value db 0
 .CODE
-chat	PROC FAR
+chatproc proc
 		mov ax, @DATA
 		mov ds, ax
 
-		call init
+		mov ah,0
+		mov al,3h
+		int 10h
+
+		mov dx,3fbh 			; Line Control Register
+		mov al,10000000b		;Set Divisor Latch Access Bit
+		out dx,al				;Out it
+
+		mov dx,3f8h
+		mov al,0ch
+		out dx,al
+
+		mov dx,3f9h
+		mov al,00h
+		out dx,al
+
+		mov dx,3fbh
+		mov al,00011011b
+		out dx, al
+
+
+		mov ah,6       ; function 6
+		mov al,0       ; clear
+		mov bh,4Fh      ; normal video attribute
+		mov ch,0       ; upper left Y
+		mov cl,0        ; upper left X
+		mov dh,12     ; lower right Y
+		mov dl,79      ; lower right X
+		int 10h
+
+		mov ah,6       ; function 6
+		mov al,0       ; clear
+		mov bh,7      ; normal video attribute
+		mov ch,13       ; upper left Y
+		mov cl,0        ; upper left X
+		mov dh,24     ; lower right Y
+		mov dl,79      ; lower right X
+		int 10h
+
+		mov ah, 2
+		mov dl, 0
+		mov dh, 0
+		mov bh, 0
+		int 10h
 		call transmit
 
-chat endp
-
-init proc
-	mov dx,3fbh 			; Line Control Register
-	mov al,10000000b		;Set Divisor Latch Access Bit
-	out dx,al				;Out it
-
-	mov dx,3f8h
-	mov al,0ch
-	out dx,al
-
-	mov dx,3f9h
-	mov al,00h
-	out dx,al
-
-	mov dx,3fbh
-	mov al,00011011b
-	out dx, al
-
-
-	mov ah,6       ; function 6
-	mov al,0       ; clear
-	mov bl, 0
-	mov bh,4Fh      ; normal video attribute
-	mov ch,22       ; upper left Y
-	mov cl,0        ; upper left X
-	mov dh,22     ; lower right Y
-	mov dl,39      ; lower right X
-	int 10h
-
-	mov ah,6       ; function 6
-	mov al,0       ; clear
-	mov bh,7      ; normal video attribute
-	mov bl, 0
-	mov ch,24       ; upper left Y
-	mov cl,0        ; upper left X
-	mov dh,24     ; lower right Y
-	mov dl,39      ; lower right X
-	int 10h
-
-	mov ah, 2
-	mov dl, 0
-	mov dh, 0
-	mov bh, 0
-	int 10h
 	ret
-init endp
+chatproc endp
 
+
+;TODO Scroll one of the halves of the screen by one line
 scrollupper proc
 mov ah,6 ; function 6
 mov al,1 ; scroll by 1 line
-mov bl, 0
 mov bh,4Fh      ; normal video attribute
-mov ch,22       ; upper left Y
+mov ch,0       ; upper left Y
 mov cl,0        ; upper left X
-mov dh,22     ; lower right Y
-mov dl,39      ; lower right X
+mov dh,12     ; lower right Y
+mov dl,79      ; lower right X
 int 10h
 
 ret
@@ -80,12 +80,11 @@ scrollupper endp
 scrolllower proc
 mov ah,6 ; function 6
 mov al,1 ; scroll by 1 line
-mov bl, 0
 mov bh,7      ; normal video attribute
-mov ch,24       ; upper left Y
+mov ch,13       ; upper left Y
 mov cl,0        ; upper left X
 mov dh,24     ; lower right Y
-mov dl,39      ; lower right X
+mov dl,79      ; lower right X
 int 10h
 
 ret
@@ -93,13 +92,6 @@ scrolllower endp
 
 transmit proc
 	send:
-
-	cmp upperx, 39
-	jnz nolimitsend
-	call scrollupper
-	mov upperx, 0
-
-nolimitsend:
 	;get input from KB
 	mov ah, 1
 	int 16h
@@ -122,7 +114,7 @@ nolimitsend:
 	mov ah, 2
 	mov dl, value
 	int 21h ;print char
-	jmp BKSPCont
+	jmp Flush1
 BKSP1:
 	dec upperx
 	; print space
@@ -134,18 +126,18 @@ BKSP1:
 	mov dl, 8
 	int 21h ;print char
 	cmp upperx, 0
-	je BKSPCont
+	je Flush1
 	dec upperx
-BKSPCont:
+Flush1:
 	;flush KB
 	mov ah, 0
 	int 16h
 
 	;scroll if upperx == 79 (right end of the window)
-	;cmp upperx, 40
-	;jnz contsend
-	;call scrollupper
-	;mov upperx, 0
+	cmp upperx, 79
+	jnz contsend
+	call scrollupper
+	mov upperx, 0
 	jmp contsend
 ShortReceive:
 	jmp receive
@@ -169,14 +161,7 @@ contsend:
 	call scrollupper
 	mov upperx, 0
 
-receive:
-	;scroll if lowerx == 79 (right end of the window)
-	cmp lowerx, 39
-	jnz nolimitrec
-	call scrolllower
-	mov lowerx, 0
-
-nolimitrec:
+	receive:
 	;Check that Data is Ready
 	mov dx , 3FDH ; Line Status Register
 	in al , dx
@@ -222,23 +207,33 @@ BKSP2:
 	je SKIP
 	dec lowerx
 
-;SKIP:
+SKIP:
 	;scroll if lowerx == 79 (right end of the window)
-	;cmp lowerx, 40
-	;jnz contrec
-	;call scrolllower
-	;mov lowerx, 0
+	cmp lowerx, 79
+	jnz contrec
+	call scrolllower
+	mov lowerx, 0
 
 contrec:
 	cmp value, 27
 	jz close
 	cmp value, 13 ;new Line
-	jnz close
+	jnz lop
 	call scrolllower
 	mov lowerx, 0
 
 
+lop:
+	jmp send
+
+
 	close:
+	mov status, 0
+	mov upperx, 0
+	mov lowerx, 0
+	mov ah,0
+	mov al,13h
+	int 10h
 	ret
 transmit endp
 		end

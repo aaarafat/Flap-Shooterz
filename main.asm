@@ -2,6 +2,7 @@ EXTRN Game:far
 EXTRN menu:far
 EXTRN gameover:far
 EXTRN selname:far
+EXTRN chatproc:far
 EXTRN p1lives:byte, p2lives:byte
 PUBLIC p1cd,p2cd,p1cl,p2cl,p2name
 PUBLIC currentoption,option1,optionssize
@@ -10,7 +11,7 @@ PUBLIC status
 .stack
 .data
 
-status db -1    ; -1 ==> SelectName || 0 ==> Menu || 1 ==> ChooseColor || 2 ==> Game || 3 ==> EndGame || 4 ==> GameOver
+status db -1    ; -2 ==> chat || -1 ==> SelectName || 0 ==> Menu || 1 ==> ChooseColor || 2 ==> Game || 3 ==> EndGame || 4 ==> GameOver
 p1cl db 0
 p1cd db 0
 p2cl db 0
@@ -29,10 +30,22 @@ MainLoop:
 	cmp status, 0
 	jne EndGame
 
+MenuLB:
 	call menu
+	cmp status, -2
+	je ChatLB
+	cmp status, 2
+	je GameLB
+	jne EndGame
+
+ChatLB:
+	call chatproc
+	cmp status, 0
+	je MenuLB
 	cmp status, 2
 	jne EndGame
 
+GameLB:
 	call Game
 	mov status, 4
 

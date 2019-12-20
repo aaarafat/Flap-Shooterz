@@ -1,6 +1,7 @@
 	EXTRN gameover:far
 	EXTRN choosecolor:far
-	EXTRN chat:far
+	EXTRN sendproc:far
+	EXTRN recproc:far
 	PUBLIC p1lives,p2lives
 	EXTRN p1cd:byte,p2cd:byte,p1cl:byte,p2cl:byte
 	PUBLIC Game
@@ -210,16 +211,16 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
-    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2
+    ;PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
+    ;PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2
+	PlayerInput  48h , 50h  , 0fh , 4dh, 4bh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
+	;call recproc
 
-    ; IF Q PRESSED CLOSE
-    CMP AH, 10H     ; Q
-    JNE chatlop
+    ; IF Escape PRESSED CLOSE
+    CMP al, 27     ; escape
+    JNE FLUSH
     MOV Running, 0
     ;-------------------
-	chatlop:
-	call chat
 FLUSH:
     ; Flush Keyboard Buffer
     mov ah,0ch
@@ -422,6 +423,36 @@ mov P2Tunnel ,   0h
 	 mov ah,0
     mov al,13h
     int 10h
+
+;====================init chatbar==========
+
+	mov dx,3fbh 			; Line Control Register
+	mov al,10000000b		;Set Divisor Latch Access Bit
+	out dx,al				;Out it
+
+	mov dx,3f8h
+	mov al,0ch
+	out dx,al
+
+	mov dx,3f9h
+	mov al,00h
+	out dx,al
+
+	mov dx,3fbh
+	mov al,00011011b
+	out dx, al
+
+
+	mov ah,6       ; function 6
+	mov al,0       ; clear
+	mov bl, 0
+	mov bh, 0FFh      ; normal video attribute
+	mov ch,21       ; upper left Y
+	mov cl,0        ; upper left X
+	mov dh,21     ; lower right Y
+	mov dl,39      ; lower right X
+	int 10h
+
 	ret
 initailize endp
 end

@@ -147,16 +147,16 @@ menu proc far
 
 
 MenuLoop:
-	cmp status, 1   ; if Change color
-	je CC
     call Draw
 
     call delay
 
     call GetInput
 	
-	cmp status, 3
-	je Close
+	cmp status, 1
+	je CC
+    cmp status, 0
+    jne Close
 	
     jmp MenuLoop
 	
@@ -194,8 +194,19 @@ jz NOFLUSH ; If no Key Pressed Return
    ; cmp currentoption, 2 ;exit
    ; mov ah, esckey
 	mov ax, currentoption
-	inc ax
-	mov status, al
+	cmp al, 0
+    jnz NotCC
+    mov status, 1
+    jmp FLUSH
+NotCC:
+    cmp al, 1
+    jnz NotChat
+    mov status, -2
+    jmp FLUSH
+NotChat:
+    cmp al, 2
+    jnz FLUSH
+    mov status, 3
 
 
 
