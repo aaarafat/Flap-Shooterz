@@ -58,6 +58,7 @@ chatproc proc
 		mov dh, 0
 		mov bh, 0
 		int 10h
+		call printname
 		call transmit
 
 	ret
@@ -91,8 +92,8 @@ int 10h
 ret
 scrolllower endp
 ;print player name
-printname proc
-mov al, 1
+printname proc 
+mov al, 0
 mov bh, 0;page nubmer
 mov bl,04fh
 mov cl, p1name ;  message size.
@@ -104,11 +105,12 @@ mov dh,uppery
 mov bp,offset p1name+1
 mov ah, 13h
 int 10h
-add upperx,cl
+mov upperx,cl
+dec upperx
 ;mov cursor
 mov ah, 2
 mov dl, upperx
-mov dh, uppery
+mov dh, 12
 mov bh, 0
 int 10h
 mov ah, 2
@@ -119,15 +121,16 @@ ret
 printname endp
 
 transmit proc
-	mov upperx,0
-	call printname
 	send:
 	;get input from KB
 	mov ah, 1
 	int 16h
 	jz ShortReceive ;if no key pressed
 	mov value, al
-
+	cmp value, 27 ;escape
+	jnz noShortclose
+	jmp Shortclose
+	noShortclose:
 	;move cursor
 	mov ah, 2
 	mov dl, upperx
@@ -135,11 +138,14 @@ transmit proc
 	mov bh, 0
 	int 10h
 	inc upperx
-
+	mov al, p1name
+	add al,1
+	cmp upperx,al
+	je noBKSP
 	; if value = backspace
 	cmp value, 8
 	je BKSP1
-
+	noBKSP:
 	;print char
 	mov ah, 2
 	mov dl, value
@@ -184,8 +190,7 @@ contsend:
 	mov al, value
 	out dx , al
 
-	cmp value, 27 ;escape
-	jz Shortclose
+	
 	cmp value, 13 ;new Line
 	jnz receive
 	call scrollupper
