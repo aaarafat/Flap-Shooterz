@@ -1,4 +1,5 @@
 EXTRN status:byte
+EXTRN p1name:byte 
 public chatproc
 .MODEL SMALL
 .STACK 64
@@ -89,8 +90,37 @@ int 10h
 
 ret
 scrolllower endp
+;print player name
+printname proc
+mov al, 1
+mov bh, 0;page nubmer
+mov bl,04fh
+mov cl, p1name ;  message size.
+mov ch,0
+push ds
+pop es
+mov dl,upperx
+mov dh,uppery
+mov bp,offset p1name+1
+mov ah, 13h
+int 10h
+add upperx,cl
+;mov cursor
+mov ah, 2
+mov dl, upperx
+mov dh, uppery
+mov bh, 0
+int 10h
+mov ah, 2
+mov dl, ':'
+int 21h ;print char
+inc upperx	
+ret
+printname endp
 
 transmit proc
+	mov upperx,0
+	call printname
 	send:
 	;get input from KB
 	mov ah, 1
@@ -160,7 +190,7 @@ contsend:
 	jnz receive
 	call scrollupper
 	mov upperx, 0
-
+	call printname
 	receive:
 	;Check that Data is Ready
 	mov dx , 3FDH ; Line Status Register
@@ -231,6 +261,9 @@ lop:
 	mov status, 0
 	mov upperx, 0
 	mov lowerx, 0
+	;flush KB
+	mov ah, 0
+	int 16h
 	mov ah,0
 	mov al,13h
 	int 10h
