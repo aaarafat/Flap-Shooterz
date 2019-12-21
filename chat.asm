@@ -215,7 +215,7 @@ SKIP:
 	mov lowerx, 0
 
 contrec:
-	cmp value, 27
+	cmp value, 27 ;escape
 	jz close
 	cmp value, 13 ;new Line
 	jnz lop

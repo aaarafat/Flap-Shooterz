@@ -1,4 +1,5 @@
 public sendproc, recproc
+EXTRN Running:byte
 .MODEL SMALL
 .STACK 64
 .DATA
@@ -73,6 +74,12 @@ sendproc	PROC FAR
 		mov al, value
 		out dx , al
 
+		cmp value, 27
+		jnz NotEscape
+		mov Running, 0
+		jmp return
+
+	NotEscape:
 		cmp value, 13 ;new Line
 		jnz return
 		call supper
@@ -81,7 +88,7 @@ sendproc	PROC FAR
 	ret
 sendproc endp
 
-recproc proc 
+recproc proc FAR
 ;scroll if lowerx == 79 (right end of the window)
 		cmp lowerx, 39
 		jnz nolimitrec
@@ -138,6 +145,11 @@ recproc proc
 		mov lowerx, 0
 
 	contrec:
+		cmp value, 27 ;escape
+		jnz NotEscapeRec
+		mov Running, 0
+		jmp close
+	NotEscapeRec:
 		cmp value, 13 ;new Line
 		jnz close
 		call slower
