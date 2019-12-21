@@ -2,6 +2,7 @@
 	EXTRN choosecolor:far
 	EXTRN sendproc:far
 	EXTRN recproc:far
+	EXTRN init:far
 	PUBLIC p1lives,p2lives
 	EXTRN p1cd:byte,p2cd:byte,p1cl:byte,p2cl:byte
 	PUBLIC Game
@@ -426,32 +427,7 @@ mov P2Tunnel ,   0h
 
 ;====================init chatbar==========
 
-	mov dx,3fbh 			; Line Control Register
-	mov al,10000000b		;Set Divisor Latch Access Bit
-	out dx,al				;Out it
-
-	mov dx,3f8h
-	mov al,0ch
-	out dx,al
-
-	mov dx,3f9h
-	mov al,00h
-	out dx,al
-
-	mov dx,3fbh
-	mov al,00011011b
-	out dx, al
-
-
-	mov ah,6       ; function 6
-	mov al,0       ; clear
-	mov bl, 0
-	mov bh, 0FFh      ; normal video attribute
-	mov ch,21       ; upper left Y
-	mov cl,0        ; upper left X
-	mov dh,21     ; lower right Y
-	mov dl,39      ; lower right X
-	int 10h
+	call init
 
 	ret
 initailize endp
