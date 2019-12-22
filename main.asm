@@ -69,6 +69,11 @@ GameLB:
 	;jne EndGame
 	;call getp2name
 
+	call waitproc
+	cmp status, 0
+	je MenuLB
+	cmp status, 2
+	jne EndGame
 	call Game
 	mov status, 4
 
