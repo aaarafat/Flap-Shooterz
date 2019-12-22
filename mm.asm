@@ -4,6 +4,8 @@ include p1m.inc
 EXTRN choosecolor:far
 EXTRN status:byte
 EXTRN p1cl:byte, p2cl:byte, p1cd:byte, p2cd:byte
+EXTRN waitproc:far
+EXTRN getp2name:far
 PUBLIC menu
 .model small
 .stack
@@ -147,16 +149,16 @@ menu proc far
 
 
 MenuLoop:
-	cmp status, 1   ; if Change color
-	je CC
     call Draw
 
     call delay
 
     call GetInput
 	
-	cmp status, 3
-	je Close
+	cmp status, 1
+	je CC
+    cmp status, 0
+    jne Close
 	
     jmp MenuLoop
 	
@@ -165,6 +167,10 @@ CC:
     mov ah,0ch
     mov al,0
     int 21h
+    call waitproc
+    cmp status, 0
+    je Close
+    call getp2name
 	call choosecolor
 	mov status, 2
 Close:
@@ -194,8 +200,19 @@ jz NOFLUSH ; If no Key Pressed Return
    ; cmp currentoption, 2 ;exit
    ; mov ah, esckey
 	mov ax, currentoption
-	inc ax
-	mov status, al
+	cmp al, 0
+    jnz NotCC
+    mov status, 1
+    jmp FLUSH
+NotCC:
+    cmp al, 1
+    jnz NotChat
+    mov status, -2
+    jmp FLUSH
+NotChat:
+    cmp al, 2
+    jnz FLUSH
+    mov status, 3
 
 
 

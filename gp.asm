@@ -1,8 +1,13 @@
 	EXTRN gameover:far
 	EXTRN choosecolor:far
+	EXTRN sendproc:far
+	EXTRN recproc:far
+	EXTRN init:far
+	EXTRN value:byte
 	PUBLIC p1lives,p2lives
 	EXTRN p1cd:byte,p2cd:byte,p1cl:byte,p2cl:byte
 	PUBLIC Game
+	public Running
 include p1m.inc
 include barrier.inc
 include logic.inc
@@ -20,6 +25,7 @@ swidquart    equ 2
 
 
 ;============Player 1================
+br     dw   15
 p1x    dw   20      ; left upper corner
 p1y    dw   2
 m1x    dw   0       ; right bottom corner
@@ -209,11 +215,13 @@ Clear endp
 
 ;------Get Input-----
 GetInput proc
-    PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
-    PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2
+    ;PlayerInput  11h , 1fh  , 39h , 20h, 1eh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
+    ;PlayerInput  48h , 50h  , 1Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2
+	PlayerInput  48h , 50h  , 0Ch , 4dh, 4bh, P1Tunnel , p1x , p1y , bul1x , bul1y, CurrentWeapon1, CurrentBullet1, 1, FreezeFlag1, InvertFlag1,DoubleJumpFlag1,Bullet1
+	Player2Input  48h , 50h  , 0Ch , 4dh, 4bh, P2Tunnel , p2x , p2y , bul2x , bul2y, CurrentWeapon2, CurrentBullet2, 0, FreezeFlag2, InvertFlag2,DoubleJumpFlag2,Bullet2
 
-    ; IF Q PRESSED CLOSE
-    CMP AH, 10H     ; Q
+    ; IF Escape PRESSED CLOSE
+    CMP al, 27     ; escape
     JNE FLUSH
     MOV Running, 0
     ;-------------------
@@ -419,6 +427,11 @@ mov P2Tunnel ,   0h
 	 mov ah,0
     mov al,13h
     int 10h
+
+;====================init chatbar==========
+
+	call init
+
 	ret
 initailize endp
 end
