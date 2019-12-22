@@ -7,7 +7,10 @@
 		EXTRN p2lives:BYTE
         EXTRN p1name:BYTE
         EXTRN p2name:BYTE
+		EXTRN status:byte
+		EXTRN p2status:byte
         PUBLIC gameover
+		public waitproc
 include Gameover.inc
 .model small
 .stack
@@ -272,6 +275,7 @@ ci    db 0
 frameincrease dw 0
 winstr db " WON !" ;len = 6
 winsize equ 6
+waitstr db "WAIT FOR PLAYER2..$"
 ;mesg1 db "PLAYER1 WIN !"
 ;mesg2 db "PLAYER2 WIN !"
 drawresult db "    DRAW!    "
@@ -383,4 +387,52 @@ ja delayloop
     ret
 
 Delay endp
+
+
+waitproc proc far
+	mov ah, 2
+	mov dl, 12
+	mov dh, 10
+	int 10h
+
+	mov ah, 9
+	lea dx, waitstr
+	int 21h
+	againwait:
+	mov dx, 3fdh
+	in al, dx
+	test al, 00100000b
+	jz againwait ;if not empty go to save before recieving (No sending)
+
+	;If empty put the VALUE in Transmit data register
+	mov dx , 3F8H ; Transmit data register
+	mov al, status
+	out dx , al
+	receivewait:
+	mov ah, 1
+	int 16h
+	jz NoEscape
+	mov ah, 0
+	int 16h
+	cmp al, 27
+	jnz NoEscape
+	mov status, 0
+	jmp ForceRet
+	NoEscape:
+	mov dx , 3FDH ; Line Status Register
+	in al , dx
+	test al , 1
+	jz receivewait ;Not Ready
+	;If Ready read the VALUE in Receive data register
+	mov dx , 03F8H
+	in al , dx
+	mov p2status, al
+	ProcRet:
+	mov al, p2status
+	cmp al, status
+	jne againwait
+	ForceRet:
+	ret
+
+waitproc endp
 end

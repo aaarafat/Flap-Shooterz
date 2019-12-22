@@ -4,11 +4,12 @@ EXTRN gameover:far
 EXTRN selname:far
 EXTRN chatproc:far
 EXTRN p1lives:byte, p2lives:byte,p1name:byte
-public waitproc
+EXTRN waitproc:far
 PUBLIC p1cd,p2cd,p1cl,p2cl,p2name
 PUBLIC currentoption,option1,optionssize
 PUBLIC status
 public getp2name
+public p2status
 .model small
 .stack
 .data
@@ -23,7 +24,7 @@ p2cd db 0
 currentoption dw 0
 option1 db 14,"START NEW GAME"
 option2 db 9 ,"QUIT GAME"
-waitstr db "WAIT FOR PLAYER2..$"
+
 optionssize dw 2
 p2name db 16 dup('$') ;temporary for phase 1
 .code
@@ -62,12 +63,11 @@ ChatLB:
 	jne EndGame
 
 GameLB:
-	;call waitproc
-	;cmp status, 0
-	;je MenuLB
-	;cmp status, 2
-	;jne EndGame
-	;call getp2name
+	call waitproc
+	cmp status, 0
+	je MenuLB
+	;cmp status, 3
+	;je EndGame
 
 	call Game
 	mov status, 4
@@ -86,52 +86,6 @@ EndGame:
 main endp
 
 
-waitproc proc
-	mov ah, 2
-	mov dl, 12
-	mov dh, 10
-	int 10h
-
-	mov ah, 9
-	lea dx, waitstr
-	int 21h
-	againwait:
-	mov dx, 3fdh
-	in al, dx
-	test al, 00100000b
-	jz againwait ;if not empty go to save before recieving (No sending)
-
-	;If empty put the VALUE in Transmit data register
-	mov dx , 3F8H ; Transmit data register
-	mov al, status
-	out dx , al
-	receivewait:
-	mov ah, 1
-	int 16h
-	jz NoEscape
-	mov ah, 0
-	int 16h
-	cmp al, 27
-	jnz NoEscape
-	mov status, 0
-	jmp ForceRet
-	NoEscape:
-	mov dx , 3FDH ; Line Status Register
-	in al , dx
-	test al , 1
-	jz receivewait ;Not Ready
-	;If Ready read the VALUE in Receive data register
-	mov dx , 03F8H
-	in al , dx
-	mov p2status, al
-	ProcRet:
-	mov al, p2status
-	cmp al, status
-	jne againwait
-	ForceRet:
-	ret
-
-waitproc endp
 getp2name proc
 	lea si ,p1name
 	lea di,p2name
