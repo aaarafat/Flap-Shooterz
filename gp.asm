@@ -394,8 +394,8 @@ mov bul2x, 0h   ;p2 bullet x
 mov bul2y, 0h   ;p2 bullet y
 mov p2lives , 5h
 mov p2invc , 0h ;invincible
-mov CurrentWeapon2 , 2
-mov CurrentBullet2 , 2
+mov CurrentWeapon2 , 1
+mov CurrentBullet2 , 1
 mov timer2, 0
 mov InvertFlag2 , 0
 mov DoubleJumpFlag2 , 0
