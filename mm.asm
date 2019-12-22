@@ -4,6 +4,8 @@ include p1m.inc
 EXTRN choosecolor:far
 EXTRN status:byte
 EXTRN p1cl:byte, p2cl:byte, p1cd:byte, p2cd:byte
+EXTRN waitproc:far
+EXTRN getp2name:far
 PUBLIC menu
 .model small
 .stack
@@ -165,6 +167,10 @@ CC:
     mov ah,0ch
     mov al,0
     int 21h
+    call waitproc
+    cmp status, 0
+    je Close
+    call getp2name
 	call choosecolor
 	mov status, 2
 Close:

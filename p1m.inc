@@ -253,11 +253,139 @@ ToRightMostWeapon:
 	jmp Return
 ToLeftMostWeapon:
 	mov W, 1
-	jmp Return
+Return:
+	;Check that Transmitter Holding Register is Empty
+	mov dx, 3fdh
+	in al, dx
+	test al, 00100000b
+	jz GoOut ;if not empty go to save before recieving (No sending)
+	;If empty put the VALUE in Transmit data register
+	mov dx , 3F8H ; Transmit data register
+	mov ah, 1
+	int 16h
+	mov al, ah
+	out dx , al
+	jmp GoOut
 chatlop:
 	call sendproc
-Return:
+GoOut:
+ENDM	PlayerInput
+;========================================================================================
+;========================================================================================
+Player2Input Macro Up,Down,Shoot,ChangeWeaponR,ChangeWeaponL,Tunnel,px,py,bulx,buly,W,CurrentBullet,IsPlayer1,FreezeFlag,InvertFlag,DoubleJumpFlag,BulletCount
+	LOCAL MoveUp,MoveDown,PShoot,Return,PLAYER2,WeaponL,WeaponR,ToRightMostWeapon,ToLeftMostWeapon,CheckWeapon,SmallJmp1,SmallJmp2,SkipMove,CheckDown,SmallJmp3,WeaponLSmallJmp,WeaponRSmallJmp
+	;Check that Data is Ready
+	mov dx , 3FDH ; Line Status Register
+	in al , dx
+	test al , 1
+	jz SmallJmp1
+
+	;If Ready read the VALUE in Receive data register
+	mov dx , 03F8H
+	in al , dx
+	mov value, al
+	mov ah, al
+	cmp FreezeFlag, 1
+	je SkipMove
+    ; Key Pressed
+    cmp ah, Up     ; IF UP ARROW MOVE UP
+    jne CheckDown
+	cmp InvertFlag, 1
+	je MoveDown
+	jmp MoveUp
+CheckDown:
+    cmp ah, Down     ; IF DOWN ARROW MOVE DOWN
+    jne SkipMove
+	cmp InvertFlag, 1
+	je MoveUp
+	jmp MoveDown
+SkipMove:
+    cmp ah, Shoot     ; IF SPACE SHOOT
+    je PShoot
+	cmp ah, ChangeWeaponR
+	je WeaponRSmallJmp
+	cmp ah, ChangeWeaponL
+	je WeaponLSmallJmp
+	jmp chatlop2
+SmallJmp1:
+    jmp SmallJmp2
+MoveUp:
+    cmp Tunnel, 0
+    je SmallJmp2
+    dec Tunnel
+	cmp Tunnel, 0            ; if tunnel = 0 don't dec tunnel again
+    je SmallJmp2
+	cmp DoubleJumpFlag, 0    ; if DJflag = 0 don't dec tunnel again
+	je SmallJmp2
+	dec Tunnel
+	jmp SmallJmp2
+MoveDown:
+    cmp Tunnel, 5
+    je SmallJmp2
+    inc Tunnel
+	cmp Tunnel, 5            ; if tunnel = 5 don't inc tunnel again
+    je SmallJmp2
+	cmp DoubleJumpFlag, 0    ; if DJflag = 0 don't inc tunnel again
+	je SmallJmp2
+	inc Tunnel
+	jmp SmallJmp2
+SmallJmp2: 
+    jmp SmallJmp3
+WeaponLSmallJmp:
+	jmp WeaponL
+WeaponRSmallJmp:
+	jmp WeaponR
+PShoot:
+    cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
+    jne SmallJmp3
+	mov ax, 0
+	mov al, W
+	dec ax           ; as current weapon starts from 1x
+	mov dl, 2
+	mul dl
+	mov si, offset BulletCount
+	add si, ax
+	mov ax, 0
+	cmp [si], ax     ; if not bullet no shoot
+	je SmallJmp3
+	mov ax, 1        ; dec bullet count
+	sub [si], ax
+	mov ah, W
+	mov CurrentBullet, ah
+    mov ax, px
+	mov bx, IsPlayer1
+    cmp bx, 0
+	jz PLAYER2
+    add ax, plen     ; SHIFT THE X POS TO THE HEAD OF THE PLAYER
+PLAYER2:
+    mov bulx, ax     ; MOVE SHOOT TO THE PLAYER HEAD
+    mov ax, py
+    add ax, plen / 2 - slen / 2    ; MOVE SHOOT TO VERT CENTER OF THE PLAYER
+    mov buly, ax
+SmallJmp3:
+	jmp Return2
+WeaponR:
+	inc W
+	jmp CheckWeapon
+WeaponL:
+	dec W
+CheckWeapon:
+    mov ah, W
+	cmp ah, 1       ; IF W < 1 ==> W = 4
+	jl ToRightMostWeapon
+	cmp ah, 4       ; IF W > 4 ==> W = 1
+	jg ToLeftMostWeapon
+	jmp Return2
+ToRightMostWeapon:
+	mov W, 4
+	jmp Return2
+ToLeftMostWeapon:
+	mov W, 1
+Return2:
+	jmp Go2Out
+chatlop2:
 	call recproc
+Go2Out:
 ENDM	PlayerInput
 ;========================================================================================
 ;========================================================================================

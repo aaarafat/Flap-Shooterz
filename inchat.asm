@@ -1,4 +1,5 @@
 public sendproc, recproc, init
+public value
 EXTRN Running:byte
 .MODEL SMALL
 .STACK 64
@@ -127,7 +128,7 @@ recproc proc FAR
 		mov lowerx, 0
 
 	nolimitrec:
-		;Check that Data is Ready
+		/*;Check that Data is Ready
 		mov dx , 3FDH ; Line Status Register
 		in al , dx
 		test al , 1
@@ -137,7 +138,7 @@ recproc proc FAR
 		mov dx , 03F8H
 		in al , dx
 		mov value, al
-
+*/
 		;move cursor
 		mov ah, 2
 		mov dl, lowerx

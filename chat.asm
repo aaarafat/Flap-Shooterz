@@ -106,7 +106,6 @@ mov bp,offset p1name+1
 mov ah, 13h
 int 10h
 mov upperx,cl
-dec upperx
 ;mov cursor
 mov ah, 2
 mov dl, upperx
@@ -129,7 +128,7 @@ transmit proc
 	mov value, al
 	cmp value, 27 ;escape
 	jnz noShortclose
-	jmp Shortclose
+	jmp contsend
 	noShortclose:
 	;move cursor
 	mov ah, 2
@@ -139,7 +138,7 @@ transmit proc
 	int 10h
 	inc upperx
 	mov al, p1name
-	add al,1
+	add al,2
 	cmp upperx,al
 	je noBKSP
 	; if value = backspace
@@ -174,10 +173,10 @@ Flush1:
 	jnz contsend
 	call scrollupper
 	mov upperx, 0
+	call printname
 	jmp contsend
 ShortReceive:
 	jmp receive
-
 contsend:
 	;Check that Transmitter Holding Register is Empty
 	mov dx, 3fdh
@@ -189,7 +188,8 @@ contsend:
 	mov dx , 3F8H ; Transmit data register
 	mov al, value
 	out dx , al
-
+	cmp al, 27
+	jz Shortclose
 	
 	cmp value, 13 ;new Line
 	jnz receive
