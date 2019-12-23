@@ -27,7 +27,7 @@ option1 db 14,"START NEW GAME"
 option2 db 9 ,"QUIT GAME"
 
 optionssize dw 2
-lvlOption   dw 0     ; 1 ==> lv1 , 2 ==> lv2
+lvlOption   dw 2     ; 1 ==> lv1 , 2 ==> lv2
 p2name db 16 dup('$') ;temporary for phase 1
 .code
 main proc far

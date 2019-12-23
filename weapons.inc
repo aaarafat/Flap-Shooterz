@@ -110,12 +110,20 @@ ENDM MoveB
 
 ;========================================================================================
 DrawBullet Macro	
+	local Go,lv2,lv2Agn,GoOut
 	push es
 	mov ax, ds
 	mov es, ax
-
+	
+	cmp lvlOption, 2
+	je lv2
 	add CurrentBulletCount1, '0'
 	add CurrentBulletCount2, '0'
+	jmp Go
+lv2:
+	mov CurrentBulletCount1, 236
+	mov CurrentBulletCount2, 236
+Go:
 	;---PLAYER 1---;
 	;DrawB 0, 10, CurrentWeapon1
     mov ah,13h ;Display
@@ -142,8 +150,15 @@ DrawBullet Macro
 	;DrawB 308, 10, CurrentWeapon2
 	;--------------;
 	pop es
+	cmp lvlOption, 2
+	je lv2Agn
 	sub CurrentBulletCount1, '0'
 	sub CurrentBulletCount2, '0'
+	jmp GoOut
+lv2Agn:
+	mov CurrentBulletCount1, -1
+	mov CurrentBulletCount2, -1
+GoOut:
 endm DrawBullet
 ;========================================================================================
 
@@ -185,6 +200,9 @@ endm ClearBullet
 
 ;========================================================================================
 UpdateBullet macro
+	local GoOut
+	cmp lvlOption, 2
+	je GoOut
 	;---PLAYER 1---;
 	mov si, offset Bullet1
 	mov ax, 0
@@ -208,6 +226,6 @@ UpdateBullet macro
 	mov ax, [si]
 	mov CurrentBulletCount2, al
 	;--------------;
-	
+GoOut:	
 endm UpdateBullet
 ;========================================================================================

@@ -6,6 +6,7 @@
 	EXTRN value:byte
 	PUBLIC p1lives,p2lives
 	EXTRN p1cd:byte,p2cd:byte,p1cl:byte,p2cl:byte
+	EXTRN lvlOption:byte
 	PUBLIC Game
 	public Running
 include p1m.inc
@@ -167,13 +168,20 @@ Game proc far
     mov ax,@data
     mov ds,ax
 
-	call lvl2
-    
-Game endp
-
-lvl1 proc
 	; init all
     call initailize
+	cmp lvlOption, 1
+	je GameLoop
+	mov Bullet2, -1
+	mov Bullet2 + 2, -1
+	mov Bullet2 + 4, -1
+	mov Bullet2 + 6, -1
+	mov Bullet2, -1
+	mov Bullet2 + 2, -1
+	mov Bullet2 + 4, -1
+	mov Bullet2 + 6, -1
+	mov CurrentBulletCount1, -1
+	mov CurrentBulletCount2, -1
 	;------------------
     ;MainMenuLoop
     ;------------------
@@ -194,33 +202,8 @@ GameLoop:
     cmp Running, 1
     je GameLoop
 
-lvl1 endp
-
-lvl2 proc
-	; init all
-    call initailize	
-	;------------------
-    ;MainMenuLoop
-    ;------------------
-GameLoop2:
-
-    ; Clear
-    Call Clear
-    ; Get Input
-    Call GetInput
-    ; Update
-    Call Update
-    ; Draw
-    Call Draw
-    ; Delay
-    Call Delay
-    ; UI
-    ;Call UI
-    cmp Running, 1
-    je GameLoop2	
-
-lvl2 endp
-
+    
+Game endp
 
 ;------Clear Screen-----
 Clear proc

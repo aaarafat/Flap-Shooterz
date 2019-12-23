@@ -210,6 +210,8 @@ WeaponRSmallJmp:
 PShoot:
     cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
     jne SmallJmp3
+	cmp lvlOption, 2
+	je SkipCount1
 	mov ax, 0
 	mov al, W
 	dec ax           ; as current weapon starts from 1x
@@ -222,6 +224,7 @@ PShoot:
 	je SmallJmp3
 	mov ax, 1        ; dec bullet count
 	sub [si], ax
+SkipCount1:
 	mov ah, W
 	mov CurrentBullet, ah
     mov ax, px
@@ -341,6 +344,8 @@ WeaponRSmallJmp:
 PShoot:
     cmp bulx, 0       ; IF SHOOT.X = 0 RETURN
     jne SmallJmp3
+	cmp lvlOption, 2
+	je SkipCount2
 	mov ax, 0
 	mov al, W
 	dec ax           ; as current weapon starts from 1x
@@ -353,6 +358,7 @@ PShoot:
 	je SmallJmp3
 	mov ax, 1        ; dec bullet count
 	sub [si], ax
+SkipCount2:
 	mov ah, W
 	mov CurrentBullet, ah
     mov ax, px
