@@ -67,8 +67,8 @@ p2livesstr label byte
         db 3h,'x'
 p2lives db 5h
 p2invc db 0h ;invincible
-CurrentWeapon2 db 2
-CurrentBullet2 db 2
+CurrentWeapon2 db 1
+CurrentBullet2 db 1
 timer2         dw 0
 InvertFlag2 dw 0
 DoubleJumpFlag2 dw 0
@@ -395,8 +395,8 @@ mov bul2x, 0h   ;p2 bullet x
 mov bul2y, 0h   ;p2 bullet y
 mov p2lives , 5h
 mov p2invc , 0h ;invincible
-mov CurrentWeapon2 , 2
-mov CurrentBullet2 , 2
+mov CurrentWeapon2 , 1
+mov CurrentBullet2 , 1
 mov timer2, 0
 mov InvertFlag2 , 0
 mov DoubleJumpFlag2 , 0
@@ -434,4 +434,7 @@ mov P2Tunnel ,   0h
 
 	ret
 initailize endp
+
+
+
 end

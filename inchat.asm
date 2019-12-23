@@ -1,6 +1,7 @@
 public sendproc, recproc, init
 public value
 EXTRN Running:byte
+EXTRN p1name:byte, p2name:byte
 .MODEL small
 .STACK 64
 .DATA
@@ -42,19 +43,27 @@ init proc far
 
 init endp
 sendproc	PROC FAR
-		mov ax, @DATA
-		mov ds, ax
 
+
+		cmp upperx, 0
+		jnz noPP1N
+		call printname
+	noPP1N:
 		cmp upperx, 39
 		jnz nolimitsend
 		call supper
 		mov upperx, 0
+		call printname
 
 	nolimitsend:
 		;get input from KB
 		mov ah, 1
 		int 16h
+		jnz printLB
+		jmp return
+	printLB:
 		mov value, al
+
 
 		;move cursor
 		mov ah, 2
@@ -65,9 +74,19 @@ sendproc	PROC FAR
 		inc upperx
 
 		; if value = backspace
+		mov al, p1name
+		add al,2
+		cmp upperx,al
+		je noBKSP
+		
 		cmp value, 8
 		je BKSP1
-
+		noBKSP:
+		cmp value, 8
+		jnz NormPrint
+		dec upperx
+		jmp BKSPCont
+	NormPrint:
 		;print char
 		mov ah, 2
 		mov dl, value
@@ -92,6 +111,7 @@ sendproc	PROC FAR
 		jnz contsend
 		call supper
 		mov upperx, 0
+		call printname
 		jmp contsend
 
 	contsend:
@@ -116,16 +136,23 @@ sendproc	PROC FAR
 		jnz return
 		call supper
 		mov upperx, 0
+		call printname
 	return:
 	ret
 sendproc endp
 
 recproc proc FAR
+
+		cmp lowerx, 0
+		jnz NPP2N
+		call printp2name
+	NPP2N:
 ;scroll if lowerx == 79 (right end of the window)
 		cmp lowerx, 39
 		jnz nolimitrec
 		call slower
 		mov lowerx, 0
+		call printp2name
 
 	nolimitrec:
 		;Check that Data is Ready
@@ -147,10 +174,20 @@ recproc proc FAR
 		int 10h
 		inc lowerx
 
+
+		mov al, p2name
+		add al,2
+		cmp lowerx,al
+		je noBKSPRec
 		; if value = BKSP
 		cmp value, 8
 		je BKSP2
-
+	noBKSPRec:
+		cmp value, 8
+		jnz NormPrintRec
+		dec lowerx
+		jmp SKIP
+	NormPrintRec:
 		mov ah, 2
 		mov dl, value
 		int 21h ;print char
@@ -175,6 +212,7 @@ recproc proc FAR
 		jnz contrec
 		call slower
 		mov lowerx, 0
+		call printp2name
 
 	contrec:
 		cmp value, 27 ;escape
@@ -186,6 +224,7 @@ recproc proc FAR
 		jnz close
 		call slower
 		mov lowerx, 0
+		call printp2name
 	close:
 	ret
 recproc endp
@@ -217,5 +256,62 @@ int 10h
 
 ret
 slower endp
+
+printname proc 
+mov al, 0
+mov bh, 0;page nubmer
+mov bl,0Fh
+mov cl, p1name ;  message size.
+mov ch,0
+push ds
+pop es
+mov dl,0
+mov dh,uppery
+mov bp,offset p1name+1
+mov ah, 13h
+int 10h
+mov upperx,cl
+;mov cursor
+mov ah, 2
+mov dl, upperx
+mov dh, uppery
+mov bh, 0
+int 10h
+mov ah, 2
+mov dl, ':'
+int 21h ;print char
+inc upperx	
+
+ret
+printname endp
+
+printp2name proc 
+mov al, 0
+mov bh, 0;page nubmer
+mov bl, 0Fh
+mov cl, p2name ;  message size.
+mov ch,0
+push ds
+pop es
+mov dl,0
+mov dh,lowery
+mov bp,offset p2name+1
+mov ah, 13h
+int 10h
+mov lowerx,cl
+;mov cursor
+mov ah, 2
+mov dl, lowerx
+mov dh, lowery
+mov bh, 0
+int 10h
+mov ah, 2
+mov dl, ':'
+int 21h ;print char
+inc lowerx	
+
+ret
+printp2name endp
+
 
 		end

@@ -1,6 +1,7 @@
 EXTRN status:byte
-EXTRN p1name:byte 
+EXTRN p1name:byte, p2name:byte
 public chatproc
+public getp2name
 .MODEL SMALL
 .STACK 64
 .DATA
@@ -9,6 +10,8 @@ uppery EQU 12
 lowerx db 0
 lowery EQU 23
 value db 0
+recivecount db 16
+sendcount db 16
 .CODE
 chatproc proc
 		mov ax, @DATA
@@ -59,6 +62,7 @@ chatproc proc
 		mov bh, 0
 		int 10h
 		call printname
+		call printp2name
 		call transmit
 
 	ret
@@ -109,15 +113,44 @@ mov upperx,cl
 ;mov cursor
 mov ah, 2
 mov dl, upperx
-mov dh, 12
+mov dh, uppery
 mov bh, 0
 int 10h
 mov ah, 2
 mov dl, ':'
 int 21h ;print char
 inc upperx	
+
 ret
 printname endp
+
+printp2name proc 
+mov al, 0
+mov bh, 0;page nubmer
+mov bl, 0Fh
+mov cl, p2name ;  message size.
+mov ch,0
+push ds
+pop es
+mov dl,lowerx
+mov dh,lowery
+mov bp,offset p2name+1
+mov ah, 13h
+int 10h
+mov lowerx,cl
+;mov cursor
+mov ah, 2
+mov dl, lowerx
+mov dh, lowery
+mov bh, 0
+int 10h
+mov ah, 2
+mov dl, ':'
+int 21h ;print char
+inc lowerx	
+
+ret
+printp2name endp
 
 transmit proc
 	send:
@@ -126,10 +159,10 @@ transmit proc
 	int 16h
 	jz ShortReceive ;if no key pressed
 	mov value, al
-	cmp value, 27 ;escape
-	jnz noShortclose
-	jmp contsend
-	noShortclose:
+	;cmp value, 27 ;escape
+	;jnz noShortclose
+	;jmp contsend
+	;noShortclose:
 	;move cursor
 	mov ah, 2
 	mov dl, upperx
@@ -188,7 +221,7 @@ contsend:
 	mov dx , 3F8H ; Transmit data register
 	mov al, value
 	out dx , al
-	cmp al, 27
+	cmp value, 27
 	jz Shortclose
 	
 	cmp value, 13 ;new Line
@@ -216,10 +249,14 @@ contsend:
 	int 10h
 	inc lowerx
 
+	mov al, p2name
+	add al,2
+	cmp lowerx,al
+	je noBKSPRec
 	; if value = BKSP
 	cmp value, 8
 	je BKSP2
-
+noBKSPRec:
 	mov ah, 2
 	mov dl, value
 	int 21h ;print char
@@ -248,6 +285,7 @@ SKIP:
 	jnz contrec
 	call scrolllower
 	mov lowerx, 0
+	call printp2name
 
 contrec:
 	cmp value, 27 ;escape
@@ -256,6 +294,7 @@ contrec:
 	jnz lop
 	call scrolllower
 	mov lowerx, 0
+	call printp2name
 
 
 lop:
@@ -266,12 +305,56 @@ lop:
 	mov status, 0
 	mov upperx, 0
 	mov lowerx, 0
-	;flush KB
-	mov ah, 0
-	int 16h
 	mov ah,0
 	mov al,13h
 	int 10h
 	ret
 transmit endp
+
+getp2name proc far
+	lea si ,p1name
+	lea di,p2name
+	mov recivecount, 16
+	mov sendcount, 16
+	againgetp2name:
+	cmp recivecount, 0
+	je p2namesend
+
+
+	mov dx , 3FDH ; Line Status Register
+	in al , dx
+	test al , 1
+	jz p2namesend ;Not Ready
+	;If Ready read the VALUE in Receive data register
+	mov dx , 03F8H
+	in al , dx
+	mov [di],al
+	inc di 
+	dec recivecount
+
+
+	p2namesend:
+	cmp sendcount, 0
+	je Compare
+	mov dx, 3fdh
+	in al, dx
+	test al, 00100000b
+	jz againgetp2name ;if not empty go to save before recieving (No sending)
+	;If empty put the VALUE in Transmit data register
+	mov dx , 3F8H ; Transmit data register
+	mov al, [si]
+	out dx , al
+	inc si
+	dec sendcount
+	jmp againgetp2name
+	
+Compare:
+	cmp recivecount, 0
+	jne againgetp2name
+	
+
+
+	ret 
+getp2name endp
+
 		end

@@ -5,10 +5,10 @@ EXTRN selname:far
 EXTRN chatproc:far
 EXTRN p1lives:byte, p2lives:byte,p1name:byte
 EXTRN waitproc:far
+EXTRN getp2name:far
 PUBLIC p1cd,p2cd,p1cl,p2cl,p2name
 PUBLIC currentoption,option1,optionssize
 PUBLIC status
-public getp2name
 public p2status
 .model small
 .stack
@@ -66,7 +66,8 @@ GameLB:
 	call waitproc
 	cmp status, 0
 	je MenuLB
-	;cmp status, 3
+	call xchgcolors
+	;cmp status, 2
 	;je EndGame
 
 	call Game
@@ -86,46 +87,54 @@ EndGame:
 main endp
 
 
-getp2name proc
-	lea si ,p1name
-	lea di,p2name
-	againgetp2name:
-	cmp recivecount, 0
-	je send
+xchgcolors proc
 
-
-	mov dx , 3FDH ; Line Status Register
-	in al , dx
-	test al , 1
-	jz send ;Not Ready
-	;If Ready read the VALUE in Receive data register
-	mov dx , 03F8H
-	in al , dx
-	mov [di],al
-	inc di 
-	dec recivecount
-
-
-	send:
-	cmp sendcount, 0
-	je Compare
+	repsend1:
 	mov dx, 3fdh
 	in al, dx
 	test al, 00100000b
-	jz againgetp2name ;if not empty go to save before recieving (No sending)
-	;If empty put the VALUE in Transmit data register
+	jz repsend1
+
 	mov dx , 3F8H ; Transmit data register
-	mov al, [si]
+	mov al, p1cl
 	out dx , al
-	inc si
-	dec sendcount
-	jmp againgetp2name
+
+	reprec1:
+	mov dx , 3FDH ; Line Status Register
+	in al , dx
+	test al , 1
+	jz reprec1
+
+	mov dx , 03F8H
+	in al , dx
+	mov p2cl, al
+
+
+	repsend2:
+	mov dx, 3fdh
+	in al, dx
+	test al, 00100000b
+	jz repsend2
+
+	mov dx , 3F8H ; Transmit data register
+	mov al, p1cd
+	out dx , al
+
+	reprec2:
+	mov dx , 3FDH ; Line Status Register
+	in al , dx
+	test al , 1
+	jz reprec2
+
+	mov dx , 03F8H
+	in al , dx
+	mov p2cd, al
+
 	
-Compare:
-	cmp recivecount, 0
-	jne againgetp2name
-	
-	ret 
-getp2name endp
+
+ret 
+xchgcolors endp 
+
+
 
 end main

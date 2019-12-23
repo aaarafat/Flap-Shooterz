@@ -143,95 +143,7 @@ choosecolor proc far
     mov al,backcolors+colorssize2
     mov backcolors+colorssize2,bl
     mov [si],al
-	uiloop2:
-	;get input
-    mov ah,1
-    int 16h
-    jz nopress2
-    cmp ah,048h
-    jz up2
-    cmp ah,050h
-    jz down2
-	cmp ah,01ch
-    jnz nolongjump2
-    jmp quit2
-    nolongjump2:
-    jmp press2
-    up2:
-    dec currentcolor2
-    jns press2
-    mov currentcolor2,colorssize-2
-    jmp press2
-    down2:
-    inc currentcolor2
-    jmp press2
-    press2:
-	;flush keyboard buffer
-    mov ah,0ch
-    mov al,0
-    int 21h
-	;mod to wrap
-    mov ax,currentcolor2
-    mov dx,colorssize2
-    div dl
-    mov al,0
-    xchg al,ah
-    mov currentcolor2,ax
-    nopress2:
-	;init for int 10h
-    mov dh,13 ;row
-	mov bh,0 ;Page 0
-    lea bp, p2name
-    push ds;to make es equal to ds
-    pop es;int 10h es:bp
-    mov bl,0fh
-    mov al, 1
-    mov cl, ds:[bp]
-    mov ch, 0
-    ;set cursor to middel of screen
-    mov dl, 20
-    sub dl, ds:[bp]
-    shr dl, 1
-	mov ah, 13h
-    inc bp
-    int 10h
-	;get the selected colors
-    lea si,colors
-    add si,currentcolor2
-    mov ax,6
-    add si,ax
-    mov bl,[si]
-    mov p2cd,bl
-    sub si,ax
-	mov bl,[si]
-    mov p2cl,bl
-	;make arrows move up and down
-	;as in the above segment
-	mov dh, 10;row
-	cmp count,1
-	je float1
-	jne float12
-	float1:
-    mov bp,offset colorpicker1
-    jmp ot12
-    float12:
-    mov bp,offset colorpicker2
-    ot12:
-    mov cx ,13
-    xor count,1
-    mov al, 1
 
-    ;set cursor to middel of screen
-    mov dl,20
-	mov ah, 13h
-    int 10h
-
-    ClearP p2x, p2y, m2x , m2y
-    DrawP p2x, p2y, m2x , m2y , p2cl , p2cd
-
-	call Delay
-	jmp uiloop2
-	quit2:
 	;delete all the drawn objects
 	mov ah,0
 	mov al,13h
@@ -239,6 +151,8 @@ choosecolor proc far
 	mov ah,0ch
     mov al,0
     int 21h
+
+
 	ret
    choosecolor endp
    ;delay proc
