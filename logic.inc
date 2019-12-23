@@ -34,7 +34,7 @@ ENDM CheckCollision
 ;========================================================================================
 
 ;========================================================================================
-CheckCollisionBullet Macro px, py, bulx, buly, BulletType, IsPlayer1, flag, timer
+CheckCollisionBullet Macro px, py, bulx, buly, BulletType, IsPlayer1, flag, timer, plives
  	LOCAL finish, PLAYER2, HandleEff, ShortJmp
 	; If player 1 norm = plen normBul = 0 , player2 norm = 0 normBul = 4
 	mov ax, bulx 
@@ -82,6 +82,13 @@ HandleEff:
 	mov [si], ax
 	mov bulx, 0
 	mov timer, timerDur  
+	cmp lvlOption, 1
+	je finish
+	dec plives
+	cmp plives, 0
+    jg finish
+	mov plives, 0      ; Check that lives can't be negative
+    mov Running ,0     ; Exit
 finish:
 ENDM CheckCollisionBullet
 ;========================================================================================
