@@ -191,6 +191,8 @@ GameLoop:
     Call Clear
     ; Get Input
     Call GetInput
+	cmp Running, 0
+	je GameFinish
     ; Update
     Call Update
     ; Draw
@@ -201,7 +203,7 @@ GameLoop:
     ;Call UI
     cmp Running, 1
     je GameLoop
-
+GameFinish:
     
 Game endp
 
@@ -236,7 +238,6 @@ GetInput proc
     ; IF Escape PRESSED CLOSE
     CMP al, 27     ; escape
     JNE FLUSH
-	mov p1lives, 0
     MOV Running, 0
     ;-------------------
 FLUSH:

@@ -219,7 +219,7 @@ recproc proc FAR
 	contrec:
 		cmp value, 27 ;escape
 		jnz NotEscapeRec
-		mov Running, 0
+		;mov Running, 0
 		mov p2lives, 0
 		jmp close
 	NotEscapeRec:
