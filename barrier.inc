@@ -94,7 +94,7 @@ ENDM DeletePipe
 getrandom  macro  Gap
     mov ah,2ch    ; To get System Time
     int 21h
-    mov aL,dl    ; 1/100 is in Dl
+    mov aL,ch    ; 1/100 is in Dl
     mov ah,0
 	inc seed
 	add al,seed
