@@ -159,6 +159,8 @@ MenuLoop:
 	
 	cmp status, 1
 	je CC
+	cmp status, -3
+	je CC
     cmp status, 0
     jne Close
 	
@@ -216,10 +218,11 @@ NotChat:
     cmp al, 3
     jnz lvl2
     mov status, 3
+	jmp FLUSH
 lvl2:
     cmp al,1
     jnz FLUSH
-    mov status,1
+    mov status,-3
     mov lvlOption,2
 
 

@@ -16,7 +16,7 @@ public lvlOption
 .data
 recivecount db 16
 sendcount db 16
-status db -1    ; -2 ==> chat || -1 ==> SelectName || 0 ==> Menu || 1 ==> ChooseColor || 2 ==> Game || 3 ==> EndGame || 4 ==> GameOver
+status db -1    ; -3 ==> ChangeLv2 || -2 ==> chat || -1 ==> SelectName || 0 ==> Menu || 1 ==> ChooseColor || 2 ==> Game || 3 ==> EndGame || 4 ==> GameOver 
 p2status db -1
 p1cl db 0
 p1cd db 0
@@ -45,6 +45,8 @@ MenuLB:
 	cmp status, -2
 	je ChatLB
 	cmp status, 2
+	je GameLB
+	cmp status,5
 	je GameLB
 	cmp status, 0
 	je MenuLB
