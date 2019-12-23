@@ -341,8 +341,8 @@ Update proc
     CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4, DoubleDamageFlag2
 	;------------
 	; CHECK IF PLAYER HITTED BY BULLET
-	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, InvertFlag1, timer1
-	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, InvertFlag2, timer2
+	CheckCollisionBullet p1x, p1y, bul2x, bul2y, CurrentBullet2, 1, InvertFlag1, timer1,p1lives
+	CheckCollisionBullet p2x, p2y, bul1x, bul1y, CurrentBullet1, 0, InvertFlag2, timer2,p2lives
 	;-----timer----
 	Call UpdateTimer
 	;---Update Bullet Counter---
