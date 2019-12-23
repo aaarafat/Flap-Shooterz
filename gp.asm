@@ -236,6 +236,7 @@ GetInput proc
     ; IF Escape PRESSED CLOSE
     CMP al, 27     ; escape
     JNE FLUSH
+	mov p1lives, 0
     MOV Running, 0
     ;-------------------
 FLUSH:

@@ -2,6 +2,7 @@ public sendproc, recproc, init
 public value
 EXTRN Running:byte
 EXTRN p1name:byte, p2name:byte
+EXTRN p1lives:byte, p2lives:byte
 .MODEL small
 .STACK 64
 .DATA
@@ -129,6 +130,7 @@ sendproc	PROC FAR
 		cmp value, 27
 		jnz NotEscape
 		mov Running, 0
+		mov p1lives, 0
 		jmp return
 
 	NotEscape:
@@ -218,6 +220,7 @@ recproc proc FAR
 		cmp value, 27 ;escape
 		jnz NotEscapeRec
 		mov Running, 0
+		mov p2lives, 0
 		jmp close
 	NotEscapeRec:
 		cmp value, 13 ;new Line
