@@ -1,6 +1,7 @@
 include fs.inc
 include Gameover.inc
 include p1m.inc
+EXTRN lvlOption:word
 EXTRN choosecolor:far
 EXTRN status:byte
 EXTRN p1cl:byte, p2cl:byte, p1cd:byte, p2cd:byte
@@ -122,10 +123,11 @@ fsy DW 10
 msx DW 0
 msy Dw 0
 clr DB 01h
-option1 db 8,'NEW GAME'
-option2 db 4,'CHAT'
-option3 db 4,'EXIT'
-optionsize EQU 3
+option1 db 6,'LEVEL1'
+option2 db 6,'LEVEL2'
+option3 db 4,'CHAT'
+option4 db 4,'EXIT'
+optionsize EQU 4
 currentoption dw 0
 Running db 1
 drawcount db 9
@@ -203,17 +205,22 @@ jz NOFLUSH ; If no Key Pressed Return
 	cmp al, 0
     jnz NotCC
     mov status, 1
+    mov lvlOption,1
     jmp FLUSH
 NotCC:
-    cmp al, 1
+    cmp al, 2
     jnz NotChat
     mov status, -2
     jmp FLUSH
 NotChat:
-    cmp al, 2
-    jnz FLUSH
+    cmp al, 3
+    jnz lvl2
     mov status, 3
-
+lvl2:
+    cmp al,1
+    jnz FLUSH
+    mov status,1
+    mov lvlOption,2
 
 
 FLUSH:
