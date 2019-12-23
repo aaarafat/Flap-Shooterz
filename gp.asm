@@ -333,8 +333,10 @@ Update proc
     ;--------------
     ; GENERATE PIP 1
     GeneratePip  2,Pipx1,p1invc,Gap1, 0
+
+
     ; GENERATE PIP 2
-    GeneratePip  -2,Pipx2,p2invc,Gap2, 4
+    Generate2Pip  -2,Pipx2,p2invc,Gap2, 4
     ;------------
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0, DoubleDamageFlag1
@@ -432,7 +434,9 @@ mov P2Tunnel ,   0h
  mov Pipx1 ,155
     getrandom Gap1
     mov Pipx2 ,160
-    getrandom Gap2
+    ;getrandom Gap2
+	mov ax, Gap1
+	mov Gap2, ax
     mov Running, 1
 	mov ah,0ch
     mov al,0

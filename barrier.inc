@@ -129,5 +129,31 @@ gen:
 	endm GeneratePip
 ;========================================================================================
 
+Generate2Pip macro speed,px,invc,Gap,norm
+	local finish,gen
+	sub px,speed
+    mov si, px
+    add si, norm
+	;checks if the pipe went out of sight
+    cmp si, ScreenWidth 
+	jg gen
+    cmp si, -1
+	jnl finish
+gen:
+    mov invc ,0
+    mov px,160 ;center of the screen
+    ;getrandom Gap, seed
+    mov ax, Gap1
+    mov Gap, ax
+	mov ax, norm
+	cmp ax, 0
+	jnz finish
+	sub px, 5
+    
+
+
+	finish:
+	endm GeneratePip
+
 
 
