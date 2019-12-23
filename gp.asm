@@ -166,10 +166,15 @@ mt2y	DW 0
 Game proc far
     mov ax,@data
     mov ds,ax
-    ; init all
-   call initailize
 
-    ;------------------
+	call lvl2
+    
+Game endp
+
+lvl1 proc
+	; init all
+    call initailize
+	;------------------
     ;MainMenuLoop
     ;------------------
 GameLoop:
@@ -189,7 +194,32 @@ GameLoop:
     cmp Running, 1
     je GameLoop
 
-Game endp
+lvl1 endp
+
+lvl2 proc
+	; init all
+    call initailize	
+	;------------------
+    ;MainMenuLoop
+    ;------------------
+GameLoop2:
+
+    ; Clear
+    Call Clear
+    ; Get Input
+    Call GetInput
+    ; Update
+    Call Update
+    ; Draw
+    Call Draw
+    ; Delay
+    Call Delay
+    ; UI
+    ;Call UI
+    cmp Running, 1
+    je GameLoop2	
+
+lvl2 endp
 
 
 ;------Clear Screen-----

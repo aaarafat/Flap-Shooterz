@@ -10,6 +10,7 @@ PUBLIC p1cd,p2cd,p1cl,p2cl,p2name
 PUBLIC currentoption,option1,optionssize
 PUBLIC status
 public p2status
+public lvlOption
 .model small
 .stack
 .data
@@ -26,6 +27,7 @@ option1 db 14,"START NEW GAME"
 option2 db 9 ,"QUIT GAME"
 
 optionssize dw 2
+lvlOption   dw 0     ; 1 ==> lv1 , 2 ==> lv2
 p2name db 16 dup('$') ;temporary for phase 1
 .code
 main proc far
