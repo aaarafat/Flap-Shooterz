@@ -7,6 +7,7 @@
 	PUBLIC p1lives,p2lives
 	EXTRN p1cd:byte,p2cd:byte,p1cl:byte,p2cl:byte
 	EXTRN lvlOption:byte
+	EXTRN hostorguest:byte
 	PUBLIC Game
 	public Running
 include p1m.inc
@@ -332,14 +333,28 @@ Update proc
     ; UPDATE PLAYER
     UpdatePlayer P1Tunnel, p1y
     UpdatePlayer P2Tunnel, p2y
-    ;--------------
-    ; GENERATE PIP 1
+    
+	;--------------
+    cmp hostorguest,0
+	je continueguest
+	jmp guest
+continueguest:
+	; GENERATE PIP 1
     GeneratePip  2,Pipx1,p1invc,Gap1, 0
 
 
     ; GENERATE PIP 2
     Generate2Pip  -2,Pipx2,p2invc,Gap2, 4
-    ;------------
+	jmp notguest
+guest:
+	; GENERATE PIP 2
+    Generate2Pip  -2,Pipx2,p2invc,Gap2, 4
+    ; GENERATE PIP 1
+	GeneratePip  2,Pipx1,p1invc,Gap1, 0
+notguest:
+
+    
+	;------------
     ; CHECK IF PLAYER HIT THE PIP
     CheckCollision Gap1, P1Tunnel, Pipx1, p1x, p1invc, p1lives, 0, DoubleDamageFlag1
     CheckCollision Gap2, P2Tunnel, Pipx2, p2x, p2invc, p2lives, 4, DoubleDamageFlag2

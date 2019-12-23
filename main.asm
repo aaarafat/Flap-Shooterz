@@ -1,3 +1,4 @@
+include Gameover.inc
 EXTRN Game:far
 EXTRN menu:far
 EXTRN gameover:far
@@ -11,22 +12,27 @@ PUBLIC currentoption,option1,optionssize
 PUBLIC status
 public p2status
 public lvlOption
+public hostorguest
 .model small
 .stack
 .data
 recivecount db 16
 sendcount db 16
-status db -1    ; -3 ==> ChangeLv2 || -2 ==> chat || -1 ==> SelectName || 0 ==> Menu || 1 ==> ChooseColor || 2 ==> Game || 3 ==> EndGame || 4 ==> GameOver 
+status db -1    ;-4 host or guest|| -3 ==> ChangeLv2 || -2 ==> chat || -1 ==> SelectName || 0 ==> Menu || 1 ==> ChooseColor || 2 ==> Game || 3 ==> EndGame || 4 ==> GameOver 
 p2status db -1
 p1cl db 0
 p1cd db 0
 p2cl db 0
 p2cd db 0
+hostorguest db 0
 currentoption dw 0
 option1 db 14,"START NEW GAME"
 option2 db 9 ,"QUIT GAME"
-
 optionssize dw 2
+connectionoptions1 db 4,'HOST'
+connectionoptions2 db 5,'guest'
+connectionoptions dw 2
+currentoptionconnection dw 0
 lvlOption   dw 2     ; 1 ==> lv1 , 2 ==> lv2
 p2name db 16 dup('$') ;temporary for phase 1
 .code
@@ -37,11 +43,11 @@ MainLoop:
 	call selname
 	cmp status, 0
 	jne EndGame
-
+	call connection
 	
 MenuLB:
 	call menu
-
+	
 	cmp status, -2
 	je ChatLB
 	cmp status, 2
@@ -139,6 +145,25 @@ xchgcolors proc
 ret 
 xchgcolors endp 
 
-
+connection proc
+againhostorguest:
+WriteGameoverUI currentoptionconnection,connectionoptions1,connectionoptions
+mov ah,1
+int 16h
+jz notagainhostorguest1
+mov dh, ah
+ mov ah,0h
+    int 16h
+jmp againhostorguest
+notagainhostorguest1:
+   
+cmp dh,01ch
+jz notagainhostorguest2
+jmp againhostorguest
+notagainhostorguest2:
+mov ax, currentoptionconnection
+mov hostorguest,al
+ret
+connection endp
 
 end main
